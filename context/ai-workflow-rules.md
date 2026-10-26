@@ -1,60 +1,43 @@
 # Development Workflow
 
-## Approach
+## Read order and authority
 
-Build this project incrementally using a spec-driven workflow. Context files define what to build, how to build it, and what the current state of progress is. Always implement against these specs — do not infer or invent behavior from scratch.
+Read the six context files in the order specified by `AGENTS.md`, then the relevant MATMS-PRD sections and feature spec. The PRD defines product requirements; context defines implementation guidance; feature specs define verifiable work units. User-approved changes must be reconciled across these documents before dependent implementation.
 
-## Scoping Rules
+Use [feature-specs/README.md](../feature-specs/README.md) for sequencing and requirement coverage. Specs describe planned work, not completed features. Check repository state and [progress-tracker.md](progress-tracker.md) before starting.
 
-- Work on one feature unit or subsystem at a time.
-- Prefer small, verifiable increments over large speculative changes.
-- Do not combine unrelated system boundaries in a single implementation step.
+## Bootstrap first
 
-## When To Split Work
+1. Inspect repository contents; do not overwrite documentation when scaffolding into the existing repository.
+2. Use the requested Better T Stack configuration from PRD §3 and record the actual CLI/toolchain versions. Inspect output before establishing paths, scripts, adapters, or runtime assumptions.
+3. Reuse generated auth, database, environment, and UI infrastructure. Initialize/extend shadcn/ui only where missing.
+4. Read the relevant installed Next.js guides before writing frontend code. If dependencies/guides do not exist, complete scaffold inspection before coding against assumed APIs.
+5. Keep seed data fictional and production credentials out of source control.
 
-Split an implementation step if it combines:
+## Delivery units
 
-- UI changes and background task changes
-- Real-time canvas state and database persistence
-- Multiple unrelated API routes
-- Behavior that is not clearly defined in the context files
+Work in small, verifiable increments within the active feature spec. A domain spec may require several increments: contract/schema, service and transaction tests, then UI and browser verification. A small end-to-end increment can span those boundaries when necessary; do not combine unrelated features merely because they share a page.
 
-If a change cannot be verified end to end quickly, the scope is too broad — split it.
+Establish auth/grant filtering and audit infrastructure before shipping protected mutations. Add immutable history and concurrency controls with the business operation, not as later cleanup. Mock UI data may support foundation previews but must be labeled and never represented as working persistence or authorization.
 
-## Handling Missing Requirements
+## Missing requirements and school decisions
 
-- Do not invent product behavior that is not defined in the context files.
-- If a requirement is ambiguous, resolve it in the relevant context file before implementing.
-- If a requirement is missing, add it as an open question in `progress-tracker.md` before continuing.
+- Resolve ordinary implementation choices using the PRD and scaffold; document material decisions.
+- Record unresolved product/policy questions in the progress tracker. Continue independent work; do not invent school retention rules, restricted-record policy, loan defaults, branding, or hosting approval.
+- Resolve an ambiguity before implementing behavior that depends on it. Keep production policy gates distinct from development setup and fictional-data testing.
+- Do not expand MVP into uploads, document automation, multi-school support, or disposal execution without an explicit scope update.
 
-## Protected Foundation Components
+## Shared UI components
 
-Do not modify generated third-party foundation components unless explicitly instructed.
+Use the shadcn/ui CLI to add required primitives. Prefer tokens, exposed variants, and feature wrappers for customization. Do not hand-edit installed library internals. A justified shared primitive change must remain reusable, be documented, and retain keyboard/focus behavior. Routine work within the user's authorized scope does not require a separate permission step.
 
-This includes:
+## Verification and handoff
 
-- `components/ui/*` (shadcn/ui components)
-- third-party library internals
+1. Check the active spec's acceptance criteria and relevant PRD AC IDs.
+2. Run appropriate checks available in the actual workspace; report failures and checks that could not run accurately.
+3. Verify permission boundaries, transaction/history invariants, and loading/error behavior for the changed feature.
+4. Update affected architecture, scope, UI, or standards documents before proceeding with dependent changes.
+5. Update `progress-tracker.md` after every meaningful implementation change, separating documentation, scaffold, implemented behavior, and verified deployment.
+6. Report the outcome, verification, remaining limitations, and next unit without claiming unimplemented features are complete.
 
-These should remain default and reusable.
-
-Project-specific styling, layout changes, and feature logic must be implemented in app-level components instead of modifying foundation components.
-
-Only modify these files when a task explicitly requires it.
-
-## Keeping Docs In Sync
-
-Update the relevant context file whenever implementation changes:
-
-- System architecture or boundaries
-- Storage model decisions
-- Code conventions or standards
-- Feature scope
-
-Progress state must reflect the actual state of the implementation, not the intended state.
-
-## Before Moving To The Next Unit
-
-1. The current unit works end to end within its defined scope.
-2. No invariant defined in `architecture-context.md` was violated.
-3. `progress-tracker.md` reflects the completed work.
+The release gate is PRD §§13–17: acceptance checks, reviewed migrations, reproducible dependencies, staff pilot validation, restore rehearsal, operational guide, and resolution of critical authorization/data-integrity defects.

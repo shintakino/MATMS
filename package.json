@@ -1,0 +1,53 @@
+{
+  "name": "matms",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "type": "module",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "check-types": "turbo run check-types",
+    "dev:web": "turbo run dev -F web --",
+    "dev:server": "turbo run dev -F server --",
+    "db:push:dev": "turbo run db:push:dev -F @matms/db --",
+    "db:studio": "turbo run db:studio -F @matms/db --",
+    "db:generate": "turbo run db:generate -F @matms/db --",
+    "db:migrate": "turbo run db:migrate -F @matms/db --",
+    "test": "pnpm run test:db && pnpm run test:auth && pnpm run test:archive && pnpm run test:inventory",
+    "test:db": "bun test packages/db/src/audit.integration.test.ts",
+    "test:auth": "bun test packages/auth/src/provisioning.integration.test.ts",
+    "test:archive": "bun test packages/api/src/archive-service.integration.test.ts",
+    "test:inventory": "bun test packages/api/src/inventory-service.integration.test.ts",
+    "db:start": "docker compose up -d postgres",
+    "db:watch": "docker compose up postgres",
+    "db:stop": "docker compose stop postgres",
+    "db:down": "docker compose down postgres",
+    "docker:build": "docker compose build",
+    "docker:up": "docker compose up -d --build",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "env:generate": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./packages/db/",
+    "postinstall": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./packages/db/",
+    "auth:generate": "cd apps/server && pnpm run auth:generate",
+    "auth:bootstrap-admin": "pnpm --filter @matms/auth bootstrap-admin"
+  },
+  "engines": {
+    "node": "22.22.2",
+    "bun": "1.4.4",
+    "pnpm": "11.1.1"
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@matms/config": "workspace:*",
+    "@types/bun": "catalog:",
+    "turbo": "^2.11.7",
+    "typescript": "catalog:",
+    "varlock": "catalog:"
+  },
+  "packageManager": "pnpm@11.1.1"
+}

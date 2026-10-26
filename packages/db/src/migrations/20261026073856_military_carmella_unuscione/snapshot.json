@@ -1,0 +1,1495 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "089cb16e-d65d-45af-804e-f80a788693e1",
+  "prevIds": [
+    "ea362179-b266-4787-a9af-ae7ffedcefbc"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_enum",
+      "statementTarget": [
+        "enum",
+        "public",
+        "stock_operation_type"
+      ],
+      "writes": [
+        "s|enum|public.stock_operation_type",
+        "n|enum|public.stock_operation_type",
+        "e|enum|public.stock_operation_type",
+        "n|type|public.stock_operation_type"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_enum",
+      "statementTarget": [
+        "enum",
+        "public",
+        "template_status"
+      ],
+      "writes": [
+        "s|enum|public.template_status",
+        "n|enum|public.template_status",
+        "e|enum|public.template_status",
+        "n|type|public.template_status"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "stock_operations"
+      ],
+      "writes": [
+        "s|tbl|public.stock_operations",
+        "n|tbl|public.stock_operations",
+        "e|tbl|public.stock_operations",
+        "n|rel|public.stock_operations",
+        "n|type|public.stock_operations",
+        "n|rel|public.stock_operations_pkey"
+      ],
+      "reads": [
+        "n|sch|public",
+        "n|enum|public.stock_operation_type"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "stock_transactions"
+      ],
+      "writes": [
+        "s|tbl|public.stock_transactions",
+        "n|tbl|public.stock_transactions",
+        "e|tbl|public.stock_transactions",
+        "n|rel|public.stock_transactions",
+        "n|type|public.stock_transactions",
+        "n|rel|public.stock_transactions_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "template_inventory"
+      ],
+      "writes": [
+        "s|tbl|public.template_inventory",
+        "n|tbl|public.template_inventory",
+        "e|tbl|public.template_inventory",
+        "n|rel|public.template_inventory",
+        "n|type|public.template_inventory",
+        "n|rel|public.template_inventory_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "templates"
+      ],
+      "writes": [
+        "s|tbl|public.templates",
+        "n|tbl|public.templates",
+        "e|tbl|public.templates",
+        "n|rel|public.templates",
+        "n|type|public.templates",
+        "n|rel|public.templates_pkey"
+      ],
+      "reads": [
+        "n|sch|public",
+        "n|enum|public.template_status"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "stock_operations",
+        "stock_operations_operation_id_unique"
+      ],
+      "writes": [
+        "s|idx|public.stock_operations_operation_id_unique",
+        "n|idx|public.stock_operations_operation_id_unique",
+        "e|idx|public.stock_operations_operation_id_unique",
+        "n|rel|public.stock_operations_operation_id_unique"
+      ],
+      "reads": [
+        "n|tbl|public.stock_operations",
+        "n|sch|public",
+        "n|col|public.stock_operations.operation_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "stock_operations",
+        "stock_operations_actor_created_idx"
+      ],
+      "writes": [
+        "s|idx|public.stock_operations_actor_created_idx",
+        "n|idx|public.stock_operations_actor_created_idx",
+        "e|idx|public.stock_operations_actor_created_idx",
+        "n|rel|public.stock_operations_actor_created_idx"
+      ],
+      "reads": [
+        "n|tbl|public.stock_operations",
+        "n|sch|public",
+        "n|col|public.stock_operations.actor_id",
+        "n|col|public.stock_operations.created_at"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "stock_transactions",
+        "stock_transactions_inventory_created_idx"
+      ],
+      "writes": [
+        "s|idx|public.stock_transactions_inventory_created_idx",
+        "n|idx|public.stock_transactions_inventory_created_idx",
+        "e|idx|public.stock_transactions_inventory_created_idx",
+        "n|rel|public.stock_transactions_inventory_created_idx"
+      ],
+      "reads": [
+        "n|tbl|public.stock_transactions",
+        "n|sch|public",
+        "n|col|public.stock_transactions.inventory_id",
+        "n|col|public.stock_transactions.created_at"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "template_inventory",
+        "template_inventory_template_folder_unique"
+      ],
+      "writes": [
+        "s|idx|public.template_inventory_template_folder_unique",
+        "n|idx|public.template_inventory_template_folder_unique",
+        "e|idx|public.template_inventory_template_folder_unique",
+        "n|rel|public.template_inventory_template_folder_unique"
+      ],
+      "reads": [
+        "n|tbl|public.template_inventory",
+        "n|sch|public",
+        "n|col|public.template_inventory.template_id",
+        "n|col|public.template_inventory.folder_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "templates",
+        "templates_normalized_code_unique"
+      ],
+      "writes": [
+        "s|idx|public.templates_normalized_code_unique",
+        "n|idx|public.templates_normalized_code_unique",
+        "e|idx|public.templates_normalized_code_unique",
+        "n|rel|public.templates_normalized_code_unique"
+      ],
+      "reads": [
+        "n|tbl|public.templates",
+        "n|sch|public",
+        "n|col|public.templates.normalized_code"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "templates",
+        "templates_family_status_idx"
+      ],
+      "writes": [
+        "s|idx|public.templates_family_status_idx",
+        "n|idx|public.templates_family_status_idx",
+        "e|idx|public.templates_family_status_idx",
+        "n|rel|public.templates_family_status_idx"
+      ],
+      "reads": [
+        "n|tbl|public.templates",
+        "n|sch|public",
+        "n|col|public.templates.family_code",
+        "n|col|public.templates.status"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "stock_operations"
+      ],
+      "writes": [
+        "s|fk|public.stock_operations.stock_operations_actor_id_user_id_fkey",
+        "n|fk|public.stock_operations.stock_operations_actor_id_user_id_fkey",
+        "e|fk|public.stock_operations.stock_operations_actor_id_user_id_fkey",
+        "n|con|public.stock_operations.stock_operations_actor_id_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.stock_operations",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.stock_operations.actor_id",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "stock_transactions"
+      ],
+      "writes": [
+        "s|fk|public.stock_transactions.stock_transactions_stock_operation_id_stock_operations_id_fkey",
+        "n|fk|public.stock_transactions.stock_transactions_stock_operation_id_stock_operations_id_fkey",
+        "e|fk|public.stock_transactions.stock_transactions_stock_operation_id_stock_operations_id_fkey",
+        "n|con|public.stock_transactions.stock_transactions_stock_operation_id_stock_operations_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.stock_transactions",
+        "n|sch|public",
+        "n|tbl|public.stock_operations",
+        "n|sch|public",
+        "n|col|public.stock_transactions.stock_operation_id",
+        "n|col|public.stock_operations.id",
+        "e|uniqueness|public.stock_operations.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "stock_transactions"
+      ],
+      "writes": [
+        "s|fk|public.stock_transactions.stock_transactions_inventory_id_template_inventory_id_fkey",
+        "n|fk|public.stock_transactions.stock_transactions_inventory_id_template_inventory_id_fkey",
+        "e|fk|public.stock_transactions.stock_transactions_inventory_id_template_inventory_id_fkey",
+        "n|con|public.stock_transactions.stock_transactions_inventory_id_template_inventory_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.stock_transactions",
+        "n|sch|public",
+        "n|tbl|public.template_inventory",
+        "n|sch|public",
+        "n|col|public.stock_transactions.inventory_id",
+        "n|col|public.template_inventory.id",
+        "e|uniqueness|public.template_inventory.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "template_inventory"
+      ],
+      "writes": [
+        "s|fk|public.template_inventory.template_inventory_template_id_templates_id_fkey",
+        "n|fk|public.template_inventory.template_inventory_template_id_templates_id_fkey",
+        "e|fk|public.template_inventory.template_inventory_template_id_templates_id_fkey",
+        "n|con|public.template_inventory.template_inventory_template_id_templates_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.template_inventory",
+        "n|sch|public",
+        "n|tbl|public.templates",
+        "n|sch|public",
+        "n|col|public.template_inventory.template_id",
+        "n|col|public.templates.id",
+        "e|uniqueness|public.templates.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "template_inventory"
+      ],
+      "writes": [
+        "s|fk|public.template_inventory.template_inventory_folder_id_folders_id_fkey",
+        "n|fk|public.template_inventory.template_inventory_folder_id_folders_id_fkey",
+        "e|fk|public.template_inventory.template_inventory_folder_id_folders_id_fkey",
+        "n|con|public.template_inventory.template_inventory_folder_id_folders_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.template_inventory",
+        "n|sch|public",
+        "n|tbl|public.folders",
+        "n|sch|public",
+        "n|col|public.template_inventory.folder_id",
+        "n|col|public.folders.id",
+        "e|uniqueness|public.folders.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "templates"
+      ],
+      "writes": [
+        "s|fk|public.templates.templates_category_id_categories_id_fkey",
+        "n|fk|public.templates.templates_category_id_categories_id_fkey",
+        "e|fk|public.templates.templates_category_id_categories_id_fkey",
+        "n|con|public.templates.templates_category_id_categories_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.templates",
+        "n|sch|public",
+        "n|tbl|public.categories",
+        "n|sch|public",
+        "n|col|public.templates.category_id",
+        "n|col|public.categories.id",
+        "e|uniqueness|public.categories.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "templates"
+      ],
+      "writes": [
+        "s|fk|public.templates.templates_supersedes_id_templates_id_fkey",
+        "n|fk|public.templates.templates_supersedes_id_templates_id_fkey",
+        "e|fk|public.templates.templates_supersedes_id_templates_id_fkey",
+        "n|con|public.templates.templates_supersedes_id_templates_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.templates",
+        "n|sch|public",
+        "n|tbl|public.templates",
+        "n|sch|public",
+        "n|col|public.templates.supersedes_id",
+        "n|col|public.templates.id",
+        "e|uniqueness|public.templates.id"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "stock_operations",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "stock_transactions",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "template_inventory",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "templates",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "stock_operation_type",
+        "values": [
+          "receive",
+          "issue",
+          "transfer",
+          "correct"
+        ],
+        "entityType": "enums"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "template_status",
+        "values": [
+          "active",
+          "superseded",
+          "retired"
+        ],
+        "entityType": "enums"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "stock_operations",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "stock_operations",
+        "name": "operation_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "stock_operations",
+        "name": "actor_id",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "stock_operations",
+        "name": "operation_type",
+        "type": "stock_operation_type",
+        "typeSchema": "public",
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "stock_operations",
+        "name": "reason",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "stock_operations",
+        "name": "reference",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "stock_operations",
+        "name": "payload_fingerprint",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "stock_operations",
+        "name": "result",
+        "type": "jsonb",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "stock_operations",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "stock_transactions",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "stock_transactions",
+        "name": "stock_operation_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "stock_transactions",
+        "name": "inventory_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "stock_transactions",
+        "name": "delta",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "stock_transactions",
+        "name": "balance_before",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "stock_transactions",
+        "name": "balance_after",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "stock_transactions",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "template_inventory",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "template_inventory",
+        "name": "template_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "template_inventory",
+        "name": "folder_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "template_inventory",
+        "name": "count",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "template_inventory",
+        "name": "threshold",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "5",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "template_inventory",
+        "name": "version",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "template_inventory",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "template_inventory",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "templates",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "templates",
+        "name": "code",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "templates",
+        "name": "normalized_code",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "templates",
+        "name": "family_code",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "templates",
+        "name": "name",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "templates",
+        "name": "description",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "templates",
+        "name": "category_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "templates",
+        "name": "revision_label",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "templates",
+        "name": "revision_date",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "templates",
+        "name": "digital_url",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "templates",
+        "name": "status",
+        "type": "template_status",
+        "typeSchema": "public",
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'active'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "templates",
+        "name": "supersedes_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "templates",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "templates",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "stock_operations",
+        "name": "stock_operations_operation_id_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "operation_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "stock_operations",
+        "name": "stock_operations_actor_created_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "actor_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "created_at",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "stock_transactions",
+        "name": "stock_transactions_inventory_created_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "inventory_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "created_at",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "template_inventory",
+        "name": "template_inventory_template_folder_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "template_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "folder_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "templates",
+        "name": "templates_normalized_code_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "normalized_code",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "templates",
+        "name": "templates_family_status_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "family_code",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "status",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "stock_operations",
+        "name": "stock_operations_actor_id_user_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "actor_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "user",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "stock_transactions",
+        "name": "stock_transactions_stock_operation_id_stock_operations_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "stock_operation_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "stock_operations",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "stock_transactions",
+        "name": "stock_transactions_inventory_id_template_inventory_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "inventory_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "template_inventory",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "template_inventory",
+        "name": "template_inventory_template_id_templates_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "template_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "templates",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "template_inventory",
+        "name": "template_inventory_folder_id_folders_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "folder_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "folders",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "templates",
+        "name": "templates_category_id_categories_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "category_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "categories",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "templates",
+        "name": "templates_supersedes_id_templates_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "supersedes_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "templates",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "stock_operations",
+        "name": "stock_operations_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "stock_transactions",
+        "name": "stock_transactions_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "template_inventory",
+        "name": "template_inventory_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "templates",
+        "name": "templates_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "stock_transactions",
+        "name": "stock_transactions_nonzero_delta",
+        "value": "\"delta\" <> 0",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "stock_transactions",
+        "name": "stock_transactions_balance_nonnegative",
+        "value": "\"balance_before\" >= 0 and \"balance_after\" >= 0",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "stock_transactions",
+        "name": "stock_transactions_arithmetic",
+        "value": "\"balance_after\" = \"balance_before\" + \"delta\"",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "template_inventory",
+        "name": "template_inventory_count_nonnegative",
+        "value": "\"count\" >= 0",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "template_inventory",
+        "name": "template_inventory_threshold_nonnegative",
+        "value": "\"threshold\" >= 0",
+        "entityType": "checks"
+      }
+    }
+  ]
+}

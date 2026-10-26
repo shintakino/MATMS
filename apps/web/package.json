@@ -1,0 +1,41 @@
+{
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3001",
+    "build": "tsc -b ../../packages/api && next build",
+    "check-types": "tsc -b ../../packages/api && tsc --noEmit",
+    "start": "next start",
+    "env:generate": "varlock codegen"
+  },
+  "dependencies": {
+    "@matms/api": "workspace:*",
+    "@matms/ui": "workspace:*",
+    "@orpc/client": "catalog:",
+    "@orpc/server": "catalog:",
+    "@orpc/tanstack-query": "^1.15.6",
+    "@swc/helpers": "^0.5.23",
+    "@tanstack/react-form": "^1.33.5",
+    "@tanstack/react-query": "^5.104.2",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "better-auth": "catalog:",
+    "lucide-react": "catalog:",
+    "next": "^16.3.4",
+    "next-themes": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "sonner": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@matms/config": "workspace:*",
+    "@tailwindcss/postcss": "catalog:",
+    "@tanstack/react-query-devtools": "^5.104.2",
+    "@types/node": "^26.4.1",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:"
+  }
+}

@@ -1,11 +1,17 @@
 # Meocan Archive & Template Management System
-## Product Requirements Document — Version 1.1
+## Product Requirements Document — Version 1.2
 
 **School:** Meocan High School  
 **Date:** October 26, 2026  
 **Status:** Development baseline; school operational policies require owner confirmation before production use.  
 **Primary operator:** Administrative Officer II  
 **Product abbreviation:** MATMS
+
+### Implementation documentation
+
+This PRD is the product baseline. The [context files](context/project-overview.md) translate it into architecture, UI, code, and workflow guidance. The [feature-spec index](feature-specs/README.md) maps planned implementation units to functional requirements and acceptance criteria. The [progress tracker](context/progress-tracker.md) records actual completion separately from planned behavior. Resolve conflicts in these documents before dependent implementation.
+
+Version 1.2 aligns these supporting documents with MATMS and clarifies server-confirmed inventory feedback. The required shadcn/ui decision and requested bootstrap configuration are retained.
 
 ## 1. Purpose and outcomes
 
@@ -206,7 +212,7 @@ Show permitted active boxes, folders, documents, low-stock inventory lines, out-
 - Transfer between folders is atomic: debit source, credit destination, and connect both ledger entries with one operation ID. Only the same template revision can be transferred.
 - Persist balance and ledger in one database transaction with conditional update or row locking. Never use an unguarded read-modify-write.
 - Each mutation has a client operation ID for idempotency. Retrying the same operation returns the original result; reusing its ID with a different payload is rejected.
-- A failed optimistic update restores the displayed balance and explains the conflict. Counts refresh after every confirmed mutation.
+- Keep the last confirmed balance visible while a mutation is pending; do not present a changed count or success until the server confirms the commit. On failure or conflict, preserve form input, refresh authoritative counts, and explain the issue. Counts refresh after every confirmed mutation.
 - Dashboard/list warnings are derived from the saved balance and local threshold; email alerts are deferred.
 
 ### FR-07 — Document requests, release and return

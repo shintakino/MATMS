@@ -1,91 +1,62 @@
-# Ghost AI
+# MATMS — Project Overview
 
-## Overview
+## Product and source of truth
 
-Ghost AI is a real-time collaborative system design workspace. Users describe a system in plain English, an AI agent maps that system onto a shared canvas, collaborators refine the architecture, and the app generates a technical specification from the resulting graph.
+The Meocan Archive & Template Management System (MATMS) is an authenticated web application for Meocan High School. The primary operator is the Administrative Officer II. It maps physical records to shelves, boxes, and folders; tracks printed blank forms and digital master links; and records requests, checkout, returns, and movement history.
+
+[MATMS-PRD.md](../MATMS-PRD.md) is the product baseline. Context files translate it into implementation guidance; [feature specs](../feature-specs/README.md) define deliverable units and verification. Resolve conflicts in the documentation before implementation. Planned behavior is not evidence of a working application.
 
 ## Goals
 
-1. Let authenticated users create and manage architecture projects.
-2. Provide a collaborative real-time canvas for system design.
-3. Let users import prebuilt starter system designs into the canvas.
-4. Let AI generate an initial architecture from a natural language prompt.
-5. Let collaborators refine the generated architecture.
-6. Convert the final graph into a persistent Markdown technical spec.
+1. Locate authorized physical records without opening multiple boxes.
+2. Keep verified locations, stock balances, and an attributable history of changes.
+3. Identify low stock per template revision and folder before forms run out.
+4. Track requests and custody from approval through fulfillment and return.
+5. Protect restricted records across every lookup, report, export, and QR path.
+6. Support desktop administration and mobile shelf lookup using a consistent shadcn/ui interface.
 
-## Core User Flow
+## Users and core workflows
 
-1. User signs in.
-2. User creates or selects a project.
-3. User enters the project workspace.
-4. User optionally imports a starter system design template into the canvas.
-5. User prompts the AI to generate or extend the system design.
-6. AI generates nodes and edges in the shared canvas.
-7. Collaborators edit and refine the design.
-8. User triggers spec generation.
-9. App persists the generated Markdown spec.
-10. User reviews or downloads the spec.
+- **Admin:** provision accounts, manage classifications and grants, maintain filing structures and template revisions, correct balances, and manage lifecycle and settings; schoolwide access.
+- **Staff:** maintain permitted document metadata, relocate records, receive/issue/transfer stock, and process requests and loans within authorized scope.
+- **Viewer:** read, search, and scan permitted records; no writes, exports, label printing, or operational transaction history.
 
-## Features
+Roles determine actions; explicit grants determine visibility of restricted records. See PRD §5 for the full matrix and inherited restriction rules.
 
-### Authentication and Projects
+### Record lookup and filing
 
-- User sign-in and route protection.
-- Project creation, ownership, and collaborator access.
-- Project list and workspace navigation.
+Sign in → search or scan a box → inspect permitted contents and breadcrumb location → file or refile a record if authorized → preserve movement and audit history.
 
-### Collaborative Canvas
+### Printed template inventory
 
-- Shared real-time canvas using Liveblocks and React Flow.
-- Live cursors, presence indicators, and node/edge editing.
-- Canvas snapshots persisted to the filesystem.
+Select a master revision and template folder → receive, issue, transfer, or correct stock → server commits balance, ledger, and audit together → show confirmed balance and per-location stock status. External master files retain their provider permissions.
 
-### Starter System Designs
+### Requests and custody
 
-- A curated library of prebuilt system design templates.
-- Users can import a starter template into the canvas at any point during editing.
-- Templates are static canvas snapshots loaded directly into the active room.
-- Covers common patterns: monolith, microservices, event-driven, serverless, and more.
+Admin/Staff enters a request → authorized officer approves lines → fulfill inspect/copy lines or release a borrowed original → track due dates → record return or an Admin exception resolution. Approval and release are separate actions.
 
-### AI Architecture Generation
+## MVP scope
 
-- AI generates a system design from a user-supplied prompt.
-- Output is structured as canvas nodes and edges written into the shared room.
-- Generation runs as a durable background task.
+- Admin-provisioned authentication, roles, restricted-record grants, and account lifecycle.
+- Dashboard, categories, structured shelf locations, boxes, folders, and document metadata.
+- Revision-specific digital master links and physical template stock with immutable ledger.
+- Requests, partial fulfillment, checkout, return, exceptions, and relocation history.
+- Permission-filtered search, reports, CSV export, QR labels, and scanning with manual fallback.
+- Audit history, safe record retirement, Docker deployment, backups, and restore rehearsal.
+- Shared shadcn/ui components, accessible forms and tables, light-first theme, and responsive navigation.
 
-### Spec Generation
+## Deferred scope
 
-- The current canvas graph is converted into a Markdown technical specification.
-- Specs are persisted as files and linked to the project in the database.
-- Users can view and download generated specs.
+Google Drive API/OAuth and document automation; scanned uploads, OCR and document-content search; electronic signatures; email/SMS reminders; purchase requests; multiple schools; offline sync; bulk spreadsheet import; native XLSX exports; configurable multistep approvals; formal disposal execution; native mobile apps. Password-recovery email is distinct from deferred reminder notifications.
 
-## Scope
+MVP stores metadata and links, not scanned records. It does not establish official retention periods or school disposal policy.
 
-### In Scope
+## Success and release gates
 
-- Authentication and route protection
-- Project creation and ownership
-- Collaborator access by project
-- Starter system design template library and import
-- Real-time shared canvas with nodes, edges, and presence
-- AI-powered architecture generation from prompts
-- AI-powered Markdown spec generation from the canvas graph
-- Persistent storage for project metadata and generated artifacts
-- Spec download
+- Verify locations for at least 95% of active pilot boxes/folders before rollout.
+- Locate an authorized record within 30 seconds in at least 90% of pilot attempts.
+- Attribute every stock change and checkout; never allow negative stock or duplicate open loans under concurrency.
+- Prevent restricted-record discovery through counts, search, exports, guessed URLs, and QR previews.
+- Complete PRD AC-01 through AC-22, restore a backup, and obtain staff pilot sign-off.
 
-### Out Of Scope
-
-- Billing and subscription systems
-- Enterprise permission tiers beyond owner and collaborator
-- Versioned spec history and review workflows
-- Production object storage migration
-- Mobile-native applications
-
-## Success Criteria
-
-1. A signed-in user can create and open a project.
-2. Multiple users can collaborate in the same canvas simultaneously.
-3. A user can import a prebuilt starter design into the canvas.
-4. AI can generate an architecture into the shared room from a prompt.
-5. The graph can be converted into a persisted Markdown spec.
-6. Project metadata and generated artifacts are stored in the correct layers.
+The PRD's four-week solo-developer pilot schedule is indicative. Preserve security, history, and backup requirements if presentation or camera-scanning scope needs adjustment. School operational decisions remain tracked in [progress-tracker.md](progress-tracker.md).

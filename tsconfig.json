@@ -1,0 +1,3 @@
+{
+  "extends": "@matms/config/tsconfig.base.json"
+}

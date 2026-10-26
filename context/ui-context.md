@@ -1,105 +1,61 @@
 # UI Context
 
-## Theme
+## Direction
 
-Dark only. No light mode. The visual language is a dark technical workspace — near-black backgrounds, layered surfaces, and vivid accent colors for interactive elements.
+MATMS is a school administrative workspace for record lookup, filing, stock, and custody. Use a clean, readable **light-first** theme optimized for desktop work and mobile shelf scanning. Dark mode is optional, not an MVP requirement.
 
-All colors are defined as CSS custom properties in `globals.css` and mapped to Tailwind tokens via `@theme inline`. Components must use these tokens — no hardcoded hex values or raw Tailwind color classes like `zinc-*`.
+**shadcn/ui with Tailwind CSS is required** to accelerate UI delivery. Reuse the scaffold's setup, aliases, utility helper, and component directory. Initialize shadcn/ui only if absent. Add primitives through its supported CLI after checking the generated project; do not install a second general-purpose UI framework.
 
-| Role             | CSS Variable           | Hex / Value               |
-| ---------------- | ---------------------- | ------------------------- |
-| Page background  | `--bg-base`            | `#080809`                 |
-| Surface          | `--bg-surface`         | `#111114`                 |
-| Elevated surface | `--bg-elevated`        | `#18181c`                 |
-| Subtle surface   | `--bg-subtle`          | `#1e1e23`                 |
-| Default border   | `--border-default`     | `#2a2a30`                 |
-| Subtle border    | `--border-subtle`      | `#3a3a42`                 |
-| Primary text     | `--text-primary`       | `#f0f0f4`                 |
-| Secondary text   | `--text-secondary`     | `#c0c0cc`                 |
-| Muted text       | `--text-muted`         | `#808090`                 |
-| Faint text       | `--text-faint`         | `#505060`                 |
-| Brand accent     | `--accent-primary`     | `#00c8d4` (cyan)          |
-| Brand dim        | `--accent-primary-dim` | `rgba(0, 200, 212, 0.12)` |
-| AI accent        | `--accent-ai`          | `#6457f9` (indigo-purple) |
-| AI text          | `--accent-ai-text`     | `#8b82ff`                 |
-| Error            | `--state-error`        | `#ff4d4f`                 |
-| Success          | `--state-success`      | `#34d399`                 |
-| Warning          | `--state-warning`      | `#fbbf24`                 |
+## Theme and typography
 
-Tailwind utility names map to these variables. Use `bg-base`, `bg-surface`, `text-copy-primary`, `text-copy-muted`, `border-surface-border`, `text-brand`, `bg-accent-dim`, etc.
+- Use shared semantic CSS variables and the scaffold's Tailwind token mapping. Start with the generated light palette; school branding can be applied centrally when approved.
+- Prefer standard shadcn tokens: `background`, `foreground`, `card`, `card-foreground`, `popover`, `popover-foreground`, `primary`, `primary-foreground`, `secondary`, `muted`, `muted-foreground`, `accent`, `destructive`, `border`, `input`, and `ring`, plus the generated sidebar tokens.
+- Add semantic success, warning, and information tokens with suitable foreground pairs only where domain statuses require them. Verify contrast rather than assigning meaning to arbitrary colors.
+- Use token-based utilities such as `bg-background`, `text-foreground`, `text-muted-foreground`, and `border-border`. Keep raw color values in theme definitions, not feature markup.
+- Retain the scaffold's readable sans-serif stack unless branding requires a change. Use tabular numbers for stock and numeric reports, clear headings, and readable form labels. No mandatory external font download.
+- Use the generated radius and spacing scale consistently; do not force oversized rounded corners on dense forms and tables.
+- Use Lucide icons if present, or add the dependency when needed. Label icon-only buttons and hide decorative icons from assistive technology.
 
-## Typography
+## Composition
 
-| Role      | Font       | CSS Variable        |
-| --------- | ---------- | ------------------- |
-| UI text   | Geist Sans | `--font-geist-sans` |
-| Code/mono | Geist Mono | `--font-geist-mono` |
+| Area | shadcn/ui approach |
+| --- | --- |
+| Shell | Sidebar, mobile Sheet, Breadcrumb, Dropdown Menu |
+| Summary | Card, Badge, Skeleton, Alert |
+| Registers/reports | Table composition, Checkbox, Pagination, Dropdown Menu |
+| Search/filtering | Input, Select, Button, Popover/Command for record selectors |
+| Forms | Shared field/label/error composition, Input, Textarea, Select, Checkbox, date controls as needed |
+| Create/edit | Dialog or responsive Sheet for short tasks; dedicated pages for longer workflows |
+| Sensitive actions | Alert Dialog with consequences, required reason and pending state |
+| Detail | Tabs, Separator, Badge, structured metadata |
+| Feedback | Sonner for transient results; inline errors and persistent Alert for unresolved issues |
 
-Both fonts are loaded via `next/font/google` and applied as CSS variables on the `<html>` element. The base `body` uses Geist Sans with `antialiased`.
+The data table is composed from primitives and optional table-behavior tooling; it is not an assumed standalone shadcn grid. Sorting, filtering, pagination, authorization, and export stay server-side. Add primitives as the active feature needs them.
 
-## Border Radius
+Keep generated UI primitives reusable. Theme through CSS tokens, variants already exposed by primitives, and feature wrappers. Document any necessary shared primitive change; do not embed record permissions or domain logic in `components/ui`.
 
-Radius increases with surface depth — smaller for inner elements, larger for outer containers.
+Reusable domain components include `StockStatusBadge`, `LocationBreadcrumb`, `InventoryActions`, `RecordPicker`, status/availability badges, and empty-state content. These belong above the primitive layer.
 
-| Context           | Class         |
-| ----------------- | ------------- |
-| Inline / small UI | `rounded-xl`  |
-| Cards / panels    | `rounded-2xl` |
-| Modal / overlay   | `rounded-3xl` |
+## Navigation and screens
 
-## Canvas
+Primary navigation: Dashboard, Boxes, Documents, Templates, Requests & Loans, Reports. Admin also sees Users & Access, Audit Log, and Settings. Hide unavailable actions and report/export capabilities according to the PRD role matrix; server enforcement remains mandatory.
 
-### Node Color Palette
+Use PRD §10 routes. Inventory is reachable from Templates, loan views from Requests & Loans, and scanning/labels from relevant box workflows. Breadcrumbs expose the authorized shelf → box → folder context. Details distinguish a record's home location from checked-out custody.
 
-8 defined color pairs. Each pair specifies a dark node fill and a vivid contrasting text color tuned for readability on the dark canvas. Defined in `types/canvas.ts` as `NODE_COLORS`.
+- Desktop: sidebar and content area with page heading, primary action, filter row, and list/detail content.
+- Mobile: Sheet navigation; compact cards or accessible horizontal table scrolling; reachable scan/manual lookup controls.
+- Print: dedicated A4/single-label views with navigation, interactive controls, and transient notifications hidden. Labels show only approved box-level fields, no confidential document titles.
 
-| Node fill | Text color | Character              |
-| --------- | ---------- | ---------------------- |
-| `#1F1F1F` | `#EDEDED`  | Neutral dark (default) |
-| `#10233D` | `#52A8FF`  | Blue                   |
-| `#2E1938` | `#BF7AF0`  | Purple                 |
-| `#331B00` | `#FF990A`  | Orange                 |
-| `#3C1618` | `#FF6166`  | Red                    |
-| `#3A1726` | `#F75F8F`  | Pink                   |
-| `#0F2E18` | `#62C073`  | Green                  |
-| `#062822` | `#0AC7B4`  | Teal                   |
+## Domain states and feedback
 
-Default node color: `#1F1F1F` with `#EDEDED` text.
+- Stock is revision- and folder-specific: `count = 0` → **Out of stock**; otherwise `count <= threshold` → **Low stock**; otherwise **In stock**. Default threshold: 5.
+- Show text/icons with status color. Folder color is a filing aid independent of confidentiality, urgency, template designation, and stock status.
+- Keep document lifecycle, availability, and loan exception states distinct. Do not imply that an item is physically present because its home folder moved.
+- Show superseded revisions/stock separately with the required Admin decision before issuance.
+- Stock changes display pending feedback until server confirmation. Do not present a changed balance or success toast before commit; refresh dependent balances, ledger, and summary data after success or conflict.
+- Disable duplicate submissions, retain inputs on failure, associate errors with fields, and provide actionable retry/conflict guidance. Keep the same operation ID when retrying the same mutation intent.
+- Every data screen needs loading, empty, error, retry, and unavailable/permission states. Unavailable states must not reveal inaccessible record existence.
 
-### Edge Style
+## Accessibility and verification
 
-Smooth-step path with an arrow marker. Default edge color: `#f8fafc`. Stroke width is thin — edges are visually secondary to nodes.
-
-### Node Shapes
-
-6 supported shapes, defined in `types/canvas.ts` as `NODE_SHAPES`. Complex shapes (diamond, hexagon, cylinder) are rendered as inline SVGs rather than CSS borders.
-
-- `rectangle` — default general-purpose node
-- `diamond` — decision / gateway
-- `circle` — event / endpoint
-- `pill` — service / process
-- `cylinder` — database / storage
-- `hexagon` — external system / boundary
-
-### Connection Handles
-
-Small white circular handles, hidden by default, revealed on node hover. Appear at all four sides of a node.
-
-### Canvas Background
-
-React Flow `<Background>` component. Canvas sits on the base background color.
-
-## Component Library
-
-shadcn/ui on top of Tailwind. No custom design system. Components live in `components/ui/`. Use the `shadcn` CLI to add new components rather than writing them from scratch.
-
-## Layout Patterns
-
-- Editor workspace: full-viewport layout — floating sidebar overlay on the left, center canvas, slide-over AI sidebar on the right.
-- Sidebars: floating overlay with dark semi-transparent background and subtle border.
-- Modals and dialogs: centered overlay, `rounded-3xl`, dark background with backdrop blur.
-- Navbar: top bar with dark background and bottom border.
-
-## Icons
-
-Lucide React. Stroke-based icons only — no filled variants. Icon sizes: `h-4 w-4` for inline, `h-5 w-5` for buttons, `h-8 w-8` for feature icons in empty states.
+Target WCAG 2.2 AA for key workflows. Verify keyboard operation, visible focus, descriptive labels, text contrast, form-error associations, dialog focus trapping/return, and non-color status cues. Notifications must not be the only place to find errors. Test responsive layouts on the school's desktop and mobile browsers. Camera denial or incompatibility must leave manual lookup usable.

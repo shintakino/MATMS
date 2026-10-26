@@ -1,0 +1,2772 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "ea362179-b266-4787-a9af-ae7ffedcefbc",
+  "prevIds": [
+    "ac045587-ee0d-4424-b56d-c72f6774c7bc"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_enum",
+      "statementTarget": [
+        "enum",
+        "public",
+        "confidentiality"
+      ],
+      "writes": [
+        "s|enum|public.confidentiality",
+        "n|enum|public.confidentiality",
+        "e|enum|public.confidentiality",
+        "n|type|public.confidentiality"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_enum",
+      "statementTarget": [
+        "enum",
+        "public",
+        "folder_color"
+      ],
+      "writes": [
+        "s|enum|public.folder_color",
+        "n|enum|public.folder_color",
+        "e|enum|public.folder_color",
+        "n|type|public.folder_color"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_enum",
+      "statementTarget": [
+        "enum",
+        "public",
+        "record_lifecycle"
+      ],
+      "writes": [
+        "s|enum|public.record_lifecycle",
+        "n|enum|public.record_lifecycle",
+        "e|enum|public.record_lifecycle",
+        "n|type|public.record_lifecycle"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "access_grants"
+      ],
+      "writes": [
+        "s|tbl|public.access_grants",
+        "n|tbl|public.access_grants",
+        "e|tbl|public.access_grants",
+        "n|rel|public.access_grants",
+        "n|type|public.access_grants",
+        "n|rel|public.access_grants_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "boxes"
+      ],
+      "writes": [
+        "s|tbl|public.boxes",
+        "n|tbl|public.boxes",
+        "e|tbl|public.boxes",
+        "n|rel|public.boxes",
+        "n|type|public.boxes",
+        "n|rel|public.boxes_pkey"
+      ],
+      "reads": [
+        "n|sch|public",
+        "n|enum|public.record_lifecycle",
+        "n|enum|public.confidentiality"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "categories"
+      ],
+      "writes": [
+        "s|tbl|public.categories",
+        "n|tbl|public.categories",
+        "e|tbl|public.categories",
+        "n|rel|public.categories",
+        "n|type|public.categories",
+        "n|rel|public.categories_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "documents"
+      ],
+      "writes": [
+        "s|tbl|public.documents",
+        "n|tbl|public.documents",
+        "e|tbl|public.documents",
+        "n|rel|public.documents",
+        "n|type|public.documents",
+        "n|rel|public.documents_pkey"
+      ],
+      "reads": [
+        "n|sch|public",
+        "n|enum|public.confidentiality",
+        "n|enum|public.record_lifecycle"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "folders"
+      ],
+      "writes": [
+        "s|tbl|public.folders",
+        "n|tbl|public.folders",
+        "e|tbl|public.folders",
+        "n|rel|public.folders",
+        "n|type|public.folders",
+        "n|rel|public.folders_pkey"
+      ],
+      "reads": [
+        "n|sch|public",
+        "n|enum|public.folder_color",
+        "n|enum|public.confidentiality",
+        "n|enum|public.record_lifecycle"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "movement_events"
+      ],
+      "writes": [
+        "s|tbl|public.movement_events",
+        "n|tbl|public.movement_events",
+        "e|tbl|public.movement_events",
+        "n|rel|public.movement_events",
+        "n|type|public.movement_events",
+        "n|rel|public.movement_events_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "shelf_locations"
+      ],
+      "writes": [
+        "s|tbl|public.shelf_locations",
+        "n|tbl|public.shelf_locations",
+        "e|tbl|public.shelf_locations",
+        "n|rel|public.shelf_locations",
+        "n|type|public.shelf_locations",
+        "n|rel|public.shelf_locations_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "access_grants",
+        "access_grants_active_box_unique"
+      ],
+      "writes": [
+        "s|idx|public.access_grants_active_box_unique",
+        "n|idx|public.access_grants_active_box_unique",
+        "e|idx|public.access_grants_active_box_unique",
+        "n|rel|public.access_grants_active_box_unique"
+      ],
+      "reads": [
+        "n|tbl|public.access_grants",
+        "n|sch|public",
+        "n|col|public.access_grants.user_id",
+        "n|col|public.access_grants.box_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "access_grants",
+        "access_grants_active_folder_unique"
+      ],
+      "writes": [
+        "s|idx|public.access_grants_active_folder_unique",
+        "n|idx|public.access_grants_active_folder_unique",
+        "e|idx|public.access_grants_active_folder_unique",
+        "n|rel|public.access_grants_active_folder_unique"
+      ],
+      "reads": [
+        "n|tbl|public.access_grants",
+        "n|sch|public",
+        "n|col|public.access_grants.user_id",
+        "n|col|public.access_grants.folder_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "access_grants",
+        "access_grants_active_document_unique"
+      ],
+      "writes": [
+        "s|idx|public.access_grants_active_document_unique",
+        "n|idx|public.access_grants_active_document_unique",
+        "e|idx|public.access_grants_active_document_unique",
+        "n|rel|public.access_grants_active_document_unique"
+      ],
+      "reads": [
+        "n|tbl|public.access_grants",
+        "n|sch|public",
+        "n|col|public.access_grants.user_id",
+        "n|col|public.access_grants.document_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "boxes",
+        "boxes_normalized_code_unique"
+      ],
+      "writes": [
+        "s|idx|public.boxes_normalized_code_unique",
+        "n|idx|public.boxes_normalized_code_unique",
+        "e|idx|public.boxes_normalized_code_unique",
+        "n|rel|public.boxes_normalized_code_unique"
+      ],
+      "reads": [
+        "n|tbl|public.boxes",
+        "n|sch|public",
+        "n|col|public.boxes.normalized_code"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "boxes",
+        "boxes_category_location_idx"
+      ],
+      "writes": [
+        "s|idx|public.boxes_category_location_idx",
+        "n|idx|public.boxes_category_location_idx",
+        "e|idx|public.boxes_category_location_idx",
+        "n|rel|public.boxes_category_location_idx"
+      ],
+      "reads": [
+        "n|tbl|public.boxes",
+        "n|sch|public",
+        "n|col|public.boxes.category_id",
+        "n|col|public.boxes.shelf_location_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "boxes",
+        "boxes_lifecycle_confidentiality_idx"
+      ],
+      "writes": [
+        "s|idx|public.boxes_lifecycle_confidentiality_idx",
+        "n|idx|public.boxes_lifecycle_confidentiality_idx",
+        "e|idx|public.boxes_lifecycle_confidentiality_idx",
+        "n|rel|public.boxes_lifecycle_confidentiality_idx"
+      ],
+      "reads": [
+        "n|tbl|public.boxes",
+        "n|sch|public",
+        "n|col|public.boxes.lifecycle",
+        "n|col|public.boxes.confidentiality"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "categories",
+        "categories_normalized_code_unique"
+      ],
+      "writes": [
+        "s|idx|public.categories_normalized_code_unique",
+        "n|idx|public.categories_normalized_code_unique",
+        "e|idx|public.categories_normalized_code_unique",
+        "n|rel|public.categories_normalized_code_unique"
+      ],
+      "reads": [
+        "n|tbl|public.categories",
+        "n|sch|public",
+        "n|col|public.categories.normalized_code"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "documents",
+        "documents_normalized_code_unique"
+      ],
+      "writes": [
+        "s|idx|public.documents_normalized_code_unique",
+        "n|idx|public.documents_normalized_code_unique",
+        "e|idx|public.documents_normalized_code_unique",
+        "n|rel|public.documents_normalized_code_unique"
+      ],
+      "reads": [
+        "n|tbl|public.documents",
+        "n|sch|public",
+        "n|col|public.documents.normalized_code"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "documents",
+        "documents_folder_lifecycle_idx"
+      ],
+      "writes": [
+        "s|idx|public.documents_folder_lifecycle_idx",
+        "n|idx|public.documents_folder_lifecycle_idx",
+        "e|idx|public.documents_folder_lifecycle_idx",
+        "n|rel|public.documents_folder_lifecycle_idx"
+      ],
+      "reads": [
+        "n|tbl|public.documents",
+        "n|sch|public",
+        "n|col|public.documents.folder_id",
+        "n|col|public.documents.lifecycle"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "folders",
+        "folders_normalized_code_unique"
+      ],
+      "writes": [
+        "s|idx|public.folders_normalized_code_unique",
+        "n|idx|public.folders_normalized_code_unique",
+        "e|idx|public.folders_normalized_code_unique",
+        "n|rel|public.folders_normalized_code_unique"
+      ],
+      "reads": [
+        "n|tbl|public.folders",
+        "n|sch|public",
+        "n|col|public.folders.normalized_code"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "folders",
+        "folders_box_lifecycle_idx"
+      ],
+      "writes": [
+        "s|idx|public.folders_box_lifecycle_idx",
+        "n|idx|public.folders_box_lifecycle_idx",
+        "e|idx|public.folders_box_lifecycle_idx",
+        "n|rel|public.folders_box_lifecycle_idx"
+      ],
+      "reads": [
+        "n|tbl|public.folders",
+        "n|sch|public",
+        "n|col|public.folders.box_id",
+        "n|col|public.folders.lifecycle"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "movement_events",
+        "movement_events_occurred_at_idx"
+      ],
+      "writes": [
+        "s|idx|public.movement_events_occurred_at_idx",
+        "n|idx|public.movement_events_occurred_at_idx",
+        "e|idx|public.movement_events_occurred_at_idx",
+        "n|rel|public.movement_events_occurred_at_idx"
+      ],
+      "reads": [
+        "n|tbl|public.movement_events",
+        "n|sch|public",
+        "n|col|public.movement_events.occurred_at"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "shelf_locations",
+        "shelf_locations_normalized_code_unique"
+      ],
+      "writes": [
+        "s|idx|public.shelf_locations_normalized_code_unique",
+        "n|idx|public.shelf_locations_normalized_code_unique",
+        "e|idx|public.shelf_locations_normalized_code_unique",
+        "n|rel|public.shelf_locations_normalized_code_unique"
+      ],
+      "reads": [
+        "n|tbl|public.shelf_locations",
+        "n|sch|public",
+        "n|col|public.shelf_locations.normalized_code"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "access_grants"
+      ],
+      "writes": [
+        "s|fk|public.access_grants.access_grants_user_id_user_id_fkey",
+        "n|fk|public.access_grants.access_grants_user_id_user_id_fkey",
+        "e|fk|public.access_grants.access_grants_user_id_user_id_fkey",
+        "n|con|public.access_grants.access_grants_user_id_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.access_grants",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.access_grants.user_id",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "access_grants"
+      ],
+      "writes": [
+        "s|fk|public.access_grants.access_grants_box_id_boxes_id_fkey",
+        "n|fk|public.access_grants.access_grants_box_id_boxes_id_fkey",
+        "e|fk|public.access_grants.access_grants_box_id_boxes_id_fkey",
+        "n|con|public.access_grants.access_grants_box_id_boxes_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.access_grants",
+        "n|sch|public",
+        "n|tbl|public.boxes",
+        "n|sch|public",
+        "n|col|public.access_grants.box_id",
+        "n|col|public.boxes.id",
+        "e|uniqueness|public.boxes.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "access_grants"
+      ],
+      "writes": [
+        "s|fk|public.access_grants.access_grants_folder_id_folders_id_fkey",
+        "n|fk|public.access_grants.access_grants_folder_id_folders_id_fkey",
+        "e|fk|public.access_grants.access_grants_folder_id_folders_id_fkey",
+        "n|con|public.access_grants.access_grants_folder_id_folders_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.access_grants",
+        "n|sch|public",
+        "n|tbl|public.folders",
+        "n|sch|public",
+        "n|col|public.access_grants.folder_id",
+        "n|col|public.folders.id",
+        "e|uniqueness|public.folders.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "access_grants"
+      ],
+      "writes": [
+        "s|fk|public.access_grants.access_grants_document_id_documents_id_fkey",
+        "n|fk|public.access_grants.access_grants_document_id_documents_id_fkey",
+        "e|fk|public.access_grants.access_grants_document_id_documents_id_fkey",
+        "n|con|public.access_grants.access_grants_document_id_documents_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.access_grants",
+        "n|sch|public",
+        "n|tbl|public.documents",
+        "n|sch|public",
+        "n|col|public.access_grants.document_id",
+        "n|col|public.documents.id",
+        "e|uniqueness|public.documents.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "access_grants"
+      ],
+      "writes": [
+        "s|fk|public.access_grants.access_grants_granted_by_user_id_fkey",
+        "n|fk|public.access_grants.access_grants_granted_by_user_id_fkey",
+        "e|fk|public.access_grants.access_grants_granted_by_user_id_fkey",
+        "n|con|public.access_grants.access_grants_granted_by_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.access_grants",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.access_grants.granted_by",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "boxes"
+      ],
+      "writes": [
+        "s|fk|public.boxes.boxes_category_id_categories_id_fkey",
+        "n|fk|public.boxes.boxes_category_id_categories_id_fkey",
+        "e|fk|public.boxes.boxes_category_id_categories_id_fkey",
+        "n|con|public.boxes.boxes_category_id_categories_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.boxes",
+        "n|sch|public",
+        "n|tbl|public.categories",
+        "n|sch|public",
+        "n|col|public.boxes.category_id",
+        "n|col|public.categories.id",
+        "e|uniqueness|public.categories.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "boxes"
+      ],
+      "writes": [
+        "s|fk|public.boxes.boxes_shelf_location_id_shelf_locations_id_fkey",
+        "n|fk|public.boxes.boxes_shelf_location_id_shelf_locations_id_fkey",
+        "e|fk|public.boxes.boxes_shelf_location_id_shelf_locations_id_fkey",
+        "n|con|public.boxes.boxes_shelf_location_id_shelf_locations_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.boxes",
+        "n|sch|public",
+        "n|tbl|public.shelf_locations",
+        "n|sch|public",
+        "n|col|public.boxes.shelf_location_id",
+        "n|col|public.shelf_locations.id",
+        "e|uniqueness|public.shelf_locations.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "documents"
+      ],
+      "writes": [
+        "s|fk|public.documents.documents_folder_id_folders_id_fkey",
+        "n|fk|public.documents.documents_folder_id_folders_id_fkey",
+        "e|fk|public.documents.documents_folder_id_folders_id_fkey",
+        "n|con|public.documents.documents_folder_id_folders_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.documents",
+        "n|sch|public",
+        "n|tbl|public.folders",
+        "n|sch|public",
+        "n|col|public.documents.folder_id",
+        "n|col|public.folders.id",
+        "e|uniqueness|public.folders.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "folders"
+      ],
+      "writes": [
+        "s|fk|public.folders.folders_box_id_boxes_id_fkey",
+        "n|fk|public.folders.folders_box_id_boxes_id_fkey",
+        "e|fk|public.folders.folders_box_id_boxes_id_fkey",
+        "n|con|public.folders.folders_box_id_boxes_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.folders",
+        "n|sch|public",
+        "n|tbl|public.boxes",
+        "n|sch|public",
+        "n|col|public.folders.box_id",
+        "n|col|public.boxes.id",
+        "e|uniqueness|public.boxes.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "movement_events"
+      ],
+      "writes": [
+        "s|fk|public.movement_events.movement_events_box_id_boxes_id_fkey",
+        "n|fk|public.movement_events.movement_events_box_id_boxes_id_fkey",
+        "e|fk|public.movement_events.movement_events_box_id_boxes_id_fkey",
+        "n|con|public.movement_events.movement_events_box_id_boxes_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.movement_events",
+        "n|sch|public",
+        "n|tbl|public.boxes",
+        "n|sch|public",
+        "n|col|public.movement_events.box_id",
+        "n|col|public.boxes.id",
+        "e|uniqueness|public.boxes.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "movement_events"
+      ],
+      "writes": [
+        "s|fk|public.movement_events.movement_events_folder_id_folders_id_fkey",
+        "n|fk|public.movement_events.movement_events_folder_id_folders_id_fkey",
+        "e|fk|public.movement_events.movement_events_folder_id_folders_id_fkey",
+        "n|con|public.movement_events.movement_events_folder_id_folders_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.movement_events",
+        "n|sch|public",
+        "n|tbl|public.folders",
+        "n|sch|public",
+        "n|col|public.movement_events.folder_id",
+        "n|col|public.folders.id",
+        "e|uniqueness|public.folders.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "movement_events"
+      ],
+      "writes": [
+        "s|fk|public.movement_events.movement_events_document_id_documents_id_fkey",
+        "n|fk|public.movement_events.movement_events_document_id_documents_id_fkey",
+        "e|fk|public.movement_events.movement_events_document_id_documents_id_fkey",
+        "n|con|public.movement_events.movement_events_document_id_documents_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.movement_events",
+        "n|sch|public",
+        "n|tbl|public.documents",
+        "n|sch|public",
+        "n|col|public.movement_events.document_id",
+        "n|col|public.documents.id",
+        "e|uniqueness|public.documents.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "movement_events"
+      ],
+      "writes": [
+        "s|fk|public.movement_events.movement_events_actor_id_user_id_fkey",
+        "n|fk|public.movement_events.movement_events_actor_id_user_id_fkey",
+        "e|fk|public.movement_events.movement_events_actor_id_user_id_fkey",
+        "n|con|public.movement_events.movement_events_actor_id_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.movement_events",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.movement_events.actor_id",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "access_grants",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "boxes",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "categories",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "documents",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "folders",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "movement_events",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "shelf_locations",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "confidentiality",
+        "values": [
+          "internal",
+          "restricted"
+        ],
+        "entityType": "enums"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "folder_color",
+        "values": [
+          "yellow",
+          "blue",
+          "red",
+          "other"
+        ],
+        "entityType": "enums"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "record_lifecycle",
+        "values": [
+          "active",
+          "archived",
+          "retired"
+        ],
+        "entityType": "enums"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "access_grants",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "access_grants",
+        "name": "user_id",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "access_grants",
+        "name": "box_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "access_grants",
+        "name": "folder_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "access_grants",
+        "name": "document_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "access_grants",
+        "name": "granted_by",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "access_grants",
+        "name": "active",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "true",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "access_grants",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "access_grants",
+        "name": "revoked_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "boxes",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "boxes",
+        "name": "code",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "boxes",
+        "name": "normalized_code",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "boxes",
+        "name": "category_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "boxes",
+        "name": "shelf_location_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "boxes",
+        "name": "lifecycle",
+        "type": "record_lifecycle",
+        "typeSchema": "public",
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'active'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "boxes",
+        "name": "confidentiality",
+        "type": "confidentiality",
+        "typeSchema": "public",
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'internal'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "boxes",
+        "name": "notes",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "boxes",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "boxes",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "categories",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "categories",
+        "name": "code",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "categories",
+        "name": "normalized_code",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "categories",
+        "name": "name",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "categories",
+        "name": "active",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "true",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "categories",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "categories",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "documents",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "documents",
+        "name": "folder_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "documents",
+        "name": "code",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "documents",
+        "name": "normalized_code",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "documents",
+        "name": "title",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "documents",
+        "name": "document_date",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "documents",
+        "name": "covered_period",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "documents",
+        "name": "keywords",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "documents",
+        "name": "description",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "documents",
+        "name": "digital_url",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "documents",
+        "name": "confidentiality",
+        "type": "confidentiality",
+        "typeSchema": "public",
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'internal'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "documents",
+        "name": "lifecycle",
+        "type": "record_lifecycle",
+        "typeSchema": "public",
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'active'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "documents",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "documents",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "folders",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "folders",
+        "name": "box_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "folders",
+        "name": "code",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "folders",
+        "name": "normalized_code",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "folders",
+        "name": "name",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "folders",
+        "name": "color",
+        "type": "folder_color",
+        "typeSchema": "public",
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'other'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "folders",
+        "name": "is_template_folder",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "false",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "folders",
+        "name": "urgency",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "folders",
+        "name": "notes",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "folders",
+        "name": "confidentiality",
+        "type": "confidentiality",
+        "typeSchema": "public",
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'internal'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "folders",
+        "name": "lifecycle",
+        "type": "record_lifecycle",
+        "typeSchema": "public",
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'active'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "folders",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "folders",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "movement_events",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "movement_events",
+        "name": "box_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "movement_events",
+        "name": "folder_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "movement_events",
+        "name": "document_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "movement_events",
+        "name": "source",
+        "type": "jsonb",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "movement_events",
+        "name": "destination",
+        "type": "jsonb",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "movement_events",
+        "name": "reason",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "movement_events",
+        "name": "actor_id",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "movement_events",
+        "name": "occurred_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "shelf_locations",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "shelf_locations",
+        "name": "code",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "shelf_locations",
+        "name": "normalized_code",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "shelf_locations",
+        "name": "room",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "shelf_locations",
+        "name": "shelf",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "shelf_locations",
+        "name": "rack",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "shelf_locations",
+        "name": "position",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "shelf_locations",
+        "name": "label",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "shelf_locations",
+        "name": "active",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "true",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "shelf_locations",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "shelf_locations",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "access_grants",
+        "name": "access_grants_active_box_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "user_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "box_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": "\"active\" = true and \"box_id\" is not null",
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "access_grants",
+        "name": "access_grants_active_folder_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "user_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "folder_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": "\"active\" = true and \"folder_id\" is not null",
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "access_grants",
+        "name": "access_grants_active_document_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "user_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "document_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": "\"active\" = true and \"document_id\" is not null",
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "boxes",
+        "name": "boxes_normalized_code_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "normalized_code",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "boxes",
+        "name": "boxes_category_location_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "category_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "shelf_location_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "boxes",
+        "name": "boxes_lifecycle_confidentiality_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "lifecycle",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "confidentiality",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "categories",
+        "name": "categories_normalized_code_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "normalized_code",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "documents",
+        "name": "documents_normalized_code_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "normalized_code",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "documents",
+        "name": "documents_folder_lifecycle_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "folder_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "lifecycle",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "folders",
+        "name": "folders_normalized_code_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "normalized_code",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "folders",
+        "name": "folders_box_lifecycle_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "box_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "lifecycle",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "movement_events",
+        "name": "movement_events_occurred_at_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "occurred_at",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "shelf_locations",
+        "name": "shelf_locations_normalized_code_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "normalized_code",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "access_grants",
+        "name": "access_grants_user_id_user_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "user_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "user",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "access_grants",
+        "name": "access_grants_box_id_boxes_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "box_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "boxes",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "access_grants",
+        "name": "access_grants_folder_id_folders_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "folder_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "folders",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "access_grants",
+        "name": "access_grants_document_id_documents_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "document_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "documents",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "access_grants",
+        "name": "access_grants_granted_by_user_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "granted_by"
+        ],
+        "schemaTo": "public",
+        "tableTo": "user",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "boxes",
+        "name": "boxes_category_id_categories_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "category_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "categories",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "boxes",
+        "name": "boxes_shelf_location_id_shelf_locations_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "shelf_location_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "shelf_locations",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "documents",
+        "name": "documents_folder_id_folders_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "folder_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "folders",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "folders",
+        "name": "folders_box_id_boxes_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "box_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "boxes",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "movement_events",
+        "name": "movement_events_box_id_boxes_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "box_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "boxes",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "movement_events",
+        "name": "movement_events_folder_id_folders_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "folder_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "folders",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "movement_events",
+        "name": "movement_events_document_id_documents_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "document_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "documents",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "movement_events",
+        "name": "movement_events_actor_id_user_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "actor_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "user",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "access_grants",
+        "name": "access_grants_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "boxes",
+        "name": "boxes_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "categories",
+        "name": "categories_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "documents",
+        "name": "documents_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "folders",
+        "name": "folders_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "movement_events",
+        "name": "movement_events_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "shelf_locations",
+        "name": "shelf_locations_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "access_grants",
+        "name": "access_grants_exactly_one_target",
+        "value": "(case when \"box_id\" is null then 0 else 1 end + case when \"folder_id\" is null then 0 else 1 end + case when \"document_id\" is null then 0 else 1 end) = 1",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "movement_events",
+        "name": "movement_events_exactly_one_target",
+        "value": "(case when \"box_id\" is null then 0 else 1 end + case when \"folder_id\" is null then 0 else 1 end + case when \"document_id\" is null then 0 else 1 end) = 1",
+        "entityType": "checks"
+      }
+    }
+  ]
+}
