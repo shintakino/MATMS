@@ -1,0 +1,42 @@
+import { afterAll, beforeAll, expect, test } from "bun:test";
+import { Hono } from "hono";
+import { createDb } from "@matms/db";
+import { sql } from "drizzle-orm";
+import { schedulingPublicLimits } from "@matms/db/schema/scheduling";
+import { consumeSchedulingPublicAttempt } from "@matms/api/scheduling-invitation-service";
+import { publicSchedulingGuard } from "./public-scheduling";
+
+const url = process.env.TEST_DATABASE_URL;
+if (!url || !new URL(url).pathname.endsWith("_test")) throw new Error("Public-request tests require an isolated _test database.");
+const db = createDb({ DATABASE_URL: url }), origin = "https://school.example.test", address = "198.51.100.79";
+const app = new Hono();
+app.use("*", publicSchedulingGuard(db, origin));
+app.all("*", async c => c.json({ reached: true, value: c.req.method === "POST" ? await c.req.json() : null }));
+const headers = { Origin: origin, "Content-Type": "application/json", "cf-connecting-ip": address };
+beforeAll(async () => { await db.delete(schedulingPublicLimits); });
+afterAll(async () => { await db.delete(schedulingPublicLimits); await db.$client.end(); });
+test("capability HTTP endpoints enforce POST, same origin, bounded JSON and no-store", async () => {
+  expect((await app.request("/rpc/scheduling/invitationPreview")).status).toBe(405);
+  expect((await app.request("/rpc/scheduling/%69nvitationPreview")).status).toBe(405);
+  expect((await app.request("/api-reference/scheduling/invitationSubmit")).status).toBe(405);
+  expect((await app.request("/rpc/scheduling/invitationSubmit", { method: "POST", headers: { ...headers, Origin: "https://untrusted.example" }, body: "{}" })).status).toBe(403);
+  expect((await app.request("/rpc/scheduling/invitationSubmit?token=wrong-place", { method: "POST", headers, body: "{}" })).status).toBe(403);
+  expect((await app.request("/rpc/scheduling/invitationPreview", { method: "POST", headers: { ...headers, "Content-Type": "text/plain" }, body: "{}" })).status).toBe(415);
+  expect((await app.request("/rpc/scheduling/invitationSubmit", { method: "POST", headers, body: "x".repeat(17000) })).status).toBe(413);
+  expect((await app.request("/rpc/scheduling/invitationSubmit", { method: "POST", headers: { ...headers, "Content-Length": "2" }, body: "x".repeat(17000) })).status).toBe(413);
+  const response = await app.request("/rpc/scheduling/invitationPreview", { method: "POST", headers, body: JSON.stringify({ fixture: "body retained for RPC" }) });
+  expect(response.status).toBe(200); expect(response.headers.get("Cache-Control")).toContain("no-store");
+  expect(response.headers.get("Referrer-Policy")).toBe("no-referrer");
+  expect(await response.json()).toEqual({ reached: true, value: { fixture: "body retained for RPC" } });
+  expect((await app.request("/health/live")).status).toBe(200);
+});
+test("persistent rate counters serialize simultaneous requests and reset in the next window", async () => {
+  await db.delete(schedulingPublicLimits);
+  const outcomes = await Promise.allSettled(Array.from({ length: 140 }, () => consumeSchedulingPublicAttempt(db, address)));
+  expect(outcomes.filter(result => result.status === "fulfilled")).toHaveLength(120);
+  expect(outcomes.filter(result => result.status === "rejected")).toHaveLength(20);
+  const blocked = await app.request("/rpc/scheduling/invitationPreview", { method: "POST", headers, body: "{}" });
+  expect(blocked.status).toBe(429); expect(blocked.headers.get("Retry-After")).toBe("60");
+  await db.execute(sql`UPDATE scheduling_public_limits SET window_start = now() - interval '2 minutes'`);
+  expect((await app.request("/rpc/scheduling/invitationPreview", { method: "POST", headers, body: "{}" })).status).toBe(200);
+});

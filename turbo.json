@@ -12,7 +12,7 @@
     },
     "check-types": {
       "dependsOn": ["^check-types"],
-      "outputs": ["dist/**"]
+      "outputs": ["dist/**/*.d.ts", "dist/**/*.d.ts.map", "dist/**/*.tsbuildinfo"]
     },
     "dev": {
       "cache": false,

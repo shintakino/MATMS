@@ -13,6 +13,7 @@ import { ENV } from "./env.server";
 import { getAuth, db } from "./services";
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
+import { publicSchedulingGuard } from "./public-scheduling";
 
 type AppBindings = {
   Variables: {
@@ -55,6 +56,8 @@ app.use(
 );
 
 app.on(["POST", "GET"], "/api/auth/*", async (c) => (await getAuth()).auth.handler(c.req.raw));
+
+app.use("*", publicSchedulingGuard(db, ENV.CORS_ORIGIN));
 
 let importUploadsInFlight = 0;
 // Read only an authenticated, bounded binary body before invoking the isolated parser.
@@ -125,7 +128,7 @@ export const apiHandler = new OpenAPIHandler(appRouter, {
   ],
   interceptors: [
     onError((error) => {
-      console.error(error);
+      console.error(JSON.stringify({ level: "error", event: "rpc_error", errorName: error instanceof Error ? error.name : "UnknownError" }));
     }),
   ],
 });
@@ -133,7 +136,7 @@ export const apiHandler = new OpenAPIHandler(appRouter, {
 export const rpcHandler = new RPCHandler(appRouter, {
   interceptors: [
     onError((error) => {
-      console.error(error);
+      console.error(JSON.stringify({ level: "error", event: "rpc_error", errorName: error instanceof Error ? error.name : "UnknownError" }));
     }),
   ],
 });

@@ -52,6 +52,8 @@
 
 ## Verification
 
+Type-check task caches may retain declaration files/maps and TypeScript build metadata only. They must never restore executable server bundles. Verify runtime content hashes survive a cached type-check run when changing build/cache configuration.
+
 Run the generated project's relevant type, lint, test, and build scripts once available. Prioritize meaningful checks for permission inheritance, state transitions, concurrent stock writes, transfer rollback, duplicate operation retries, open-loan uniqueness, and audit rollback. Use browser tests for login/QR continuation, stock issuance, request/return workflows, and accessibility. Documentation-only updates require consistency and link checks, not claims of passing application tests.
 
 ## Custodial inventory, import and report conventions

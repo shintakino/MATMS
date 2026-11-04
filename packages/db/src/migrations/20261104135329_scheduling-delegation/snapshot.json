@@ -1,0 +1,1797 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "45295053-c832-463b-b540-a246fb174bab",
+  "prevIds": [
+    "9aa47509-0a8a-45a0-a736-3ab63cd98122"
+  ],
+  "footprints": [
+    {
+      "statementType": "alter_enum",
+      "statementTarget": [
+        "enum",
+        "public",
+        "employment_category"
+      ],
+      "writes": [
+        "s|enum|public.employment_category"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "scheduling_invitations"
+      ],
+      "writes": [
+        "s|tbl|public.scheduling_invitations",
+        "n|tbl|public.scheduling_invitations",
+        "e|tbl|public.scheduling_invitations",
+        "n|rel|public.scheduling_invitations",
+        "n|type|public.scheduling_invitations",
+        "n|rel|public.scheduling_invitations_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "scheduling_people"
+      ],
+      "writes": [
+        "s|tbl|public.scheduling_people",
+        "n|tbl|public.scheduling_people",
+        "e|tbl|public.scheduling_people",
+        "n|rel|public.scheduling_people",
+        "n|type|public.scheduling_people",
+        "n|rel|public.scheduling_people_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "scheduling_public_limits"
+      ],
+      "writes": [
+        "s|tbl|public.scheduling_public_limits",
+        "n|tbl|public.scheduling_public_limits",
+        "e|tbl|public.scheduling_public_limits",
+        "n|rel|public.scheduling_public_limits",
+        "n|type|public.scheduling_public_limits",
+        "n|rel|public.scheduling_public_limits_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "leave_bookings",
+        "person_id"
+      ],
+      "writes": [
+        "s|col|public.leave_bookings.person_id",
+        "n|col|public.leave_bookings.person_id",
+        "e|col|public.leave_bookings.person_id"
+      ],
+      "reads": [
+        "n|tbl|public.leave_bookings",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "leave_bookings",
+        "person_name"
+      ],
+      "writes": [
+        "s|col|public.leave_bookings.person_name",
+        "n|col|public.leave_bookings.person_name",
+        "e|col|public.leave_bookings.person_name"
+      ],
+      "reads": [
+        "n|tbl|public.leave_bookings",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "leave_bookings",
+        "invitation_id"
+      ],
+      "writes": [
+        "s|col|public.leave_bookings.invitation_id",
+        "n|col|public.leave_bookings.invitation_id",
+        "e|col|public.leave_bookings.invitation_id"
+      ],
+      "reads": [
+        "n|tbl|public.leave_bookings",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "resource_bookings",
+        "person_id"
+      ],
+      "writes": [
+        "s|col|public.resource_bookings.person_id",
+        "n|col|public.resource_bookings.person_id",
+        "e|col|public.resource_bookings.person_id"
+      ],
+      "reads": [
+        "n|tbl|public.resource_bookings",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "resource_bookings",
+        "person_name"
+      ],
+      "writes": [
+        "s|col|public.resource_bookings.person_name",
+        "n|col|public.resource_bookings.person_name",
+        "e|col|public.resource_bookings.person_name"
+      ],
+      "reads": [
+        "n|tbl|public.resource_bookings",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "resource_bookings",
+        "beneficiary_category"
+      ],
+      "writes": [
+        "s|col|public.resource_bookings.beneficiary_category",
+        "n|col|public.resource_bookings.beneficiary_category",
+        "e|col|public.resource_bookings.beneficiary_category"
+      ],
+      "reads": [
+        "n|tbl|public.resource_bookings",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "resource_bookings",
+        "invitation_id"
+      ],
+      "writes": [
+        "s|col|public.resource_bookings.invitation_id",
+        "n|col|public.resource_bookings.invitation_id",
+        "e|col|public.resource_bookings.invitation_id"
+      ],
+      "reads": [
+        "n|tbl|public.resource_bookings",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "scheduling_policy",
+        "shs_limit"
+      ],
+      "writes": [
+        "s|col|public.scheduling_policy.shs_limit",
+        "n|col|public.scheduling_policy.shs_limit",
+        "e|col|public.scheduling_policy.shs_limit"
+      ],
+      "reads": [
+        "n|tbl|public.scheduling_policy",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "scheduling_policy",
+        "jhs_limit"
+      ],
+      "writes": [
+        "s|col|public.scheduling_policy.jhs_limit",
+        "n|col|public.scheduling_policy.jhs_limit",
+        "e|col|public.scheduling_policy.jhs_limit"
+      ],
+      "reads": [
+        "n|tbl|public.scheduling_policy",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "leave_bookings",
+        "requester_id"
+      ],
+      "writes": [
+        "s|colprop|public.leave_bookings.requester_id.notNull"
+      ],
+      "reads": [
+        "n|tbl|public.leave_bookings",
+        "n|sch|public",
+        "n|col|public.leave_bookings.requester_id"
+      ],
+      "sqlHash": "d221694a7f14c5ef"
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "resource_bookings",
+        "requester_id"
+      ],
+      "writes": [
+        "s|colprop|public.resource_bookings.requester_id.notNull"
+      ],
+      "reads": [
+        "n|tbl|public.resource_bookings",
+        "n|sch|public",
+        "n|col|public.resource_bookings.requester_id"
+      ],
+      "sqlHash": "0e8d8d16f516d387"
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "leave_bookings",
+        "leave_booking_invitation_unique"
+      ],
+      "writes": [
+        "s|idx|public.leave_booking_invitation_unique",
+        "n|idx|public.leave_booking_invitation_unique",
+        "e|idx|public.leave_booking_invitation_unique",
+        "n|rel|public.leave_booking_invitation_unique"
+      ],
+      "reads": [
+        "n|tbl|public.leave_bookings",
+        "n|sch|public",
+        "n|col|public.leave_bookings.invitation_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "resource_bookings",
+        "resource_booking_invitation_unique"
+      ],
+      "writes": [
+        "s|idx|public.resource_booking_invitation_unique",
+        "n|idx|public.resource_booking_invitation_unique",
+        "e|idx|public.resource_booking_invitation_unique",
+        "n|rel|public.resource_booking_invitation_unique"
+      ],
+      "reads": [
+        "n|tbl|public.resource_bookings",
+        "n|sch|public",
+        "n|col|public.resource_bookings.invitation_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "scheduling_invitations",
+        "scheduling_invitation_hash_unique"
+      ],
+      "writes": [
+        "s|idx|public.scheduling_invitation_hash_unique",
+        "n|idx|public.scheduling_invitation_hash_unique",
+        "e|idx|public.scheduling_invitation_hash_unique",
+        "n|rel|public.scheduling_invitation_hash_unique"
+      ],
+      "reads": [
+        "n|tbl|public.scheduling_invitations",
+        "n|sch|public",
+        "n|col|public.scheduling_invitations.token_hash"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "scheduling_invitations",
+        "scheduling_invitation_created_idx"
+      ],
+      "writes": [
+        "s|idx|public.scheduling_invitation_created_idx",
+        "n|idx|public.scheduling_invitation_created_idx",
+        "e|idx|public.scheduling_invitation_created_idx",
+        "n|rel|public.scheduling_invitation_created_idx"
+      ],
+      "reads": [
+        "n|tbl|public.scheduling_invitations",
+        "n|sch|public",
+        "n|col|public.scheduling_invitations.created_at"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "scheduling_people",
+        "scheduling_person_code_unique"
+      ],
+      "writes": [
+        "s|idx|public.scheduling_person_code_unique",
+        "n|idx|public.scheduling_person_code_unique",
+        "e|idx|public.scheduling_person_code_unique",
+        "n|rel|public.scheduling_person_code_unique"
+      ],
+      "reads": [
+        "n|tbl|public.scheduling_people",
+        "n|sch|public",
+        "n|col|public.scheduling_people.code"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "scheduling_people",
+        "scheduling_person_account_unique"
+      ],
+      "writes": [
+        "s|idx|public.scheduling_person_account_unique",
+        "n|idx|public.scheduling_person_account_unique",
+        "e|idx|public.scheduling_person_account_unique",
+        "n|rel|public.scheduling_person_account_unique"
+      ],
+      "reads": [
+        "n|tbl|public.scheduling_people",
+        "n|sch|public",
+        "n|col|public.scheduling_people.user_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "scheduling_public_limits",
+        "scheduling_public_limit_window_idx"
+      ],
+      "writes": [
+        "s|idx|public.scheduling_public_limit_window_idx",
+        "n|idx|public.scheduling_public_limit_window_idx",
+        "e|idx|public.scheduling_public_limit_window_idx",
+        "n|rel|public.scheduling_public_limit_window_idx"
+      ],
+      "reads": [
+        "n|tbl|public.scheduling_public_limits",
+        "n|sch|public",
+        "n|col|public.scheduling_public_limits.window_start"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "leave_bookings"
+      ],
+      "writes": [
+        "s|fk|public.leave_bookings.leave_bookings_person_id_scheduling_people_id_fkey",
+        "n|fk|public.leave_bookings.leave_bookings_person_id_scheduling_people_id_fkey",
+        "e|fk|public.leave_bookings.leave_bookings_person_id_scheduling_people_id_fkey",
+        "n|con|public.leave_bookings.leave_bookings_person_id_scheduling_people_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.leave_bookings",
+        "n|sch|public",
+        "n|tbl|public.scheduling_people",
+        "n|sch|public",
+        "n|col|public.leave_bookings.person_id",
+        "n|col|public.scheduling_people.id",
+        "e|uniqueness|public.scheduling_people.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "leave_bookings"
+      ],
+      "writes": [
+        "s|fk|public.leave_bookings.leave_bookings_invitation_id_scheduling_invitations_id_fkey",
+        "n|fk|public.leave_bookings.leave_bookings_invitation_id_scheduling_invitations_id_fkey",
+        "e|fk|public.leave_bookings.leave_bookings_invitation_id_scheduling_invitations_id_fkey",
+        "n|con|public.leave_bookings.leave_bookings_invitation_id_scheduling_invitations_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.leave_bookings",
+        "n|sch|public",
+        "n|tbl|public.scheduling_invitations",
+        "n|sch|public",
+        "n|col|public.leave_bookings.invitation_id",
+        "n|col|public.scheduling_invitations.id",
+        "e|uniqueness|public.scheduling_invitations.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "resource_bookings"
+      ],
+      "writes": [
+        "s|fk|public.resource_bookings.resource_bookings_person_id_scheduling_people_id_fkey",
+        "n|fk|public.resource_bookings.resource_bookings_person_id_scheduling_people_id_fkey",
+        "e|fk|public.resource_bookings.resource_bookings_person_id_scheduling_people_id_fkey",
+        "n|con|public.resource_bookings.resource_bookings_person_id_scheduling_people_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.resource_bookings",
+        "n|sch|public",
+        "n|tbl|public.scheduling_people",
+        "n|sch|public",
+        "n|col|public.resource_bookings.person_id",
+        "n|col|public.scheduling_people.id",
+        "e|uniqueness|public.scheduling_people.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "resource_bookings"
+      ],
+      "writes": [
+        "s|fk|public.resource_bookings.resource_bookings_invitation_id_scheduling_invitations_id_fkey",
+        "n|fk|public.resource_bookings.resource_bookings_invitation_id_scheduling_invitations_id_fkey",
+        "e|fk|public.resource_bookings.resource_bookings_invitation_id_scheduling_invitations_id_fkey",
+        "n|con|public.resource_bookings.resource_bookings_invitation_id_scheduling_invitations_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.resource_bookings",
+        "n|sch|public",
+        "n|tbl|public.scheduling_invitations",
+        "n|sch|public",
+        "n|col|public.resource_bookings.invitation_id",
+        "n|col|public.scheduling_invitations.id",
+        "e|uniqueness|public.scheduling_invitations.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "scheduling_invitations"
+      ],
+      "writes": [
+        "s|fk|public.scheduling_invitations.scheduling_invitations_person_id_scheduling_people_id_fkey",
+        "n|fk|public.scheduling_invitations.scheduling_invitations_person_id_scheduling_people_id_fkey",
+        "e|fk|public.scheduling_invitations.scheduling_invitations_person_id_scheduling_people_id_fkey",
+        "n|con|public.scheduling_invitations.scheduling_invitations_person_id_scheduling_people_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.scheduling_invitations",
+        "n|sch|public",
+        "n|tbl|public.scheduling_people",
+        "n|sch|public",
+        "n|col|public.scheduling_invitations.person_id",
+        "n|col|public.scheduling_people.id",
+        "e|uniqueness|public.scheduling_people.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "scheduling_invitations"
+      ],
+      "writes": [
+        "s|fk|public.scheduling_invitations.scheduling_invitations_created_by_user_id_fkey",
+        "n|fk|public.scheduling_invitations.scheduling_invitations_created_by_user_id_fkey",
+        "e|fk|public.scheduling_invitations.scheduling_invitations_created_by_user_id_fkey",
+        "n|con|public.scheduling_invitations.scheduling_invitations_created_by_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.scheduling_invitations",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.scheduling_invitations.created_by",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "scheduling_people"
+      ],
+      "writes": [
+        "s|fk|public.scheduling_people.scheduling_people_user_id_user_id_fkey",
+        "n|fk|public.scheduling_people.scheduling_people_user_id_user_id_fkey",
+        "e|fk|public.scheduling_people.scheduling_people_user_id_user_id_fkey",
+        "n|con|public.scheduling_people.scheduling_people_user_id_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.scheduling_people",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.scheduling_people.user_id",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "add_check",
+      "statementTarget": [
+        "table",
+        "public",
+        "leave_bookings"
+      ],
+      "writes": [
+        "s|ck|public.leave_bookings.leave_booking_origin",
+        "n|ck|public.leave_bookings.leave_booking_origin",
+        "e|ck|public.leave_bookings.leave_booking_origin",
+        "n|con|public.leave_bookings.leave_booking_origin"
+      ],
+      "reads": [
+        "n|tbl|public.leave_bookings",
+        "n|sch|public",
+        "n|col|public.leave_bookings.requester_id",
+        "n|col|public.leave_bookings.invitation_id"
+      ]
+    },
+    {
+      "statementType": "add_check",
+      "statementTarget": [
+        "table",
+        "public",
+        "leave_bookings"
+      ],
+      "writes": [
+        "s|ck|public.leave_bookings.leave_booking_beneficiary_name",
+        "n|ck|public.leave_bookings.leave_booking_beneficiary_name",
+        "e|ck|public.leave_bookings.leave_booking_beneficiary_name",
+        "n|con|public.leave_bookings.leave_booking_beneficiary_name"
+      ],
+      "reads": [
+        "n|tbl|public.leave_bookings",
+        "n|sch|public",
+        "n|col|public.leave_bookings.person_name"
+      ]
+    },
+    {
+      "statementType": "add_check",
+      "statementTarget": [
+        "table",
+        "public",
+        "resource_bookings"
+      ],
+      "writes": [
+        "s|ck|public.resource_bookings.resource_booking_origin",
+        "n|ck|public.resource_bookings.resource_booking_origin",
+        "e|ck|public.resource_bookings.resource_booking_origin",
+        "n|con|public.resource_bookings.resource_booking_origin"
+      ],
+      "reads": [
+        "n|tbl|public.resource_bookings",
+        "n|sch|public",
+        "n|col|public.resource_bookings.requester_id",
+        "n|col|public.resource_bookings.invitation_id"
+      ]
+    },
+    {
+      "statementType": "add_check",
+      "statementTarget": [
+        "table",
+        "public",
+        "resource_bookings"
+      ],
+      "writes": [
+        "s|ck|public.resource_bookings.resource_booking_beneficiary_name",
+        "n|ck|public.resource_bookings.resource_booking_beneficiary_name",
+        "e|ck|public.resource_bookings.resource_booking_beneficiary_name",
+        "n|con|public.resource_bookings.resource_booking_beneficiary_name"
+      ],
+      "reads": [
+        "n|tbl|public.resource_bookings",
+        "n|sch|public",
+        "n|col|public.resource_bookings.person_name"
+      ]
+    },
+    {
+      "statementType": "add_check",
+      "statementTarget": [
+        "table",
+        "public",
+        "resource_bookings"
+      ],
+      "writes": [
+        "s|ck|public.resource_bookings.resource_booking_beneficiary_category",
+        "n|ck|public.resource_bookings.resource_booking_beneficiary_category",
+        "e|ck|public.resource_bookings.resource_booking_beneficiary_category",
+        "n|con|public.resource_bookings.resource_booking_beneficiary_category"
+      ],
+      "reads": [
+        "n|tbl|public.resource_bookings",
+        "n|sch|public",
+        "n|col|public.resource_bookings.beneficiary_category"
+      ]
+    },
+    {
+      "statementType": "alter_check",
+      "statementTarget": [
+        "table",
+        "public",
+        "scheduling_policy"
+      ],
+      "writes": [
+        "s|ck|public.scheduling_policy.scheduling_policy_limits"
+      ],
+      "reads": [
+        "n|tbl|public.scheduling_policy",
+        "n|sch|public",
+        "n|col|public.scheduling_policy.teacher_limit",
+        "n|col|public.scheduling_policy.personnel_limit",
+        "n|col|public.scheduling_policy.shs_limit",
+        "n|col|public.scheduling_policy.jhs_limit",
+        "e|col|public.scheduling_policy.teacher_limit",
+        "e|col|public.scheduling_policy.personnel_limit"
+      ],
+      "sqlHash": "1da2aa3e3b18efe1"
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "scheduling_invitations",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "scheduling_people",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "scheduling_public_limits",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "leave_bookings",
+        "name": "person_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "leave_bookings",
+        "name": "person_name",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "leave_bookings",
+        "name": "invitation_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "resource_bookings",
+        "name": "person_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "resource_bookings",
+        "name": "person_name",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "resource_bookings",
+        "name": "beneficiary_category",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "resource_bookings",
+        "name": "invitation_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_invitations",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_invitations",
+        "name": "token_hash",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_invitations",
+        "name": "kind",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_invitations",
+        "name": "person_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_invitations",
+        "name": "person_version",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_invitations",
+        "name": "created_by",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_invitations",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_invitations",
+        "name": "expires_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_invitations",
+        "name": "revoked_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_invitations",
+        "name": "used_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_invitations",
+        "name": "used_operation_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_invitations",
+        "name": "used_fingerprint",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_invitations",
+        "name": "receipt_code",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_invitations",
+        "name": "version",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_people",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_people",
+        "name": "code",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_people",
+        "name": "name",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_people",
+        "name": "category",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_people",
+        "name": "user_id",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_people",
+        "name": "active",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "true",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_people",
+        "name": "version",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_policy",
+        "name": "shs_limit",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_policy",
+        "name": "jhs_limit",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_public_limits",
+        "name": "key",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_public_limits",
+        "name": "window_start",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_public_limits",
+        "name": "attempts",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "leave_bookings",
+        "name": "leave_booking_invitation_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "invitation_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "resource_bookings",
+        "name": "resource_booking_invitation_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "invitation_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_invitations",
+        "name": "scheduling_invitation_hash_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "token_hash",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_invitations",
+        "name": "scheduling_invitation_created_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "created_at",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_people",
+        "name": "scheduling_person_code_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "code",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_people",
+        "name": "scheduling_person_account_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "user_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_public_limits",
+        "name": "scheduling_public_limit_window_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "window_start",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "leave_bookings",
+        "name": "leave_bookings_person_id_scheduling_people_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "person_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "scheduling_people",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "leave_bookings",
+        "name": "leave_bookings_invitation_id_scheduling_invitations_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "invitation_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "scheduling_invitations",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "resource_bookings",
+        "name": "resource_bookings_person_id_scheduling_people_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "person_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "scheduling_people",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "resource_bookings",
+        "name": "resource_bookings_invitation_id_scheduling_invitations_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "invitation_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "scheduling_invitations",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_invitations",
+        "name": "scheduling_invitations_person_id_scheduling_people_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "person_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "scheduling_people",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_invitations",
+        "name": "scheduling_invitations_created_by_user_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "created_by"
+        ],
+        "schemaTo": "public",
+        "tableTo": "user",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_people",
+        "name": "scheduling_people_user_id_user_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "user_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "user",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_invitations",
+        "name": "scheduling_invitations_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_people",
+        "name": "scheduling_people_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_public_limits",
+        "name": "scheduling_public_limits_pkey",
+        "columns": [
+          "key"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "leave_bookings",
+        "name": "leave_booking_origin",
+        "value": "num_nonnulls(\"requester_id\", \"invitation_id\") = 1",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "leave_bookings",
+        "name": "leave_booking_beneficiary_name",
+        "value": "length(trim(\"person_name\")) > 0",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "resource_bookings",
+        "name": "resource_booking_origin",
+        "value": "num_nonnulls(\"requester_id\", \"invitation_id\") = 1",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "resource_bookings",
+        "name": "resource_booking_beneficiary_name",
+        "value": "length(trim(\"person_name\")) > 0",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "resource_bookings",
+        "name": "resource_booking_beneficiary_category",
+        "value": "\"beneficiary_category\" IN ('teacher', 'shs', 'jhs', 'personnel', 'student', 'other')",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_invitations",
+        "name": "scheduling_invitation_kind",
+        "value": "(\"kind\" = 'leave' AND \"person_id\" IS NOT NULL AND \"person_version\" IS NOT NULL) OR (\"kind\" = 'resource' AND \"person_id\" IS NULL AND \"person_version\" IS NULL)",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_invitations",
+        "name": "scheduling_invitation_expiry",
+        "value": "\"expires_at\" > \"created_at\" AND \"expires_at\" <= \"created_at\" + interval '7 days'",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_invitations",
+        "name": "scheduling_invitation_hash",
+        "value": "\"token_hash\" ~ '^[0-9a-f]{64}$'",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_invitations",
+        "name": "scheduling_invitation_receipt",
+        "value": "num_nonnulls(\"used_at\", \"used_operation_id\", \"used_fingerprint\", \"receipt_code\") IN (0, 4)",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_invitations",
+        "name": "scheduling_invitation_version",
+        "value": "\"version\" >= 0",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_people",
+        "name": "scheduling_person_code",
+        "value": "\"code\" ~ '^[A-Z0-9][A-Z0-9._-]{0,63}$'",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_people",
+        "name": "scheduling_person_name",
+        "value": "length(trim(\"name\")) BETWEEN 1 AND 160",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_people",
+        "name": "scheduling_person_category",
+        "value": "\"category\" IN ('teacher', 'shs', 'jhs', 'personnel')",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_people",
+        "name": "scheduling_teacher_no_account",
+        "value": "\"category\" = 'personnel' OR \"user_id\" IS NULL",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_people",
+        "name": "scheduling_person_version",
+        "value": "\"version\" >= 0",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_public_limits",
+        "name": "scheduling_public_limit_positive",
+        "value": "\"attempts\" > 0",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "enums\u0000[\"public\",\"employment_category\"]",
+      "set": {
+        "values": [
+          "teacher",
+          "personnel",
+          "shs",
+          "jhs"
+        ]
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"leave_bookings\",\"requester_id\"]",
+      "set": {
+        "notNull": false
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"resource_bookings\",\"requester_id\"]",
+      "set": {
+        "notNull": false
+      }
+    },
+    {
+      "op": "alter",
+      "key": "checks\u0000[\"public\",\"scheduling_policy\",\"scheduling_policy_limits\"]",
+      "set": {
+        "value": "(\"teacher_limit\" IS NULL OR \"teacher_limit\" >= 0) AND (\"personnel_limit\" IS NULL OR \"personnel_limit\" >= 0) AND (\"shs_limit\" IS NULL OR \"shs_limit\" >= 0) AND (\"jhs_limit\" IS NULL OR \"jhs_limit\" >= 0)"
+      }
+    }
+  ]
+}

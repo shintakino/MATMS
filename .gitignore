@@ -4,6 +4,7 @@ node_modules
 .pnp.js
 
 # Build outputs
+**/.next-*/
 .next-booking-*
 dist
 build

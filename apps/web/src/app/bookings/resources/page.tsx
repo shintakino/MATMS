@@ -5,6 +5,6 @@ import { redirect } from "next/navigation";
 
 export default async function Page() {
   const identity = await requireIdentity("/bookings/resources");
-  if (!["admin", "property_custodian"].includes(identity.role)) redirect("/dashboard");
+  if (identity.role !== "admin") redirect("/dashboard");
   return <AppShell role={identity.role} userName={identity.name}><ResourceManager /></AppShell>;
 }

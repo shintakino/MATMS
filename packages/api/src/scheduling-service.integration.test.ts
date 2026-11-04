@@ -1,291 +1,319 @@
 import { afterAll, beforeAll, expect, test } from "bun:test";
-import { count, eq, inArray } from "drizzle-orm";
+import { count, eq, inArray, sql } from "drizzle-orm";
 import { createDb } from "@matms/db";
 import { provisionAccount } from "@matms/auth/provisioning";
 import { user } from "@matms/db/schema/auth";
 import { userProfiles } from "@matms/db/schema/identity";
 import { auditLogs } from "@matms/db/schema/audit";
 import { custodialItems, custodialLots, custodialTransactions } from "@matms/db/schema/custodial-inventory";
-import { bookableResources, employmentAssignments, leaveBookings, leaveClosures, resourceBookings, schedulingEditReplays, schedulingPolicy } from "@matms/db/schema/scheduling";
-import { availabilityInput, dateDays, leaveInput, manilaToday, scheduleDate } from "./scheduling-contract";
+import { bookableResources, leaveBookings, leaveClosures, resourceBookings, schedulingEditReplays, schedulingInvitations, schedulingPeople, schedulingPolicy } from "@matms/db/schema/scheduling";
+import { availabilityInput, dateDays, leaveInput, manilaToday, personInput, publicSubmissionInput, scheduleDate } from "./scheduling-contract";
+import type { Actor } from "./scheduling-core";
 import * as service from "./scheduling-service";
+import * as people from "./scheduling-people-service";
+import * as invite from "./scheduling-invitation-service";
 import { updateCustodialItem, updateCustodialLot } from "./custodial-service";
 
 const url = process.env.TEST_DATABASE_URL;
 if (!url || !new URL(url).pathname.endsWith("_test")) throw new Error("Scheduling tests require an isolated _test database.");
-const db = createDb({ DATABASE_URL: url });
-const correlation = crypto.randomUUID();
-const suffix = correlation.slice(0, 8);
-const actors: Array<{ id: string; role: "admin" | "staff" | "property_custodian" | "viewer" }> = [];
-const resources: string[] = [];
-let itemId = "", lotId = "";
+const db = createDb({ DATABASE_URL: url }), correlation = crypto.randomUUID(), suffix = correlation.slice(0, 8);
+const actors: Actor[] = [], personIds: string[] = [], resources: string[] = [], closedDates: string[] = [];
+let shs = "", shs2 = "", jhs = "", personnel2 = "", itemId = "", lotId = "";
 let original: typeof schedulingPolicy.$inferSelect | undefined;
+const admin = () => actors[0]!, staff = () => actors[1]!, other = () => actors[2]!;
 function day(offset: number) { return new Date(Date.parse(`${manilaToday()}T00:00:00Z`) + offset * 86400000).toISOString().slice(0, 10); }
-const request = (offset: number, end = offset) => ({ startDate: day(offset), endDate: day(end), reason: "Private fixture reason", operationId: crypto.randomUUID() });
-const range = { startDate: day(10), endDate: day(30) };
-async function policy(values: Partial<{ publicLeave: boolean; leaveEnabled: boolean; teacherLimit: number | null; personnelLimit: number | null }> = {}) {
-  const config = (await service.getSchedulingSetup(db, actors[0]!)).policy;
-  await service.saveSchedulingPolicy(db, actors[0]!, { leaveEnabled: true, publicLeave: false, teacherLimit: 1, personnelLimit: 1, ...values, expectedVersion: config.version }, correlation);
+function request(personId: string | undefined, offset: number, end = offset) { return { personId, startDate: day(offset), endDate: day(end), reason: "Private fictional leave reason", operationId: crypto.randomUUID() }; }
+function reservation(resourceId: string, offset: number, end = offset) { return { resourceId, startDate: day(offset), endDate: day(end), purpose: "Private fictional event purpose", operationId: crypto.randomUUID() }; }
+async function config(values: Partial<{ leaveEnabled: boolean; publicLeave: boolean; teacherLimit: number | null; shsLimit: number | null; jhsLimit: number | null; personnelLimit: number | null }> = {}) {
+  const current = (await service.getSchedulingSetup(db, admin())).policy;
+  await service.saveSchedulingPolicy(db, admin(), { leaveEnabled: true, publicLeave: false, teacherLimit: null, shsLimit: 1, jhsLimit: 1, personnelLimit: 1, ...values, expectedVersion: current.version }, correlation);
+}
+async function person(category: "shs" | "jhs" | "personnel", userId: string | null = null) {
+  const code = `FIX-${crypto.randomUUID().slice(0, 8)}`.toUpperCase();
+  const saved = await people.saveSchedulingPerson(db, admin(), { code, name: `Fictional ${category} ${code}`, category, userId, active: true }, correlation);
+  personIds.push(saved.id); return saved.id;
 }
 async function resource(published = true, kind: "facility" | "equipment" = "facility") {
-  const saved = await service.saveBookableResource(db, actors[0]!, { name: `${kind} ${crypto.randomUUID()}`, kind, lotId: kind === "equipment" ? lotId : null, publicDescription: "Public fixture description", active: true, published }, correlation);
+  const saved = await service.saveBookableResource(db, admin(), { name: `Fictional ${kind} ${crypto.randomUUID()}`, kind, lotId: kind === "equipment" ? lotId : null, publicDescription: "Public fixture description", active: true, published }, correlation);
   resources.push(saved.id); return saved.id;
 }
+async function link(kind: "leave" | "resource", personId?: string, issuer = admin()) { return invite.createSchedulingInvitation(db, issuer, { kind, personId, expiresInHours: 24 }, correlation); }
+function publicRequest(token: string, offset: number) { return { token, startDate: day(offset), endDate: day(offset), detail: "Private public-link fixture reason", operationId: crypto.randomUUID() }; }
 beforeAll(async () => {
   original = (await db.select().from(schedulingPolicy))[0];
-  for (const [i, role] of (["admin", "staff", "staff", "staff", "property_custodian", "viewer"] as const).entries()) {
-    const saved = await provisionAccount(db, { name: `Booking person ${i} ${suffix}`, email: `schedule-${i}-${correlation}@example.test`, password: "fictional scheduling password", role, actorId: null, correlationId: correlation, mustChangePassword: false });
+  for (const [index, role] of (["admin", "staff", "staff", "property_custodian", "viewer", "staff", "admin"] as const).entries()) {
+    const saved = await provisionAccount(db, { name: `Fictional scheduling account ${index} ${suffix}`, email: `delegation-${index}-${correlation}@example.test`, password: "fictional scheduling password", role, actorId: null, correlationId: correlation, mustChangePassword: false });
     actors.push({ id: saved.id, role });
   }
-  for (const i of [1, 2, 3]) await service.saveEmployment(db, actors[0]!, { userId: actors[i]!.id, category: i === 3 ? "personnel" : "teacher", active: true }, correlation);
-  const [item] = await db.insert(custodialItems).values({ code: `SCHEDULE-${suffix}`, normalizedCode: `SCHEDULE-${suffix}`.toUpperCase(), article: "Fictional projector", description: "Fixture", unit: "unit" }).returning(); itemId = item!.id;
+  shs = await person("shs"); shs2 = await person("shs"); jhs = await person("jhs");
+  await person("personnel", staff().id); personnel2 = await person("personnel", other().id);
+  const [item] = await db.insert(custodialItems).values({ code: `DELEGATE-${suffix}`, normalizedCode: `DELEGATE-${suffix}`.toUpperCase(), article: "Fictional projector", description: "Fixture", unit: "unit" }).returning(); itemId = item!.id;
   const [lot] = await db.insert(custodialLots).values({ itemId, reportingClass: "ppe", fundCluster: "Fixture fund", office: "Fixture office" }).returning(); lotId = lot!.id;
+  await config();
 });
 afterAll(async () => {
-  const ids = actors.map((a) => a.id);
+  const ids = actors.map(actor => actor.id);
+  const linked = await db.select({ id: schedulingPeople.id }).from(schedulingPeople).where(inArray(schedulingPeople.userId, ids));
+  const allPeople = [...new Set([...personIds, ...linked.map(row => row.id)])];
   await db.delete(schedulingEditReplays).where(inArray(schedulingEditReplays.actorId, ids));
-  await db.delete(resourceBookings).where(inArray(resourceBookings.requesterId, ids));
-  await db.delete(leaveBookings).where(inArray(leaveBookings.requesterId, ids));
+  if (resources.length) await db.delete(resourceBookings).where(inArray(resourceBookings.resourceId, resources));
+  if (allPeople.length) await db.delete(leaveBookings).where(inArray(leaveBookings.personId, allPeople));
+  await db.delete(schedulingInvitations).where(inArray(schedulingInvitations.createdBy, ids));
+  if (allPeople.length) await db.delete(schedulingPeople).where(inArray(schedulingPeople.id, allPeople));
   if (resources.length) await db.delete(bookableResources).where(inArray(bookableResources.id, resources));
-  await db.delete(leaveClosures).where(inArray(leaveClosures.day, [day(25), day(26), day(44)]));
-  await db.delete(employmentAssignments).where(inArray(employmentAssignments.userId, ids));
-  await db.delete(schedulingPolicy);
-  if (original) await db.insert(schedulingPolicy).values(original);
+  if (closedDates.length) await db.delete(leaveClosures).where(inArray(leaveClosures.day, closedDates));
+  await db.delete(schedulingPolicy); if (original) await db.insert(schedulingPolicy).values(original);
   if (lotId) await db.delete(custodialLots).where(eq(custodialLots.id, lotId));
   if (itemId) await db.delete(custodialItems).where(eq(custodialItems.id, itemId));
   await db.delete(auditLogs).where(eq(auditLogs.correlationId, correlation));
   await db.delete(userProfiles).where(inArray(userProfiles.userId, ids));
-  await db.delete(user).where(inArray(user.id, ids));
-  await db.$client.end();
+  await db.delete(user).where(inArray(user.id, ids)); await db.$client.end();
 });
 
-test("real dates, leap dates, inclusive ranges and public bounds are validated", () => {
+test("real inclusive dates, teacher identities and public payloads are validated", () => {
   expect(scheduleDate.safeParse("2028-02-29").success).toBe(true);
-  for (const date of ["2027-02-29", "2026-04-31", "2026-13-01", "2026-00-01", "2026-1-1", "not-a-date"]) expect(scheduleDate.safeParse(date).success).toBe(false);
+  for (const date of ["2027-02-29", "2026-04-31", "2026-13-01", "2026-1-1"]) expect(scheduleDate.safeParse(date).success).toBe(false);
   expect(dateDays("2028-02-28", "2028-03-01")).toEqual(["2028-02-28", "2028-02-29", "2028-03-01"]);
-  expect(leaveInput.safeParse({ ...request(12), endDate: day(11) }).success).toBe(false);
+  expect(leaveInput.safeParse({ ...request(shs, 12), endDate: day(11) }).success).toBe(false);
   expect(availabilityInput.safeParse({ startDate: day(0), endDate: day(31) }).success).toBe(false);
+  expect(personInput.safeParse({ code: "SHS-1", name: "Fictional teacher", category: "shs", userId: staff().id, active: true }).success).toBe(false);
+  expect(publicSubmissionInput.safeParse({ ...publicRequest("x".repeat(43), 12), personId: shs }).success).toBe(false);
 });
-
-test("leave capacity, replay, permissions, publication and cancellation are atomic", async () => {
-  await policy({ leaveEnabled: false });
-  await expect(service.createLeaveBooking(db, actors[1]!, request(10), correlation)).rejects.toMatchObject({ code: "CONFLICT" });
-  expect((await service.leaveAvailability(db, null, range)).approved).toEqual([]);
-  await policy();
-  const payload = request(10, 11);
-  const first = await service.createLeaveBooking(db, actors[1]!, payload, correlation);
-  expect(await service.createLeaveBooking(db, actors[1]!, payload, correlation)).toEqual(first);
-  await expect(service.createLeaveBooking(db, actors[1]!, { ...payload, reason: "Changed intent" }, correlation)).rejects.toMatchObject({ code: "CONFLICT" });
-  await expect(service.createLeaveBooking(db, actors[2]!, request(9, 10), correlation)).rejects.toMatchObject({ code: "CONFLICT" });
-  expect((await db.select().from(leaveBookings).where(eq(leaveBookings.operationId, payload.operationId))).length).toBe(1);
-  expect((await db.select().from(auditLogs).where(eq(auditLogs.targetId, first.id))).length).toBe(1);
-  await service.createLeaveBooking(db, actors[3]!, request(10), correlation); // separate personnel capacity
-  await expect(service.listScheduleRequests(db, actors[2]!, { kind: "leave", scope: "all", page: 1 })).rejects.toMatchObject({ code: "FORBIDDEN" });
-  expect((await service.listScheduleRequests(db, actors[2]!, { kind: "leave", scope: "mine", page: 1 })).items).toHaveLength(0);
-  await expect(service.decideBooking(db, actors[2]!, { kind: "leave", id: first.id, status: "approved", note: "Unauthorized", expectedVersion: 0 }, correlation)).rejects.toMatchObject({ code: "NOT_FOUND" });
-  await expect(service.decideBooking(db, actors[4]!, { kind: "leave", id: first.id, status: "approved", note: "Custodian cannot approve leave", expectedVersion: 0 }, correlation)).rejects.toMatchObject({ code: "NOT_FOUND" });
-  await service.decideBooking(db, actors[0]!, { kind: "leave", id: first.id, status: "approved", note: "Approved privately", expectedVersion: 0 }, correlation);
-  expect((await service.leaveAvailability(db, null, range)).published).toBe(false);
-  await policy({ publicLeave: true });
-  const published = await service.leaveAvailability(db, null, range);
-  expect(published.approved).toHaveLength(1);
-  expect(published.approved[0]!.name).toContain("Booking person 1");
-  expect(Object.keys(published.approved[0]!).sort()).toEqual(["category", "endDate", "name", "startDate"]);
-  const serialized = JSON.stringify(published);
-  for (const secret of [payload.reason, "Approved privately", first.id, actors[1]!.id, "@example.test", "Booking person 3"]) expect(serialized).not.toContain(secret);
-  expect(published.days.find((d) => d.day === day(10))!.teacher.status).toBe("full");
-  await expect(service.decideBooking(db, actors[0]!, { kind: "leave", id: first.id, status: "cancelled", note: "Stale", expectedVersion: 0 }, correlation)).rejects.toMatchObject({ code: "CONFLICT" });
-  await service.decideBooking(db, actors[1]!, { kind: "leave", id: first.id, status: "cancelled", note: "Changed plans", expectedVersion: 1 }, correlation);
-  expect((await service.leaveAvailability(db, null, range)).approved).toHaveLength(0);
-  await service.createLeaveBooking(db, actors[2]!, request(10), correlation);
-  await expect(service.createLeaveBooking(db, actors[5]!, request(12), correlation)).rejects.toMatchObject({ code: "FORBIDDEN" });
+test("directory CRUD, delegated filing and self filing enforce account/category boundaries", async () => {
+  expect((await service.getSchedulingSetup(db, staff())).canFileLeave).toBe(true);
+  for (const actor of [actors[3]!, actors[4]!, actors[5]!]) {
+    expect((await service.getSchedulingSetup(db, actor)).canFileLeave).toBe(false);
+    await expect(service.createLeaveBooking(db, actor, request(shs, 5), correlation)).rejects.toMatchObject({ code: "FORBIDDEN" });
+  }
+  const choices = await people.schedulingPeople(db, staff(), { page: 1, search: "" });
+  expect(choices.items.some(row => row.id === shs)).toBe(true);
+  expect(choices.items.every(row => row.userId === null)).toBe(true);
+  await expect(people.saveSchedulingPerson(db, staff(), { code: "DENIED", name: "Denied", category: "shs", userId: null, active: true }, correlation)).rejects.toMatchObject({ code: "FORBIDDEN" });
+  const own = await service.createLeaveBooking(db, admin(), request(undefined, 5), correlation);
+  const [created] = await db.select().from(leaveBookings).where(eq(leaveBookings.id, own.id));
+  expect(created).toMatchObject({ requesterId: admin().id, category: "personnel" });
+  expect((await service.getSchedulingSetup(db, admin())).assignment?.userId).toBe(admin().id);
+  const entry = (await db.select().from(schedulingPeople).where(eq(schedulingPeople.id, shs)))[0]!;
+  await expect(people.saveSchedulingPerson(db, admin(), { ...entry, expectedVersion: 9, category: "shs" }, correlation)).rejects.toMatchObject({ code: "CONFLICT" });
+  await expect(people.saveSchedulingPerson(db, admin(), { code: entry.code, name: "Duplicate", category: "shs", userId: null, active: true }, correlation)).rejects.toMatchObject({ code: "CONFLICT" });
 });
-
-test("concurrent last leave slot and partial range conflicts never overbook", async () => {
-  const results = await Promise.allSettled([service.createLeaveBooking(db, actors[1]!, request(13), correlation), service.createLeaveBooking(db, actors[2]!, request(13), correlation)]);
-  expect(results.filter((r) => r.status === "fulfilled")).toHaveLength(1);
-  const rows = await db.select().from(leaveBookings).where(eq(leaveBookings.startDate, day(13)));
-  expect(rows).toHaveLength(1);
-  await expect(service.saveLeaveClosure(db, actors[0]!, { day: day(13), label: "Closed", closed: true }, correlation)).rejects.toMatchObject({ code: "CONFLICT" });
-  await service.saveLeaveClosure(db, actors[0]!, { day: day(25), label: "Private event", closed: true }, correlation);
-  await expect(service.createLeaveBooking(db, actors[1]!, request(24, 26), correlation)).rejects.toMatchObject({ code: "CONFLICT" });
-  expect(JSON.stringify(await service.leaveAvailability(db, null, { startDate: day(24), endDate: day(26) }))).not.toContain("Private event");
-  await service.saveLeaveClosure(db, actors[0]!, { day: day(25), label: "Reopened", closed: false }, correlation);
-});
-
-test("whole-day equipment/facility reservations serialize, remain private and never post stock", async () => {
-  const [before] = await db.select({ value: count() }).from(custodialTransactions);
+test("directory retirement preserves history, excludes inactive choices and guards future holds", async () => {
+  const id = await person("shs");
+  const [entry] = await db.select().from(schedulingPeople).where(eq(schedulingPeople.id, id));
+  const input = { id, code: entry!.code, name: entry!.name, category: "shs" as const, userId: null, active: false };
+  await people.saveSchedulingPerson(db, admin(), { ...input, expectedVersion: 0 }, correlation);
+  expect((await people.schedulingPeople(db, staff(), { search: input.code })).items).toHaveLength(0);
+  expect((await people.schedulingPeople(db, admin(), { search: input.code, includeInactive: true })).items[0]).toMatchObject({ id, active: false, version: 1 });
+  await expect(service.createLeaveBooking(db, staff(), request(id, 6), correlation)).rejects.toMatchObject({ code: "NOT_FOUND" });
+  await people.saveSchedulingPerson(db, admin(), { ...input, active: true, expectedVersion: 1 }, correlation);
+  const leave = await service.createLeaveBooking(db, staff(), request(id, 6), correlation);
+  await expect(people.saveSchedulingPerson(db, admin(), { ...input, expectedVersion: 2 }, correlation)).rejects.toMatchObject({ code: "CONFLICT" });
+  await service.decideBooking(db, admin(), { kind: "leave", id: leave.id, expectedVersion: 0, status: "cancelled", note: "Directory lifecycle fixture" }, correlation);
   const facility = await resource();
-  const equipment = await resource(true, "equipment");
-  const hidden = await resource(false);
-  const publicList = await service.listBookableResources(db, null, { page: 1, search: "" });
-  expect(publicList.items.some((r) => r.id === hidden)).toBe(false);
-  expect(publicList.items.some((r) => r.id === equipment)).toBe(true);
-  expect(Object.keys(publicList.items[0]!).sort()).toEqual(["description", "id", "kind", "name"]);
-  await expect(service.resourceAvailability(db, null, { ...range, resourceId: hidden })).rejects.toMatchObject({ code: "NOT_FOUND" });
-  const payload = { startDate: day(15), endDate: day(16), resourceId: facility, purpose: "Private purpose", operationId: crypto.randomUUID() };
-  const results = await Promise.allSettled([service.createResourceBooking(db, actors[1]!, payload, correlation), service.createResourceBooking(db, actors[2]!, { ...payload, operationId: crypto.randomUUID() }, correlation)]);
-  expect(results.filter((r) => r.status === "fulfilled")).toHaveLength(1);
-  const winning = results[0]!.status === "fulfilled" ? actors[1]! : actors[2]!;
-  const [row] = await db.select().from(resourceBookings).where(eq(resourceBookings.resourceId, facility));
-  expect(row).toBeDefined();
-  const replayPayload = { ...payload, operationId: row!.operationId };
-  expect(await service.createResourceBooking(db, winning, replayPayload, correlation)).toEqual({ id: row!.id });
-  await expect(service.createResourceBooking(db, winning, { ...replayPayload, purpose: "Different" }, correlation)).rejects.toMatchObject({ code: "CONFLICT" });
-  await service.createResourceBooking(db, actors[1]!, { ...payload, startDate: day(17), endDate: day(17), operationId: crypto.randomUUID() }, correlation);
-  const available = await service.resourceAvailability(db, null, { ...range, resourceId: facility });
-  expect(available.days.find((d) => d.day === day(14))!.status).toBe("available");
-  expect(available.days.find((d) => d.day === day(15))!.status).toBe("reserved");
-  expect(available.days.find((d) => d.day === day(16))!.status).toBe("reserved");
-  for (const secret of [payload.purpose, row!.id, winning.id, "@example.test"]) expect(JSON.stringify(available)).not.toContain(secret);
-  await service.decideBooking(db, actors[4]!, { kind: "resource", id: row!.id, status: "approved", note: "Approved", expectedVersion: 0 }, correlation);
-  await service.decideBooking(db, winning, { kind: "resource", id: row!.id, status: "cancelled", note: "Cancelled", expectedVersion: 1 }, correlation);
-  expect((await service.resourceAvailability(db, null, { ...range, resourceId: facility })).days.find((d) => d.day === day(15))!.status).toBe("available");
-  const [r] = await db.select().from(bookableResources).where(eq(bookableResources.id, facility));
-  await expect(service.saveBookableResource(db, actors[0]!, { id: facility, expectedVersion: r!.version, name: r!.name, kind: "facility", lotId: null, active: false, published: true, publicDescription: "" }, correlation)).rejects.toMatchObject({ code: "CONFLICT" });
-  await expect(service.saveBookableResource(db, actors[1]!, { name: "Denied", kind: "facility", lotId: null, active: true, published: true, publicDescription: "" }, correlation)).rejects.toMatchObject({ code: "FORBIDDEN" });
-  const [after] = await db.select({ value: count() }).from(custodialTransactions);
-  expect(after?.value).toBe(before?.value);
+  const booking = await service.createResourceBooking(db, admin(), { ...reservation(facility, 6), personId: id }, correlation);
+  await expect(people.saveSchedulingPerson(db, admin(), { ...input, expectedVersion: 2 }, correlation)).rejects.toMatchObject({ code: "CONFLICT" });
+  await service.decideBooking(db, admin(), { kind: "resource", id: booking.id, expectedVersion: 0, status: "cancelled", note: "Directory lifecycle fixture" }, correlation);
+  await people.saveSchedulingPerson(db, admin(), { ...input, expectedVersion: 2 }, correlation);
+  expect((await db.select().from(schedulingPeople).where(eq(schedulingPeople.id, id)))[0]).toMatchObject({ active: false, version: 3 });
+  expect((await db.select().from(leaveBookings).where(eq(leaveBookings.id, leave.id)))[0]).toMatchObject({ personId: id, personName: input.name, status: "cancelled" });
+  expect((await db.select().from(resourceBookings).where(eq(resourceBookings.id, booking.id)))[0]).toMatchObject({ personId: id, personName: input.name, status: "cancelled" });
 });
-
-test("audit failure rolls back requests and deactivated accounts cannot replay", async () => {
-  const payload = request(28);
-  await expect(service.createLeaveBooking(db, actors[1]!, payload, undefined as unknown as string)).rejects.toThrow();
-  expect(await db.select().from(leaveBookings).where(eq(leaveBookings.operationId, payload.operationId))).toHaveLength(0);
-  const saved = await service.createLeaveBooking(db, actors[1]!, payload, correlation);
-  await db.update(userProfiles).set({ active: false }).where(eq(userProfiles.userId, actors[1]!.id));
-  await expect(service.createLeaveBooking(db, actors[1]!, payload, correlation)).rejects.toMatchObject({ code: "FORBIDDEN" });
-  await db.update(userProfiles).set({ active: true }).where(eq(userProfiles.userId, actors[1]!.id));
-  expect(saved.id).toBeTruthy();
+test("SHS/JHS/personnel limits, beneficiary holds, privacy and authorization remain separate", async () => {
+  await config(); const payload = request(shs, 10, 11);
+  const first = await service.createLeaveBooking(db, staff(), payload, correlation);
+  expect(await service.createLeaveBooking(db, staff(), payload, correlation)).toEqual(first);
+  await expect(service.createLeaveBooking(db, staff(), { ...payload, personId: shs2 }, correlation)).rejects.toMatchObject({ code: "CONFLICT" });
+  await expect(service.createLeaveBooking(db, other(), request(shs, 9, 10), correlation)).rejects.toMatchObject({ code: "CONFLICT" });
+  await expect(service.createLeaveBooking(db, other(), request(shs2, 10), correlation)).rejects.toMatchObject({ code: "CONFLICT" });
+  await service.createLeaveBooking(db, other(), request(jhs, 10), correlation);
+  await service.createLeaveBooking(db, staff(), request(personnel2, 10), correlation);
+  expect((await service.listScheduleRequests(db, other(), { kind: "leave", scope: "mine", page: 1 })).items.some(row => row.personId === personnel2)).toBe(true);
+  await expect(service.listScheduleRequests(db, staff(), { kind: "leave", scope: "all", page: 1 })).rejects.toMatchObject({ code: "FORBIDDEN" });
+  await expect(service.decideBooking(db, other(), { kind: "leave", id: first.id, status: "cancelled", note: "Not mine", expectedVersion: 0 }, correlation)).rejects.toMatchObject({ code: "NOT_FOUND" });
+  await expect(service.decideBooking(db, staff(), { kind: "leave", id: first.id, status: "approved", note: "Not approver", expectedVersion: 0 }, correlation)).rejects.toMatchObject({ code: "FORBIDDEN" });
+  const range = { startDate: day(10), endDate: day(11) };
+  expect((await service.leaveAvailability(db, null, range)).days).toEqual([]);
+  await service.decideBooking(db, admin(), { kind: "leave", id: first.id, status: "approved", note: "Private approval", expectedVersion: 0 }, correlation);
+  await config({ publicLeave: true });
+  const calendar = await service.leaveAvailability(db, null, range);
+  expect(calendar.days[0]!.shs.status).toBe("full"); expect(calendar.days[0]!.jhs.status).toBe("full");
+  expect(calendar.approved).toHaveLength(1); expect(calendar.approved[0]!.category).toBe("shs");
+  for (const secret of [payload.reason, "Private approval", first.id, staff().id, "@example.test"]) expect(JSON.stringify(calendar)).not.toContain(secret);
+  expect(Object.keys(calendar.approved[0]!).sort()).toEqual(["category", "endDate", "name", "startDate"]);
+  const entry = (await db.select().from(schedulingPeople).where(eq(schedulingPeople.id, shs)))[0]!;
+  await expect(people.saveSchedulingPerson(db, admin(), { ...entry, category: "jhs", expectedVersion: entry.version }, correlation)).rejects.toMatchObject({ code: "CONFLICT" });
 });
-
-test("database exclusions and inventory retirement guard preserve booked units", async () => {
-  const id = await resource(true, "equipment");
-  const payload = { resourceId: id, startDate: day(29), endDate: day(30), purpose: "Constraint fixture", operationId: crypto.randomUUID() };
-  await service.createResourceBooking(db, actors[1]!, payload, correlation);
-  await expect(db.insert(resourceBookings).values({ ...payload, requesterId: actors[2]!.id, fingerprint: "a".repeat(64), operationId: crypto.randomUUID() }).execute()).rejects.toThrow();
-  const [item] = await db.select().from(custodialItems).where(eq(custodialItems.id, itemId));
-  await expect(updateCustodialItem(db, actors[0]!, { itemId, expectedVersion: item!.version, code: item!.code, article: item!.article, description: item!.description, unit: item!.unit, reorderPoint: null, defaultSectionId: null, notes: null, active: false, reason: "Retire fixture", operationId: crypto.randomUUID(), correlationId: correlation })).rejects.toThrow("bookable equipment");
+test("concurrent last-slot requests, partial ranges, closures and combined teacher limits never overbook", async () => {
+  await config();
+  const results = await Promise.allSettled([service.createLeaveBooking(db, staff(), request(shs, 20), correlation), service.createLeaveBooking(db, other(), request(shs2, 20), correlation)]);
+  expect(results.filter(result => result.status === "fulfilled")).toHaveLength(1);
+  await expect(service.createLeaveBooking(db, admin(), request(jhs, 19, 20), correlation)).resolves.toHaveProperty("id");
+  await service.createLeaveBooking(db, staff(), request(shs, 21), correlation);
+  await config({ teacherLimit: 1 });
+  await expect(service.createLeaveBooking(db, admin(), request(jhs, 21), correlation)).rejects.toMatchObject({ code: "CONFLICT" });
+  closedDates.push(day(25)); await service.saveLeaveClosure(db, admin(), { day: day(25), label: "Private school event", closed: true }, correlation);
+  await expect(service.createLeaveBooking(db, staff(), request(shs, 24, 26), correlation)).rejects.toMatchObject({ code: "CONFLICT" });
+  expect((await db.select().from(leaveBookings).where(eq(leaveBookings.startDate, day(24))))).toHaveLength(0);
+  await config({ publicLeave: true });
+  expect(JSON.stringify(await service.leaveAvailability(db, null, { startDate: day(25), endDate: day(25) }))).not.toContain("Private school event");
+});
+test("only Admin manages internal resources; reservations retain beneficiaries and never post stock", async () => {
+  const [before] = await db.select({ value: count() }).from(custodialTransactions);
+  const facility = await resource(), equipment = await resource(true, "equipment"), hidden = await resource(false);
+  for (const actor of actors.slice(1, 6)) {
+    await expect(service.createResourceBooking(db, actor, reservation(facility, 30), correlation)).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(service.listScheduleRequests(db, actor, { kind: "resource", scope: "mine", page: 1 })).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(service.saveBookableResource(db, actor, { name: "Denied", kind: "facility", lotId: null, publicDescription: "", active: true, published: false }, correlation)).rejects.toMatchObject({ code: "FORBIDDEN" });
+  }
+  await expect(service.resourceAvailability(db, staff(), { resourceId: hidden, startDate: day(30), endDate: day(30) })).rejects.toMatchObject({ code: "NOT_FOUND" });
+  const payload = { ...reservation(equipment, 30, 31), personId: shs };
+  const saved = await service.createResourceBooking(db, admin(), payload, correlation);
+  expect(await service.createResourceBooking(db, admin(), payload, correlation)).toEqual(saved);
+  const [row] = await db.select().from(resourceBookings).where(eq(resourceBookings.id, saved.id));
+  expect(row).toMatchObject({ requesterId: admin().id, personId: shs, beneficiaryCategory: "shs" });
+  const publicCalendar = await service.resourceAvailability(db, null, { resourceId: equipment, startDate: day(30), endDate: day(31) });
+  expect(publicCalendar.days.every(day => day.status === "reserved")).toBe(true);
+  for (const secret of [payload.purpose, admin().id, row!.personName, lotId]) expect(JSON.stringify(publicCalendar)).not.toContain(secret);
+  const race = await Promise.allSettled([service.createResourceBooking(db, admin(), reservation(facility, 32), correlation), service.createResourceBooking(db, actors[6]!, reservation(facility, 32), correlation)]);
+  expect(race.filter(result => result.status === "fulfilled")).toHaveLength(1);
   const [lot] = await db.select().from(custodialLots).where(eq(custodialLots.id, lotId));
-  await expect(updateCustodialLot(db, actors[0]!, { lotId, expectedVersion: lot!.version, propertyNumber: null, propertyExceptionId: null, unitValue: null, supplier: null, acquiredOn: null, yearLabel: null, fundCluster: lot!.fundCluster, office: lot!.office, accountableOfficer: null, condition: null, remarks: null, active: false, reason: "Retire fixture", operationId: crypto.randomUUID(), correlationId: correlation })).rejects.toThrow("bookable equipment");
-  const p = (await service.getSchedulingSetup(db, actors[0]!)).policy;
-  await expect(service.saveSchedulingPolicy(db, actors[0]!, { ...p, expectedVersion: p.version - 1 }, correlation)).rejects.toMatchObject({ code: "CONFLICT" });
-  await policy({ teacherLimit: 0 });
-  await expect(service.createLeaveBooking(db, actors[2]!, request(26), correlation)).rejects.toMatchObject({ code: "CONFLICT" });
-  await policy({ teacherLimit: null });
-  await service.createLeaveBooking(db, actors[2]!, request(26), correlation);
-  expect((await service.leaveAvailability(db, actors[1]!, { startDate: day(26), endDate: day(26) })).days[0]!.teacher.remaining).toBeNull();
+  const [item] = await db.select().from(custodialItems).where(eq(custodialItems.id, itemId));
+  await expect(updateCustodialLot(db, { id: admin().id }, { lotId, expectedVersion: lot!.version, propertyNumber: lot!.propertyNumber, propertyExceptionId: lot!.propertyExceptionId, unitValue: lot!.unitValue, supplier: lot!.supplier, acquiredOn: lot!.acquiredOn, yearLabel: lot!.yearLabel, fundCluster: lot!.fundCluster, office: lot!.office, accountableOfficer: lot!.accountableOfficer, condition: lot!.condition, remarks: lot!.remarks, active: false, reason: "Retirement guard fixture", operationId: crypto.randomUUID(), correlationId: correlation })).rejects.toThrow("bookable");
+  await expect(updateCustodialItem(db, { id: admin().id }, { itemId, expectedVersion: item!.version, code: item!.code, article: item!.article, description: item!.description, unit: item!.unit, reorderPoint: item!.reorderPoint, defaultSectionId: item!.defaultSectionId, notes: item!.notes, active: false, reason: "Retirement guard fixture", operationId: crypto.randomUUID(), correlationId: correlation })).rejects.toThrow("bookable");
+  expect((await db.select({ value: count() }).from(custodialTransactions))[0]!.value).toBe(before!.value);
 });
-
-test("leave edits revalidate holds, clear approval, retain history and replay without overwriting decisions", async () => {
-  await policy({ publicLeave: true });
-  const initial = request(40, 41);
-  const saved = await service.createLeaveBooking(db, actors[1]!, initial, correlation);
-  await service.decideBooking(db, actors[0]!, { kind: "leave", id: saved.id, status: "approved", expectedVersion: 0, note: "Original approval" }, correlation);
-  const input = { ...initial, id: saved.id, expectedVersion: 1, operationId: crypto.randomUUID(), reason: "Updated private reason", changeReason: "Correct the reason" };
-  const edited = await service.editLeaveBooking(db, actors[1]!, input, correlation);
-  expect(edited).toEqual({ id: saved.id, version: 2 }); // own full-capacity dates do not conflict
-  let row = (await db.select().from(leaveBookings).where(eq(leaveBookings.id, saved.id)))[0]!;
-  expect(row).toMatchObject({ status: "pending", decidedAt: null, decidedBy: null, decisionNote: null, reason: input.reason, fingerprint: expect.any(String), operationId: initial.operationId });
-  const projection = await service.leaveAvailability(db, null, { startDate: day(40), endDate: day(41) });
-  expect(projection.approved).toHaveLength(0);
-  expect(projection.days[0]!.teacher.status).toBe("full");
-  expect(JSON.stringify(projection)).not.toContain(input.reason);
-  expect(await service.createLeaveBooking(db, actors[1]!, initial, correlation)).toEqual(saved);
-  const [event] = await db.select().from(auditLogs).where(eq(auditLogs.action, "scheduling.leave.updated"));
-  expect(event?.before).toMatchObject({ status: "approved", detail: initial.reason, version: 1, decisionNote: "Original approval" });
-  expect(event?.after).toMatchObject({ status: "pending", detail: input.reason, version: 2, changeReason: input.changeReason });
-  await service.decideBooking(db, actors[0]!, { kind: "leave", id: saved.id, status: "approved", expectedVersion: 2, note: "Reviewed update" }, correlation);
-  expect(await service.editLeaveBooking(db, actors[1]!, input, correlation)).toEqual(edited);
-  row = (await db.select().from(leaveBookings).where(eq(leaveBookings.id, saved.id)))[0]!;
-  expect(row).toMatchObject({ status: "approved", version: 3, decisionNote: "Reviewed update" });
-  expect((await service.leaveAvailability(db, null, { startDate: day(40), endDate: day(41) })).approved).toHaveLength(1);
-  await expect(service.editLeaveBooking(db, actors[1]!, { ...input, reason: "Mismatched retry" }, correlation)).rejects.toMatchObject({ code: "CONFLICT" });
-  await expect(service.editLeaveBooking(db, actors[2]!, { ...input, operationId: crypto.randomUUID() }, correlation)).rejects.toMatchObject({ code: "NOT_FOUND" });
-  await expect(service.editLeaveBooking(db, actors[4]!, input, correlation)).rejects.toMatchObject({ code: "NOT_FOUND" });
-  await expect(service.editLeaveBooking(db, actors[5]!, input, correlation)).rejects.toMatchObject({ code: "FORBIDDEN" });
-  await expect(service.editLeaveBooking(db, actors[1]!, { ...input, operationId: crypto.randomUUID(), reason: "Stale" }, correlation)).rejects.toMatchObject({ code: "CONFLICT" });
-  await expect(service.editLeaveBooking(db, actors[1]!, { ...input, expectedVersion: 3, operationId: crypto.randomUUID() }, correlation)).rejects.toMatchObject({ code: "VALIDATION_ERROR" });
-  const failed = { ...input, expectedVersion: 3, operationId: crypto.randomUUID(), startDate: day(42), endDate: day(42) };
-  await expect(service.editLeaveBooking(db, actors[1]!, failed, undefined as unknown as string)).rejects.toThrow();
-  expect(await db.select().from(schedulingEditReplays).where(eq(schedulingEditReplays.operationId, failed.operationId))).toHaveLength(0);
-  expect((await db.select().from(leaveBookings).where(eq(leaveBookings.id, saved.id)))[0]).toMatchObject({ startDate: day(40), status: "approved", version: 3 });
-  await service.createLeaveBooking(db, actors[2]!, request(43), correlation);
-  await expect(service.editLeaveBooking(db, actors[1]!, { ...failed, endDate: day(43) }, correlation)).rejects.toMatchObject({ code: "CONFLICT" });
-  await service.saveLeaveClosure(db, actors[0]!, { day: day(44), label: "Edit closure", closed: true }, correlation);
-  await expect(service.editLeaveBooking(db, actors[1]!, { ...failed, startDate: day(44), endDate: day(44) }, correlation)).rejects.toMatchObject({ code: "CONFLICT" });
-  const ownOther = await service.createLeaveBooking(db, actors[1]!, request(45), correlation);
-  await expect(service.editLeaveBooking(db, actors[1]!, { ...failed, startDate: day(45), endDate: day(45) }, correlation)).rejects.toMatchObject({ code: "CONFLICT" });
-  await service.saveEmployment(db, actors[0]!, { userId: actors[1]!.id, category: "teacher", active: false }, correlation);
-  await expect(service.editLeaveBooking(db, actors[1]!, input, correlation)).rejects.toMatchObject({ code: "FORBIDDEN" });
-  await service.saveEmployment(db, actors[0]!, { userId: actors[1]!.id, category: "personnel", active: true }, correlation);
-  await expect(service.editLeaveBooking(db, actors[1]!, failed, correlation)).rejects.toMatchObject({ code: "CONFLICT" });
-  await service.saveEmployment(db, actors[0]!, { userId: actors[1]!.id, category: "teacher", active: true }, correlation);
-  await db.update(userProfiles).set({ active: false }).where(eq(userProfiles.userId, actors[1]!.id));
-  await expect(service.editLeaveBooking(db, actors[1]!, input, correlation)).rejects.toMatchObject({ code: "FORBIDDEN" });
-  await db.update(userProfiles).set({ active: true }).where(eq(userProfiles.userId, actors[1]!.id));
-  await db.update(leaveBookings).set({ startDate: day(-2), endDate: day(-1) }).where(eq(leaveBookings.id, saved.id));
-  await expect(service.editLeaveBooking(db, actors[0]!, failed, correlation)).rejects.toMatchObject({ code: "CONFLICT" });
-  await db.update(leaveBookings).set({ startDate: day(40), endDate: day(41) }).where(eq(leaveBookings.id, saved.id));
-  await service.decideBooking(db, actors[1]!, { kind: "leave", id: saved.id, expectedVersion: 3, status: "cancelled", note: "Keep the history" }, correlation);
-  await expect(service.editLeaveBooking(db, actors[1]!, { ...failed, expectedVersion: 4 }, correlation)).rejects.toMatchObject({ code: "CONFLICT" });
-  expect(await service.editLeaveBooking(db, actors[1]!, input, correlation)).toEqual(edited);
-  expect((await db.select().from(leaveBookings).where(eq(leaveBookings.id, saved.id)))[0]!.status).toBe("cancelled");
-  expect((await service.editLeaveBooking(db, actors[0]!, { ...request(45), id: ownOther.id, expectedVersion: 0, reason: "Admin correction for teacher", changeReason: "Manager edit" }, correlation)).version).toBe(1);
+test("teacher-specific links disclose limited availability and atomically file one pending request", async () => {
+  await config(); const issued = await link("leave", shs2);
+  expect(issued.token).toMatch(/^[A-Za-z0-9_-]{43}$/);
+  const [stored] = await db.select().from(schedulingInvitations).where(eq(schedulingInvitations.id, issued.id));
+  expect(stored!.tokenHash).toMatch(/^[0-9a-f]{64}$/); expect(stored!.tokenHash).not.toBe(issued.token);
+  const preview = await invite.previewSchedulingInvitation(db, issued.token);
+  expect(preview).toMatchObject({ kind: "leave", state: "ready", person: { category: "shs" } });
+  expect(Object.keys(preview.person!).sort()).toEqual(["category", "name"]);
+  expect(Object.keys(preview).sort()).toEqual(["expiresAt", "kind", "person", "receiptCode", "serverNow", "state"]);
+  expect(Date.parse(preview.expiresAt) - Date.parse(preview.serverNow)).toBeGreaterThan(0);
+  const dates = await invite.schedulingInvitationAvailability(db, { token: issued.token, startDate: day(10), endDate: day(11) });
+  expect(dates.days[0]!.status).toBe("full");
+  await expect(invite.submitSchedulingInvitation(db, publicRequest(issued.token, 10), correlation)).rejects.toMatchObject({ code: "CONFLICT" });
+  expect((await db.select().from(schedulingInvitations).where(eq(schedulingInvitations.id, issued.id)))[0]!.usedAt).toBeNull();
+  const payload = publicRequest(issued.token, 35), receipt = await invite.submitSchedulingInvitation(db, payload, correlation);
+  expect(receipt.status).toBe("submitted"); expect(Object.keys(receipt).sort()).toEqual(["receiptCode", "status"]);
+  expect(await invite.submitSchedulingInvitation(db, payload, correlation)).toEqual(receipt);
+  await expect(invite.submitSchedulingInvitation(db, { ...payload, operationId: crypto.randomUUID() }, correlation)).rejects.toMatchObject({ code: "CONFLICT" });
+  const [booking] = await db.select().from(leaveBookings).where(eq(leaveBookings.invitationId, issued.id));
+  expect(booking).toMatchObject({ requesterId: null, personId: shs2, status: "pending" });
+  await service.decideBooking(db, admin(), { kind: "leave", id: booking!.id, expectedVersion: 0, status: "approved", note: "Verified teacher claim", }, correlation);
+  expect(await invite.submitSchedulingInvitation(db, payload, correlation)).toEqual(receipt);
+  const audit = await db.select().from(auditLogs).where(eq(auditLogs.targetId, booking!.id));
+  expect(audit.find(row => row.action === "scheduling.leave.public_requested")?.actorId).toBeNull();
+  expect(JSON.stringify(audit)).toContain(issued.id); expect(JSON.stringify(audit)).not.toContain(issued.token);
+  const listed = await invite.listSchedulingInvitations(db, admin(), { page: 1, search: "" });
+  expect(JSON.stringify(listed)).not.toContain(stored!.tokenHash); expect(JSON.stringify(listed)).not.toContain(issued.token);
+  expect((await invite.previewSchedulingInvitation(db, issued.token)).state).toBe("used");
 });
-
-test("reservation edits atomically swap resources and managers cannot replay after losing authority", async () => {
-  const a = await resource(), b = await resource(), equipment = await resource(true, "equipment");
-  const original = { startDate: day(50), endDate: day(51), resourceId: a, purpose: "Original reservation", operationId: crypto.randomUUID() };
-  const saved = await service.createResourceBooking(db, actors[1]!, original, correlation);
-  await service.decideBooking(db, actors[4]!, { kind: "resource", id: saved.id, expectedVersion: 0, status: "approved", note: "Original review" }, correlation);
-  const edit = { ...original, resourceId: b, id: saved.id, expectedVersion: 1, operationId: crypto.randomUUID(), startDate: day(52), endDate: day(53), purpose: "Changed purpose", changeReason: "Move venue" };
-  expect(await service.editResourceBooking(db, actors[1]!, edit, correlation)).toEqual({ id: saved.id, version: 2 });
-  expect((await service.resourceAvailability(db, null, { startDate: day(50), endDate: day(53), resourceId: a })).days.every((d) => d.status === "available")).toBe(true);
-  expect((await service.resourceAvailability(db, null, { startDate: day(52), endDate: day(53), resourceId: b })).days.every((d) => d.status === "reserved")).toBe(true);
-  expect(await service.createResourceBooking(db, actors[1]!, original, correlation)).toEqual(saved);
-  await service.decideBooking(db, actors[4]!, { kind: "resource", id: saved.id, expectedVersion: 2, status: "approved", note: "Reviewed move" }, correlation);
-  const managerEdit = { ...edit, expectedVersion: 3, operationId: crypto.randomUUID(), purpose: "Manager correction" };
-  const receipt = await service.editResourceBooking(db, actors[4]!, managerEdit, correlation);
-  expect(receipt.version).toBe(4);
-  await expect(service.editResourceBooking(db, actors[2]!, managerEdit, correlation)).rejects.toMatchObject({ code: "NOT_FOUND" });
-  await db.update(userProfiles).set({ role: "staff" }).where(eq(userProfiles.userId, actors[4]!.id));
-  await expect(service.editResourceBooking(db, { ...actors[4]!, role: "staff" }, managerEdit, correlation)).rejects.toMatchObject({ code: "NOT_FOUND" });
-  await db.update(userProfiles).set({ role: "property_custodian" }).where(eq(userProfiles.userId, actors[4]!.id));
-  expect(await service.editResourceBooking(db, actors[4]!, managerEdit, correlation)).toEqual(receipt);
-  const retryChangedResource = { ...managerEdit, resourceId: equipment };
-  await expect(service.editResourceBooking(db, actors[4]!, retryChangedResource, correlation)).rejects.toMatchObject({ code: "CONFLICT" });
-  await service.createResourceBooking(db, actors[2]!, { ...original, resourceId: equipment, startDate: day(54), endDate: day(54), operationId: crypto.randomUUID() }, correlation);
-  const conflict = { ...managerEdit, operationId: crypto.randomUUID(), expectedVersion: 4, resourceId: equipment, startDate: day(54), endDate: day(54) };
-  await expect(service.editResourceBooking(db, actors[1]!, conflict, correlation)).rejects.toMatchObject({ code: "CONFLICT" });
-  const auditFail = { ...conflict, operationId: crypto.randomUUID(), startDate: day(55), endDate: day(55) };
-  await expect(service.editResourceBooking(db, actors[0]!, auditFail, undefined as unknown as string)).rejects.toThrow();
-  expect(await db.select().from(schedulingEditReplays).where(eq(schedulingEditReplays.operationId, auditFail.operationId))).toHaveLength(0);
-  expect((await db.select().from(resourceBookings).where(eq(resourceBookings.id, saved.id)))[0]).toMatchObject({ resourceId: b, startDate: day(52), version: 4, purpose: "Manager correction" });
-  const first = await service.createResourceBooking(db, actors[1]!, { ...original, resourceId: a, startDate: day(56), endDate: day(56), operationId: crypto.randomUUID() }, correlation);
-  const second = await service.createResourceBooking(db, actors[2]!, { ...original, resourceId: b, startDate: day(56), endDate: day(56), operationId: crypto.randomUUID() }, correlation);
-  const competing = { startDate: day(57), endDate: day(57), resourceId: equipment, purpose: "Competing request", expectedVersion: 0, changeReason: "Same unit" };
-  const outcomes = await Promise.allSettled([service.editResourceBooking(db, actors[1]!, { ...competing, id: first.id, operationId: crypto.randomUUID() }, correlation), service.editResourceBooking(db, actors[2]!, { ...competing, id: second.id, operationId: crypto.randomUUID() }, correlation)]);
-  expect(outcomes.filter((o) => o.status === "fulfilled")).toHaveLength(1);
-  const rows = await db.select().from(resourceBookings).where(inArray(resourceBookings.id, [first.id, second.id]));
-  expect(rows.filter((r) => r.resourceId === equipment && r.startDate === day(57))).toHaveLength(1);
-  expect(rows.filter((r) => r.startDate === day(56))).toHaveLength(1);
+test("public resource links accept students without accounts, reject hidden choices and serialize single use", async () => {
+  const facility = await resource(), hidden = await resource(false), issued = await link("resource");
+  const [before] = await db.select({ value: count() }).from(user);
+  const payload = { ...publicRequest(issued.token, 40), resourceId: hidden, beneficiaryName: "Fictional student", beneficiaryCategory: "student" as const };
+  await expect(invite.submitSchedulingInvitation(db, payload, correlation)).rejects.toMatchObject({ code: "NOT_FOUND" });
+  const receipt = await invite.submitSchedulingInvitation(db, { ...payload, resourceId: facility }, correlation);
+  expect(receipt.status).toBe("submitted");
+  expect((await db.select().from(resourceBookings).where(eq(resourceBookings.invitationId, issued.id)))[0]).toMatchObject({ personName: payload.beneficiaryName, beneficiaryCategory: "student", requesterId: null, status: "pending" });
+  expect((await db.select({ value: count() }).from(user))[0]!.value).toBe(before!.value);
+  await expect(service.createResourceBooking(db, admin(), reservation(facility, 40), correlation)).rejects.toMatchObject({ code: "CONFLICT" });
+  expect(JSON.stringify(await service.resourceAvailability(db, null, { resourceId: facility, startDate: day(40), endDate: day(40) }))).not.toContain(payload.beneficiaryName);
+  const another = await link("resource");
+  const results = await Promise.allSettled([41, 42].map(offset => invite.submitSchedulingInvitation(db, { ...payload, resourceId: facility, token: another.token, startDate: day(offset), endDate: day(offset), operationId: crypto.randomUUID() }, correlation)));
+  expect(results.filter(result => result.status === "fulfilled")).toHaveLength(1);
+  expect(await db.select().from(resourceBookings).where(eq(resourceBookings.invitationId, another.id))).toHaveLength(1);
+  await expect(invite.createSchedulingInvitation(db, staff(), { kind: "resource", expiresInHours: 1 }, correlation)).rejects.toMatchObject({ code: "FORBIDDEN" });
 });
-
-test("concurrent leave edits and edit-versus-approval serialize on expected versions", async () => {
-  await policy();
-  const first = await service.createLeaveBooking(db, actors[1]!, request(70), correlation);
-  const second = await service.createLeaveBooking(db, actors[2]!, request(71), correlation);
-  const move = { startDate: day(72), endDate: day(72), reason: "Move to one slot", expectedVersion: 0, changeReason: "New date" };
-  const outcomes = await Promise.allSettled([service.editLeaveBooking(db, actors[1]!, { ...move, id: first.id, operationId: crypto.randomUUID() }, correlation), service.editLeaveBooking(db, actors[2]!, { ...move, id: second.id, operationId: crypto.randomUUID() }, correlation)]);
-  expect(outcomes.filter((o) => o.status === "fulfilled")).toHaveLength(1);
-  const rows = await db.select().from(leaveBookings).where(inArray(leaveBookings.id, [first.id, second.id]));
-  expect(rows.filter((r) => r.startDate === day(72))).toHaveLength(1);
-  expect(rows.filter((r) => r.startDate === day(70) || r.startDate === day(71))).toHaveLength(1);
-  const raced = await service.createLeaveBooking(db, actors[1]!, request(74), correlation);
-  const result = await Promise.allSettled([service.editLeaveBooking(db, actors[1]!, { ...move, id: raced.id, startDate: day(75), endDate: day(75), operationId: crypto.randomUUID() }, correlation), service.decideBooking(db, actors[0]!, { kind: "leave", id: raced.id, expectedVersion: 0, status: "approved", note: "Concurrent decision" }, correlation)]);
-  expect(result.filter((o) => o.status === "fulfilled")).toHaveLength(1);
-  const [row] = await db.select().from(leaveBookings).where(eq(leaveBookings.id, raced.id));
-  expect(row!.version).toBe(1);
-  expect(row!.status === "approved" ? row!.startDate === day(74) : row!.startDate === day(75)).toBe(true);
+test("expiry, revocation, issuer permission and person changes invalidate links and replays", async () => {
+  const expired = await link("leave", jhs);
+  await db.update(schedulingInvitations).set({ createdAt: new Date(Date.now() - 7200000), expiresAt: new Date(Date.now() - 3600000) }).where(eq(schedulingInvitations.id, expired.id));
+  await expect(invite.previewSchedulingInvitation(db, expired.token)).rejects.toMatchObject({ code: "NOT_FOUND" });
+  await expect(invite.submitSchedulingInvitation(db, publicRequest(expired.token, 50), correlation)).rejects.toMatchObject({ code: "NOT_FOUND" });
+  const revoked = await link("leave", jhs);
+  await invite.revokeSchedulingInvitation(db, admin(), { id: revoked.id, expectedVersion: 0 }, correlation);
+  await expect(invite.previewSchedulingInvitation(db, revoked.token)).rejects.toMatchObject({ code: "NOT_FOUND" });
+  const bound = await person("jhs"), changed = await link("leave", bound);
+  const entry = (await db.select().from(schedulingPeople).where(eq(schedulingPeople.id, bound)))[0]!;
+  await people.saveSchedulingPerson(db, admin(), { ...entry, name: "Fictional corrected teacher", category: "jhs", expectedVersion: 0 }, correlation);
+  await expect(invite.previewSchedulingInvitation(db, changed.token)).rejects.toMatchObject({ code: "NOT_FOUND" });
+  const issuer = actors[6]!, issued = await link("leave", jhs, issuer);
+  await db.update(userProfiles).set({ active: false }).where(eq(userProfiles.userId, issuer.id));
+  await expect(invite.submitSchedulingInvitation(db, publicRequest(issued.token, 50), correlation)).rejects.toMatchObject({ code: "NOT_FOUND" });
+  await db.update(userProfiles).set({ active: true, role: "staff" }).where(eq(userProfiles.userId, issuer.id));
+  await expect(invite.previewSchedulingInvitation(db, issued.token)).rejects.toMatchObject({ code: "NOT_FOUND" });
+  await db.update(userProfiles).set({ role: "admin" }).where(eq(userProfiles.userId, issuer.id));
+  const payload = publicRequest(issued.token, 50); await invite.submitSchedulingInvitation(db, payload, correlation);
+  await invite.revokeSchedulingInvitation(db, admin(), { id: issued.id, expectedVersion: 1 }, correlation);
+  await expect(invite.submitSchedulingInvitation(db, payload, correlation)).rejects.toMatchObject({ code: "NOT_FOUND" });
+  expect((await db.select().from(leaveBookings).where(eq(leaveBookings.invitationId, issued.id)))[0]!.status).toBe("pending");
+});
+test("audit failure rolls back public link consumption, capacity and booking writes", async () => {
+  const issued = await link("leave", shs), payload = publicRequest(issued.token, 55);
+  const name = `delegation_audit_${suffix}`;
+  await db.execute(sql.raw(`CREATE FUNCTION ${name}() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.correlation_id = '${correlation}' THEN RAISE EXCEPTION 'fixture audit failure'; END IF; RETURN NEW; END $$`));
+  await db.execute(sql.raw(`CREATE TRIGGER ${name} BEFORE INSERT ON audit_logs FOR EACH ROW EXECUTE FUNCTION ${name}()`));
+  try {
+    await expect(invite.submitSchedulingInvitation(db, payload, correlation)).rejects.toThrow();
+    expect(await db.select().from(leaveBookings).where(eq(leaveBookings.invitationId, issued.id))).toHaveLength(0);
+    expect((await db.select().from(schedulingInvitations).where(eq(schedulingInvitations.id, issued.id)))[0]!.usedAt).toBeNull();
+    await expect(service.createLeaveBooking(db, staff(), request(jhs, 56), correlation)).rejects.toThrow();
+    expect(await db.select().from(leaveBookings).where(eq(leaveBookings.startDate, day(56)))).toHaveLength(0);
+  } finally { await db.execute(sql.raw(`DROP TRIGGER ${name} ON audit_logs`)); await db.execute(sql.raw(`DROP FUNCTION ${name}()`)); }
+  expect((await invite.submitSchedulingInvitation(db, payload, correlation)).status).toBe("submitted");
+});
+test("edits revalidate ranges, reset approval and retain original creation and durable edit replays", async () => {
+  await config({ publicLeave: true });
+  const payload = request(jhs, 60), saved = await service.createLeaveBooking(db, staff(), payload, correlation);
+  await service.decideBooking(db, admin(), { kind: "leave", id: saved.id, expectedVersion: 0, status: "approved", note: "Original approval" }, correlation);
+  const edit = { id: saved.id, expectedVersion: 1, startDate: day(61), endDate: day(62), reason: "Changed private reason", changeReason: "Update teacher dates", operationId: crypto.randomUUID() };
+  const updated = await service.editLeaveBooking(db, staff(), edit, correlation);
+  expect(updated.version).toBe(2);
+  const [row] = await db.select().from(leaveBookings).where(eq(leaveBookings.id, saved.id));
+  expect(row).toMatchObject({ status: "pending", decidedBy: null, decisionNote: null });
+  expect((await service.leaveAvailability(db, null, { startDate: day(60), endDate: day(62) })).approved).toHaveLength(0);
+  expect(await service.createLeaveBooking(db, staff(), payload, correlation)).toEqual(saved);
+  await service.decideBooking(db, admin(), { kind: "leave", id: saved.id, expectedVersion: 2, status: "approved", note: "Reapproved" }, correlation);
+  expect(await service.editLeaveBooking(db, staff(), edit, correlation)).toEqual(updated);
+  await expect(service.editLeaveBooking(db, other(), { ...edit, expectedVersion: 3, operationId: crypto.randomUUID(), reason: "Another person's edit" }, correlation)).rejects.toMatchObject({ code: "NOT_FOUND" });
+  await expect(service.editLeaveBooking(db, staff(), { ...edit, operationId: crypto.randomUUID() }, correlation)).rejects.toMatchObject({ code: "CONFLICT" });
+  const first = await resource(), second = await resource();
+  const booking = await service.createResourceBooking(db, admin(), reservation(first, 65), correlation);
+  await service.createResourceBooking(db, admin(), reservation(second, 66), correlation);
+  const move = { ...reservation(second, 66), id: booking.id, expectedVersion: 0, changeReason: "Try occupied resource" };
+  await expect(service.editResourceBooking(db, admin(), move, correlation)).rejects.toMatchObject({ code: "CONFLICT" });
+  expect((await db.select().from(resourceBookings).where(eq(resourceBookings.id, booking.id)))[0]!.resourceId).toBe(first);
+  const changed = await service.editResourceBooking(db, admin(), { ...move, startDate: day(67), endDate: day(67) }, correlation);
+  expect(changed.version).toBe(1);
+  await expect(service.editResourceBooking(db, actors[3]!, { ...move, startDate: day(68), endDate: day(68) }, correlation)).rejects.toMatchObject({ code: "FORBIDDEN" });
+});
+test("concurrent edits/decisions and link revocation have one consistent outcome", async () => {
+  await config();
+  const saved = await service.createLeaveBooking(db, staff(), request(shs, 70), correlation);
+  const outcomes = await Promise.allSettled([
+    service.editLeaveBooking(db, staff(), { id: saved.id, expectedVersion: 0, ...request(undefined, 71), changeReason: "Move date" }, correlation),
+    service.decideBooking(db, admin(), { kind: "leave", id: saved.id, expectedVersion: 0, status: "approved", note: "Concurrent approval" }, correlation),
+  ]);
+  expect(outcomes.filter(result => result.status === "fulfilled")).toHaveLength(1);
+  expect((await db.select().from(leaveBookings).where(eq(leaveBookings.id, saved.id)))[0]!.version).toBe(1);
+  const issued = await link("leave", jhs);
+  await Promise.allSettled([invite.submitSchedulingInvitation(db, publicRequest(issued.token, 73), correlation), invite.revokeSchedulingInvitation(db, admin(), { id: issued.id, expectedVersion: 0 }, correlation)]);
+  const [state] = await db.select().from(schedulingInvitations).where(eq(schedulingInvitations.id, issued.id));
+  const bookings = await db.select().from(leaveBookings).where(eq(leaveBookings.invitationId, issued.id));
+  expect(bookings.length).toBe(state!.usedAt ? 1 : 0);
+  expect(!!state!.revokedAt || !!state!.usedAt).toBe(true);
+});
+test("database guards and conservative unclassified teacher capacity survive bypass attempts", async () => {
+  await config();
+  const [legacy] = await db.insert(schedulingPeople).values({ code: `LEGACY-${suffix}`.toUpperCase(), name: "Fictional unclassified teacher", category: "teacher" }).returning(); personIds.push(legacy!.id);
+  await db.insert(leaveBookings).values({ requesterId: admin().id, personId: legacy!.id, personName: legacy!.name, category: "teacher", startDate: day(80), endDate: day(80), reason: "Legacy hold", operationId: crypto.randomUUID(), fingerprint: "a".repeat(64) });
+  await expect(service.createLeaveBooking(db, staff(), request(shs, 80), correlation)).rejects.toMatchObject({ code: "CONFLICT" });
+  await expect(service.createLeaveBooking(db, staff(), request(jhs, 80), correlation)).rejects.toMatchObject({ code: "CONFLICT" });
+  await expect(db.insert(leaveBookings).values({ requesterId: other().id, personId: legacy!.id, personName: legacy!.name, category: "teacher", startDate: day(80), endDate: day(80), reason: "Duplicate person with different filer", operationId: crypto.randomUUID(), fingerprint: "b".repeat(64) }).execute()).rejects.toMatchObject({ cause: { code: "23P01", constraint: "leave_booking_person_no_overlap" } });
+  await expect(db.delete(schedulingPeople).where(eq(schedulingPeople.id, legacy!.id)).execute()).rejects.toMatchObject({ cause: { constraint: "leave_bookings_person_id_scheduling_people_id_fkey" } });
+  await expect(db.insert(schedulingPeople).values({ code: "BAD-LINK", name: "Fictional teacher", category: "shs", userId: actors[5]!.id }).execute()).rejects.toMatchObject({ cause: { constraint: "scheduling_teacher_no_account" } });
+  await expect(db.insert(leaveBookings).values({ personId: shs, personName: "No origin", category: "shs", startDate: day(81), endDate: day(81), reason: "Invalid origin", operationId: crypto.randomUUID(), fingerprint: "c".repeat(64) }).execute()).rejects.toMatchObject({ cause: { constraint: "leave_booking_origin" } });
 });

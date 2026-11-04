@@ -15,7 +15,7 @@ The Meocan Archive & Template Management System (MATMS) is an authenticated web 
 5. Generate Appendix 58 Stock Card, Annex A.8 RPCSP and Appendix 73 RPCPPE with the supplied workbooks' layout, design, fields and structure.
 6. Protect restricted records and apply role/scope rules to counts, search, imports, reports, exports and print paths.
 7. Support consistent shadcn/ui desktop administration and accessible mobile lookup/count entry.
-8. Plan teacher/personnel leave and equipment/facility dates with authorized approvals and separate public calendars.
+8. Let Admin/personnel file leave for SHS/JHS teachers without accounts and other personnel; support Admin-managed resource bookings, expiring public request links and separate public calendars.
 
 ## Users and core workflows
 
