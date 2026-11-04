@@ -58,6 +58,10 @@ Use PRD §10 routes. Printed-form stock is reachable from Templates at `/templat
 
 ## Accessibility and verification
 
+Future active scheduling request cards include an inline Edit request form with uniquely associated date/reason/purpose/resource labels, a required change reason and explicit review/confirm controls. Edits disclose approval reset and public unpublication; failed saves preserve input and original booking state. Creation and edit pickers have distinct IDs/URL filter keys, so multiple forms remain accessible. Protected audit history retains before/after values; removal uses cancellation/retirement.
+
+Scheduling adds Leave/Bookings operations, Admin Leave setup, and resource management linked from Property Inventory. Separate public calendars use the shared light theme with month navigation, textual availability states, accessible request links, and a single-column day list on narrow screens. Public equipment/facility views omit private reservation data; the separate opt-in leave calendar displays only approved names/categories/dates. Request forms explain inclusive dates, pending capacity holds and publication. Decision notes and a date review precede approval/rejection/cancellation; errors retain input and creation retains its operation ID for retries.
+
 Target WCAG 2.2 AA for key workflows. Verify keyboard operation, visible focus, descriptive labels, text contrast, form-error associations, dialog focus trapping/return, and non-color status cues. Notifications must not be the only place to find errors. Test responsive layouts on the school's desktop and mobile browsers. Camera denial or incompatibility must leave manual lookup usable.
 
 ## Property Inventory workflows and official forms

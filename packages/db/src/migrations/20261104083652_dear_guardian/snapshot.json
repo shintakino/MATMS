@@ -1,0 +1,325 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "9aa47509-0a8a-45a0-a736-3ab63cd98122",
+  "prevIds": [
+    "80045f7a-8513-4a7d-877b-e2f0c1fc1f80"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "scheduling_edit_replays"
+      ],
+      "writes": [
+        "s|tbl|public.scheduling_edit_replays",
+        "n|tbl|public.scheduling_edit_replays",
+        "e|tbl|public.scheduling_edit_replays",
+        "n|rel|public.scheduling_edit_replays",
+        "n|type|public.scheduling_edit_replays",
+        "n|rel|public.scheduling_edit_replays_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "scheduling_edit_replays"
+      ],
+      "writes": [
+        "s|fk|public.scheduling_edit_replays.scheduling_edit_replays_actor_id_user_id_fkey",
+        "n|fk|public.scheduling_edit_replays.scheduling_edit_replays_actor_id_user_id_fkey",
+        "e|fk|public.scheduling_edit_replays.scheduling_edit_replays_actor_id_user_id_fkey",
+        "n|con|public.scheduling_edit_replays.scheduling_edit_replays_actor_id_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.scheduling_edit_replays",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.scheduling_edit_replays.actor_id",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "scheduling_edit_replays"
+      ],
+      "writes": [
+        "s|fk|public.scheduling_edit_replays.scheduling_edit_replays_leave_id_leave_bookings_id_fkey",
+        "n|fk|public.scheduling_edit_replays.scheduling_edit_replays_leave_id_leave_bookings_id_fkey",
+        "e|fk|public.scheduling_edit_replays.scheduling_edit_replays_leave_id_leave_bookings_id_fkey",
+        "n|con|public.scheduling_edit_replays.scheduling_edit_replays_leave_id_leave_bookings_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.scheduling_edit_replays",
+        "n|sch|public",
+        "n|tbl|public.leave_bookings",
+        "n|sch|public",
+        "n|col|public.scheduling_edit_replays.leave_id",
+        "n|col|public.leave_bookings.id",
+        "e|uniqueness|public.leave_bookings.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "scheduling_edit_replays"
+      ],
+      "writes": [
+        "s|fk|public.scheduling_edit_replays.scheduling_edit_replays_39l5Qkn8xw9R_fkey",
+        "n|fk|public.scheduling_edit_replays.scheduling_edit_replays_39l5Qkn8xw9R_fkey",
+        "e|fk|public.scheduling_edit_replays.scheduling_edit_replays_39l5Qkn8xw9R_fkey",
+        "n|con|public.scheduling_edit_replays.scheduling_edit_replays_39l5Qkn8xw9R_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.scheduling_edit_replays",
+        "n|sch|public",
+        "n|tbl|public.resource_bookings",
+        "n|sch|public",
+        "n|col|public.scheduling_edit_replays.reservation_id",
+        "n|col|public.resource_bookings.id",
+        "e|uniqueness|public.resource_bookings.id"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "scheduling_edit_replays",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_edit_replays",
+        "name": "operation_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_edit_replays",
+        "name": "actor_id",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_edit_replays",
+        "name": "leave_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_edit_replays",
+        "name": "reservation_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_edit_replays",
+        "name": "fingerprint",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_edit_replays",
+        "name": "resulting_version",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_edit_replays",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_edit_replays",
+        "name": "scheduling_edit_replays_actor_id_user_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "actor_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "user",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_edit_replays",
+        "name": "scheduling_edit_replays_leave_id_leave_bookings_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "leave_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "leave_bookings",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_edit_replays",
+        "name": "scheduling_edit_replays_39l5Qkn8xw9R_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "reservation_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "resource_bookings",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_edit_replays",
+        "name": "scheduling_edit_replays_pkey",
+        "columns": [
+          "operation_id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_edit_replays",
+        "name": "scheduling_edit_one_target",
+        "value": "num_nonnulls(\"leave_id\", \"reservation_id\") = 1",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_edit_replays",
+        "name": "scheduling_edit_version",
+        "value": "\"resulting_version\" > 0",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "scheduling_edit_replays",
+        "name": "scheduling_edit_hash",
+        "value": "\"fingerprint\" ~ '^[0-9a-f]{64}$'",
+        "entityType": "checks"
+      }
+    }
+  ]
+}

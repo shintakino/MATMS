@@ -6,10 +6,12 @@ import { Label } from "@matms/ui/components/label";
 import type { Route } from "next";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { authClient } from "@/lib/auth-client";
 
 export function LoginForm({ returnTo }: { returnTo: string }) {
+  const queryClient = useQueryClient();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -29,6 +31,8 @@ export function LoginForm({ returnTo }: { returnTo: string }) {
         return;
       }
 
+      await queryClient.cancelQueries();
+      queryClient.clear();
       router.replace(returnTo as Route);
       router.refresh();
     } catch {

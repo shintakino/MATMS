@@ -46,6 +46,8 @@ import {
   ChevronDownIcon,
   BoxIcon,
   ClipboardListIcon,
+  CalendarDaysIcon,
+  Building2Icon,
   FileTextIcon,
   LayoutDashboardIcon,
   SettingsIcon,
@@ -54,7 +56,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import type { Route } from "next";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import type * as React from "react";
 
@@ -72,6 +75,8 @@ type NavigationItem = {
 };
 
 const primaryNavigation: NavigationItem[] = [
+  { label: "Leave", icon: CalendarDaysIcon, roles: ["admin", "property_custodian", "staff", "viewer"], href: "/leave" },
+  { label: "Bookings", icon: Building2Icon, roles: ["admin", "property_custodian", "staff", "viewer"], href: "/bookings" },
   { label: "Dashboard", icon: LayoutDashboardIcon, roles: ["admin", "property_custodian", "staff", "viewer"], href: "/dashboard", current: true },
   { label: "Boxes", icon: BoxIcon, roles: ["admin", "property_custodian", "staff", "viewer"], href: "/boxes" },
   { label: "Documents", icon: FileTextIcon, roles: ["admin", "property_custodian", "staff", "viewer"], href: "/documents" },
@@ -86,6 +91,7 @@ const primaryNavigation: NavigationItem[] = [
 ];
 
 const adminNavigation: NavigationItem[] = [
+  { label: "Leave setup", icon: CalendarDaysIcon, roles: ["admin"], href: "/admin/scheduling" },
   { label: "Users", icon: UsersIcon, roles: ["admin"], href: "/admin/users" },
   { label: "Archive setup", icon: ArchiveIcon, roles: ["admin"], href: "/admin/archive" },
   { label: "Access", icon: ShieldCheckIcon, roles: ["admin"], href: "/admin/access" },
@@ -138,6 +144,7 @@ export function AppShell({
   role?: NavigationRole;
   userName?: string;
 }) {
+  const queryClient = useQueryClient();
   const router = useRouter();
   const pathname = usePathname();
   const currentLabel = [...primaryNavigation, ...adminNavigation].find((item) => pathname === item.href || !!(item.href && pathname.startsWith(`${item.href}/`)))?.label ?? "Workspace";
@@ -164,7 +171,9 @@ export function AppShell({
 
   async function signOut() {
     await authClient.signOut();
-    router.replace("/login");
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    router.replace(`/login?returnTo=${encodeURIComponent(pathname)}` as Route);
     router.refresh();
   }
 
@@ -183,7 +192,7 @@ export function AppShell({
         <SidebarContent>
           <NavigationGroup items={primaryNavigation.filter((item) => ["Dashboard", "Search"].includes(item.label))} label="Overview" role={role} />
           <NavigationGroup items={primaryNavigation.filter((item) => ["Boxes", "Documents", "Templates", "Property inventory"].includes(item.label))} label="Records & inventory" role={role} />
-          <NavigationGroup items={primaryNavigation.filter((item) => ["Requests", "Loans", "Reports", "Scan box", "Print labels"].includes(item.label))} label="Operations" role={role} />
+          <NavigationGroup items={primaryNavigation.filter((item) => ["Leave", "Bookings", "Requests", "Loans", "Reports", "Scan box", "Print labels"].includes(item.label))} label="Operations" role={role} />
           <NavigationGroup items={adminNavigation} label="Administration" role={role} />
         </SidebarContent>
         <SidebarFooter>

@@ -16,7 +16,7 @@
     "db:studio": "turbo run db:studio -F @matms/db --",
     "db:generate": "turbo run db:generate -F @matms/db --",
     "db:migrate": "turbo run db:migrate -F @matms/db --",
-    "test": "pnpm run test:db && pnpm run test:auth && pnpm run test:archive && pnpm run test:inventory && pnpm run test:custodial && pnpm run test:custody && pnpm run test:reporting && pnpm run test:qr",
+    "test": "pnpm run test:db && pnpm run test:auth && pnpm run test:archive && pnpm run test:inventory && pnpm run test:custodial && pnpm run test:custody && pnpm run test:reporting && pnpm run test:qr && pnpm run test:scheduling",
     "test:db": "bun test --timeout 30000 packages/db/src/audit.integration.test.ts",
     "test:auth": "bun test --timeout 30000 packages/auth/src/provisioning.integration.test.ts apps/server/src/session-context.integration.test.ts",
     "test:archive": "bun test --timeout 30000 packages/api/src/archive-service.integration.test.ts",
@@ -39,7 +39,8 @@
     "auth:generate": "cd apps/server && pnpm run auth:generate",
     "auth:bootstrap-admin": "pnpm --filter @matms/auth bootstrap-admin",
     "seed:dev": "bun run packages/api/src/seed-development.ts",
-    "test:browser": "playwright test"
+    "test:browser": "playwright test",
+    "test:scheduling": "bun test --timeout 30000 packages/api/src/scheduling-service.integration.test.ts"
   },
   "engines": {
     "node": "22.22.2",

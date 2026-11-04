@@ -6,7 +6,7 @@ This guide walks through the current MATMS web interface using fictional example
 
 Open the address supplied by your school or operator and sign in using your provisioned account. For a local development setup, follow the [README](../README.md#development-foundation); the usual web address is `http://localhost:3001`. Contact an Administrator if you need an account or password reset. Use fictional records while evaluating the local preview.
 
-The sidebar includes Dashboard, Boxes, Documents, Search, Scan box, Print labels, Templates, Property inventory, Requests, Loans, and Reports as allowed by your role. Administrators also see Users, Archive setup, Access, Audit, and Settings. Inventory is reachable from Templates.
+The sidebar includes Dashboard, Boxes, Documents, Search, Scan box, Print labels, Templates, Property inventory, Leave, Bookings, Requests, Loans, and Reports as allowed by your role. Administrators also see Users, Archive setup, Access, Audit, Settings and Leave setup. Inventory is reachable from Templates.
 
 | Role | Typical capabilities |
 | --- | --- |
@@ -16,6 +16,42 @@ The sidebar includes Dashboard, Boxes, Documents, Search, Scan box, Print labels
 | Viewer | Read and search permitted records and scan boxes; no business writes, label printing, or CSV export. |
 
 A restricted box, folder, or document may require its own grant. A grant to a child does not bypass a restricted parent. Only Administrators can manage grants. Classroom labels such as “Administrative Officer” do not themselves determine permissions: your MATMS account role does.
+
+## Leave requests and public leave calendar
+
+An Administrator first opens **Leave setup** (`/admin/scheduling`):
+
+1. Set **Teachers away per day** and **Personnel away per day** to the school’s agreed limits. Blank means unlimited; zero means no available slots for that category. These are scheduling limits, not leave entitlements or leave balances.
+2. Check **Open leave booking** and save. Under **Teachers & personnel**, find each existing account, select its employment category, check **Enrolled for leave** and save. Use Staff accounts for ordinary requesters; assigning employment does not turn a Viewer into a writer.
+3. Enable **Publish approved leave names & dates** only when ready to publish the leave calendar. This explicitly makes approved display names, employment categories and dates visible to anyone with the link. Reasons, contact details, decision notes and pending-request names remain private.
+4. To close a school date, use **Close or reopen a date**. Resolve existing active leave requests on that date first. Reopening makes it available subject to the current limits.
+
+To request leave, open **Leave** (`/leave`), select a start and inclusive end date, enter the private reason and select **Submit request**. For one day, use the same date twice. Requests can cover up to 366 days and must start today or later in Asia/Manila. A teacher/personnel enrollment must be active. A range is accepted only when every included date has capacity; overlapping requests by the same person are refused.
+
+Pending requests hold their dates against the daily limit. Under **My requests**, follow the saved status. Admin selects **All requests for approval**, enters a decision note, selects **Approve** or **Reject**, reviews the dates and confirms. Requesters can cancel their own active requests; Admin can also cancel them. Rejection/cancellation releases capacity, while the request history remains. Old completed dates are retained as history. Changing limits does not erase existing requests.
+
+Share `/leave-calendar` from your MATMS website to show the separate public leave calendar. Select a month to see available/full/closed dates for each employment category and approved leave names. The public calendar updates automatically; available slots can still change before a request is submitted. Clicking an available day opens the request form and requires sign-in. Publication starts disabled until Admin explicitly enables it.
+
+To edit leave, find a future Pending or Approved entry under **My requests** (Admin can also use **All requests for approval**) and select **Edit request**. Change the start/end dates and private reason, enter **Reason for this change**, then select **Review changes** and **Confirm update**. Current daily limits and closed dates are checked again, with your existing hold excluded. Saving returns the request to Pending and removes its approved public listing until Admin approves it again. An error keeps the original dates/approval and retains the editor inputs. The account must still be eligible and enrolled in the original employment category; if that category changed, cancel and submit a new request. Past, rejected and cancelled entries remain history. Use cancellation to remove active dates; it preserves the audit trail.
+
+## Equipment and facility reservations
+
+Property Inventory now links to **Equipment & facility bookings**, also available as **Bookings** (`/bookings`). A reservation holds dates; it does not post an issue, move inventory, reduce a stock balance or record physical release/return. Continue recording any required inventory transactions in Property Inventory.
+
+Admin or Property Custodian opens **Manage resources** (`/bookings/resources`):
+
+1. Add a uniquely named facility, such as `Fictional Training Hall`, or choose **Equipment** and link an active semi-expendable/PPE acquisition lot using its searchable lot picker. Supplies tracked as Stock Card lots are excluded.
+2. Register each distinct bookable unit separately. If one lot represents several units, give each resource an identifiable unit name. Confirm serviceability before making it available for scheduling.
+3. Add an optional public description. **Publish on resource calendar** is off by default; enable it for resources personnel should see publicly. Names and descriptions must be suitable for public display.
+4. Edit a resource to change its name, description or publication. Resolve ongoing/future active reservations before retiring it. A resource with history cannot be relinked to a different asset. Retire linked bookable equipment before making its inventory item/lot inactive.
+
+On **Bookings**, choose a resource, start date, inclusive end date and private purpose, then submit. Bookings cover whole days only. Any overlapping pending/approved reservation prevents another request for that unit, including a partial overlap in a longer range. A separate resource can be reserved on the same dates.
+
+Admin/Property Custodian selects **All requests for approval**, enters a note, reviews and confirms approval/rejection. Owners can cancel active requests; managers can cancel them too. Cancellation/rejection releases the dates immediately after the server confirms the change. Past completed bookings stay in history.
+
+Share `/availability` for the public equipment/facility calendar. It shows only active, explicitly published resources and their available/reserved dates. Requester names, purposes, internal inventory identifiers and valuations are excluded. The leave calendar is a separate page. Both links are available on the sign-in screen, work on mobile and offer ordinary keyboard-accessible request links.
+
+To update a future Pending or Approved reservation, select **Edit request** in its request card. You can change the dates, private purpose and selected resource. Enter a change reason, review the exact dates/resource and confirm. Owners or Admin/Property Custodian can do this. A successful update releases the old resource/dates and holds the new selection atomically, then requires approval again. If the replacement is unavailable, the original reservation remains saved. Past or terminal requests cannot be edited; cancellation and resource retirement preserve their history.
 
 ## Example 1: File a Grade 10 SF10 record
 

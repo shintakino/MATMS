@@ -3,6 +3,7 @@ import type { AuditTransaction, Database } from "@matms/db";
 import { custodialBalances, custodialClassificationPolicies, custodialCountAssignments, custodialCountLines, custodialCountOmissions, custodialCounts, custodialFormProfiles, custodialImportBatches, custodialImportRows, custodialItemCodes, custodialItems, custodialLots, custodialMasterReplays, custodialOperations, custodialPropertyExceptions, custodialReportExports, custodialSections, custodialTransactions } from "@matms/db/schema/custodial-inventory";
 import { userProfiles } from "@matms/db/schema/identity";
 import { user } from "@matms/db/schema/auth";
+import { bookableResources } from "@matms/db/schema/scheduling";
 import { and, desc, eq, inArray, isNotNull, isNull, lte, or, sql, type SQL } from "drizzle-orm";
 import { createHash } from "node:crypto";
 import { z } from "zod";
@@ -1208,6 +1209,8 @@ export async function updateCustodialItem(db: Database, actor: Actor, input: { i
       if (lot || balance) throw new CustodialError("CONFLICT", "The unit cannot change after a lot or balance is created.");
     }
     if (item.active && !values.active) {
+      const [bookable] = await tx.select({ id: bookableResources.id }).from(bookableResources).innerJoin(custodialLots, eq(custodialLots.id, bookableResources.lotId)).where(and(eq(custodialLots.itemId, item.id), eq(bookableResources.active, true))).limit(1);
+      if (bookable) throw new CustodialError("CONFLICT", "Retire linked bookable equipment before making this item inactive.");
       const [stock] = await tx.select({ id: custodialBalances.id }).from(custodialBalances).where(and(eq(custodialBalances.itemId, item.id), sql`${custodialBalances.quantity} > 0`)).limit(1);
       if (stock) throw new CustodialError("CONFLICT", "Move or account for all stock before making this item inactive.");
     }
@@ -1297,6 +1300,8 @@ export async function updateCustodialLot(db: Database, actor: Actor, input: { lo
       if (balance) throw new CustodialError("CONFLICT", "A lot with balances cannot change its fund cluster.");
     }
     if (lot.active && !values.active) {
+      const [bookable] = await tx.select({ id: bookableResources.id }).from(bookableResources).where(and(eq(bookableResources.lotId, lot.id), eq(bookableResources.active, true))).limit(1);
+      if (bookable) throw new CustodialError("CONFLICT", "Retire linked bookable equipment before making this lot inactive.");
       const [stock] = await tx.select({ id: custodialBalances.id }).from(custodialBalances).where(and(eq(custodialBalances.lotId, lot.id), sql`${custodialBalances.quantity} > 0`)).limit(1);
       if (stock) throw new CustodialError("CONFLICT", "Move or account for all stock before making this lot inactive.");
     }

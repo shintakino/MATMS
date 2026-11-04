@@ -28,6 +28,7 @@ app.use("*", async (c, next) => {
 
   c.set("correlationId", correlationId);
   c.header("x-correlation-id", correlationId);
+  if (new URL(c.req.url).pathname.startsWith("/rpc/scheduling/") || new URL(c.req.url).pathname.startsWith("/api-reference/scheduling/")) c.header("Cache-Control", "private, no-store");
 
   await next();
 

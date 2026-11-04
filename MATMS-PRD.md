@@ -46,6 +46,7 @@ The first release serves one school. It is an authenticated web application opti
 - Document requests, release, checkout, return, and physical relocation history.
 - Permission-filtered search, reports, CSV export, QR generation, and camera scanning.
 - Audit history, record retirement, backups, and Docker deployment.
+- User-requested extension: Admin-approved teacher/personnel leave, whole-day equipment/facility reservations and separate public availability/approved-leave calendars (FR-12).
 
 ### Later releases
 
@@ -160,6 +161,8 @@ Accounts are provisioned by an Admin; public registration is disabled. The first
 | Manage accounts, grants and settings | Yes | No | No | No |
 
 ### Confidentiality
+
+Scheduling extends the matrix independently of archive grants: Admin manages employment enrollment, leave policy, closed dates and all leave decisions; Admin/Property Custodian manages resources and resource decisions. Active Admin/Property Custodian/Staff accounts can request resources and can request leave when enrolled. Viewers remain read-only. Requesters see and cancel their own requests; manager registers are restricted by domain. Anonymous access is limited to published resource availability and the separately enabled approved-leave calendar. Per the explicit user decision, approved leave display names/categories/dates are public there; pending identities, reasons, purposes and contact details remain private.
 
 Use `internal` and `restricted` classifications. Restricted access requires an active explicit user grant to the box, folder, or document; Admin has schoolwide access. Effective restriction is inherited from every ancestor. A document grant cannot bypass a restricted parent; access must satisfy all restricted ancestors. A parent grant covers its descendants unless a descendant is independently restricted.
 
@@ -363,6 +366,12 @@ This module is the operational system of record for the school Property Custodia
 | Appendix 58 Stock Card | Entity/fund/item metadata; Date, Reference, Receipt, Issue, Office, Balance, and Days to Consume; portrait merged-header layout | Transactional ledger, nonnegative balance, reorder status, back-date recalculation, per-item history, source-faithful XLSX/print |
 | RPCSP 2025 workbook | Annex A.8 header; A:J fields; grouped semi-expendable sections; totals; Property Custodian, committee, and School Head blocks; landscape layout | Item/lot register, draft counts, computed signed variance/value, condition review, immutable finalization, all supplied sections, controlled import and export |
 | RPCPPE 2025 workbook | Appendix 73 header; A:L fields including supplier and year acquired; Land, School Buildings, and Other Structures; totals, notes, and signatories; landscape layout | PPE classification, acquisition metadata, count snapshots, computed signed variance/value, threshold profile, immutable finalization, controlled import and export |
+
+### FR-12 — Leave and resource booking extension (2026-11-04)
+
+Request CRUD includes audited edits to future pending/approved leave and reservations by owners or the relevant manager. Recheck the complete new range and current eligibility, atomically replace holds, and require approval again. Edits preserve original creation intent and have durable replay/expected-version protection. Removal uses cancellation/retirement with history retained; past and terminal requests cannot be rewritten. See spec 14 for the update contract.
+
+The requested extension adds teacher/personnel leave requests for dates or inclusive date ranges, equipment/facility reservations, and a public availability calendar. See [spec 14](context/feature-specs/14-leave-and-resource-bookings.md) for the contract and pending school policy choices. Employment categories are separate from authorization roles. Requests and decisions are authenticated and audited; public responses contain only explicitly published resource availability and a separate opt-in calendar of approved leave names/dates. Reservations do not change stock, count snapshots or physical custody. Leave opens only after explicit Admin configuration; publication is opt-in. No leave entitlement, payroll, recurring booking or notification policy is inferred.
 
 ## 8. Data model and integrity
 
@@ -589,6 +598,9 @@ Logical configuration includes DATABASE_URL, Better Auth secret/base URL, truste
 | AC-34 | Committing an imported physical count creates a draft count session only. It does not alter inventory until an authorized user performs a separately audited adjustment or transaction. |
 | AC-35 | A Staff user without the Property Custodian capability cannot finalize counts, adjust custodial balances, import a workbook, or generate official inventory forms through either UI or direct API calls. |
 | AC-36 | Updating a form profile creates a new version; a previously finalized/exported session still regenerates byte-equivalent data and source-equivalent layout from its original version. |
+| AC-37 | Admin configures separate daily teacher/personnel limits and enrollment. A date/range leave request atomically holds every included day; simultaneous last-slot requests cannot exceed capacity. Only Admin approves/rejects leave; owner cancellation releases capacity and preserves history. |
+| AC-38 | Equipment units link eligible existing inventory lots; facilities are independent. Whole-day reservations cannot overlap for one resource, including concurrent requests. Retry, cancellation, audit rollback and retirement preserve history and stock/custody balances. |
+| AC-39 | Separate public equipment/facility and leave calendars show available/reserved/full dates. Only explicitly published resources and approved leave names/categories/dates appear; request/account IDs, pending identities, reasons, purposes, notes, contacts and inventory values are excluded. Authenticated request and approval, mobile and keyboard workflows are verified. |
 
 ## 14. Delivery plan and dependencies
 

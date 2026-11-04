@@ -1,0 +1,35 @@
+# Leave, resource reservations and public availability
+
+Status: implemented and verified locally; not pushed or deployed. Nine scheduling integration tests / 122 assertions, the full 59-test / 1,863-assertion regression suite, all six strict type checks, API and Next.js production builds, and the expanded production-build Chromium workflow passed. The latter includes editing and reapproval, four zero-violation WCAG A/AA scans, mobile planning, real sign-in continuation and account-switch cache isolation. User requested the original module and CRUD extension on 2026-11-04. This extends the PRD; it does not change archive custody or inventory accounting.
+
+PRD coverage: FR-12, AC-37–AC-39. Existing form/source acceptance remains separate.
+
+## Scope
+
+- Authenticated teachers/personnel request leave for one date or an inclusive date range. Employment category is assigned by Admin separately from authorization role. Private reasons are visible only to the requester and authorized leave approvers.
+- Bookable equipment units link to an existing active custodial acquisition lot (semi-expendable/PPE); facilities are independent resources. Reservations cover one whole date or an inclusive date range, as confirmed by the user. A reservation never posts stock or records a physical checkout.
+- Public `/availability` shows explicitly published resource labels and occupied dates. Separate public `/leave-calendar` shows approved leave dates and the teacher/personnel display name, as explicitly requested by the user. Admin enables public leave publication explicitly. Pending names, request/account IDs, reasons, purposes, contact details, internal notes, inventory values and internal lot identifiers are never public.
+- Pending requests hold capacity until approved, rejected or cancelled. Reservations on the same resource cannot overlap on any included date. Leave ranges are inclusive. Reject duplicate active leave for the same person.
+- Owner cancellations and authorized approval/rejection/cancellation commit with audit. History is retained. Creating requests uses a durable client operation ID and intent fingerprint; retries reauthorize and cannot duplicate requests.
+- Admin approves leave and configures school policy before leave opens: enabled state, teacher/personnel daily limits (null means unlimited), and whether approved leave names/dates are public. Admin approval with configurable daily limits was confirmed by the user. No default school quota, entitlement, leave balance or payroll behavior is invented. Admin/Property Custodian manage resources and reservations. Availability is a planning aid, not approval.
+- Resource publication is explicit and off by default. Resource retirement cannot strand pending/approved future bookings. Administrators can close dates to new leave. Existing accepted requests are retained when policy changes; configuration cannot silently invalidate them.
+
+## Confirmed workflow and configurable school values
+
+### Request update extension — 2026-11-04
+
+User requested completing CRUD after identifying missing request editing. Owners and domain managers (Admin for leave; Admin/Property Custodian for resources) can edit pending/approved requests whose original start date is today or later. Dates and private reason/purpose can change; reservations can select another active resource. Requester and original leave category remain fixed. Editing requires an active eligible requester and, for leave, active enrollment in the original category and an open leave policy. Current quotas/closures apply to the complete new range, excluding the request's own hold. Failed validation preserves the original request, approval and held dates.
+
+Successful changes atomically replace the held range, reset status to Pending and clear the current approval. Previously public approved leave disappears until approved again. Store full before/after private snapshots, actor and required change reason in the protected audit log. Keep original creation fingerprints unchanged and persist edit operation IDs/fingerprints/results separately so lost-response retries cannot duplicate edits or overwrite a subsequent decision. Reauthorize every replay. Expected versions reject stale edits/decisions; concurrent edits compete under the existing scheduling lock. Unchanged submissions are rejected without resetting approval. Past, rejected and cancelled requests cannot be edited or resurrected. Cancellation/retirement remains the history-preserving removal operation; permanent deletion remains outside the app.
+
+Verification covers self-exclusion, multi-day quota/closure conflicts, resource swaps, concurrency, stale writes, replay after later changes, revoked actors, audit rollback, public unpublication/reapproval, retained form input and browser edit/confirm/cancel flows.
+
+Confirmed: Admin approval, configurable daily limits separately for teachers/personnel, whole-day/date-range reservations, and a separate public leave calendar including approved teachers/personnel names. Actual daily quotas remain Admin-configured; leave and public leave publication start disabled.
+
+## Boundaries and verification
+
+- Hono/oRPC services own authorization, privacy projection, validation and concurrency. Next.js owns presentation. Public reads are bounded to 31 dates and one selected published resource; resource choices are paginated.
+- Serialize scheduling writes before checking overlaps/capacity. PostgreSQL `btree_gist` exclusion constraints additionally enforce live resource and same-person leave overlaps; the reviewed migration installs this standard PostgreSQL extension. Validate real calendar dates and ranges; retain dates as dates and audit instants in UTC. Creating/reactivating linked equipment share-locks its item/lot; source retirement locks the item/lot and refuses active bookable links, so retirement cannot race creation. Lock ordering must be consistent across configuration, requests and decisions.
+- Test concurrent last-slot claims, date boundaries, multiple-day partial conflicts, cancellation, stale decisions, idempotent/mismatched retries, role/owner isolation, public allowlists and audit rollback in an isolated PostgreSQL database.
+- Verify authenticated request/decision/setup and anonymous planning flows in Chromium, including keyboard/mobile/error/empty states and accessibility. Run strict types, migrations and production build. Update the user guide and progress tracker with actual evidence.
+- No email/SMS, recurring bookings, leave entitlement accounting, electronic signatures, external calendar integration, or physical equipment handover is included.

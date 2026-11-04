@@ -13,6 +13,7 @@
 - Default to Server Components; use client components for forms, interactive tables, scanner access, and other browser behavior.
 - Keep business logic and database access in the Hono/domain boundary. Server rendering must use authorized service calls.
 - Use the typed oRPC client and the scaffold's compatible cache integration. Invalidate affected lists, details, dashboards, and ledgers after mutations; do not establish a second uncoordinated cache.
+- Cancel and clear the browser query cache on successful sign-in and sign-out, so another account cannot inherit cached private records or permissions. Preserve safe in-progress selection across ordinary filtered-list loading without carrying data across identities.
 - Persist list filters in the URL. Use deterministic server sorting, default page size 25, maximum 100, and roughly 300 ms search debounce.
 
 ## UI and styling

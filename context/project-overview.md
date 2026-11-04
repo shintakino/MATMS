@@ -15,6 +15,7 @@ The Meocan Archive & Template Management System (MATMS) is an authenticated web 
 5. Generate Appendix 58 Stock Card, Annex A.8 RPCSP and Appendix 73 RPCPPE with the supplied workbooks' layout, design, fields and structure.
 6. Protect restricted records and apply role/scope rules to counts, search, imports, reports, exports and print paths.
 7. Support consistent shadcn/ui desktop administration and accessible mobile lookup/count entry.
+8. Plan teacher/personnel leave and equipment/facility dates with authorized approvals and separate public calendars.
 
 ## Users and core workflows
 
@@ -54,6 +55,8 @@ Upload one of the three supported form structures → detect every sheet/section
 - Shared shadcn/ui + Tailwind, light-first theme and accessible responsive workflows.
 
 ## Deferred scope
+
+The user-requested [leave and booking extension](feature-specs/14-leave-and-resource-bookings.md) adds date/range leave requests, equipment/facility scheduling and public availability. It is separate from inventory accounting and archive custody. Production leave limits, approval and public leave visibility require explicit configuration; entitlement/payroll calculations are outside scope.
 
 Google Drive API/OAuth and document automation; scanned uploads/OCR; electronic signatures; email/SMS reminders; procurement/purchase requests; multi-school support; offline sync; generic/custom spreadsheet import; XLSX exports beyond the three custodial form families; report designers; configurable multistep approvals; formal disposal execution; native mobile apps. Password-recovery email is distinct from reminders.
 

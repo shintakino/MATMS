@@ -11,6 +11,7 @@ import { physicalCountsRouter } from "./physical-counts";
 import { custodialInventoryRouter } from "./custodial-inventory";
 import { custodialImportsRouter } from "./custodial-imports";
 import { inventoryReportsRouter } from "./inventory-reports";
+import { schedulingRouter } from "./scheduling";
 
 export const appRouter = {
   healthCheck: publicProcedure.handler(() => {
@@ -32,6 +33,7 @@ export const appRouter = {
   custodialInventory: custodialInventoryRouter,
   inventoryImports: custodialImportsRouter,
   inventoryReports: inventoryReportsRouter,
+  scheduling: schedulingRouter,
 };
 export type AppRouter = typeof appRouter;
 export type AppRouterClient = RouterClient<typeof appRouter>;

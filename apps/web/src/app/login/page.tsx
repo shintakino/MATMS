@@ -21,6 +21,7 @@ export default async function LoginPage({
           <span className="flex size-12 items-center justify-center rounded-xl bg-accent text-primary"><ArchiveIcon aria-hidden="true" className="size-6" /></span>
           <div><p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-primary">Welcome to MATMS</p><h1 className="text-3xl font-semibold tracking-tight">Sign in to your workspace</h1><p className="mt-3 text-sm leading-relaxed text-muted-foreground">Use the account provided by your Administrator.</p></div>
           <LoginForm returnTo={safeReturnPath(returnTo)} />
+          <nav aria-label="Public calendars" className="flex flex-wrap gap-4 text-sm"><a className="text-primary underline underline-offset-4" href="/availability">Equipment & facilities</a><a className="text-primary underline underline-offset-4" href="/leave-calendar">Leave calendar</a></nav>
           <div className="flex gap-3 border-t pt-5 text-xs leading-relaxed text-muted-foreground"><ArrowRightIcon aria-hidden="true" className="mt-0.5 size-4 shrink-0" /><p>Need help accessing your account? Contact an Administrator for an assisted password reset.</p></div>
         </div>
       </section>
