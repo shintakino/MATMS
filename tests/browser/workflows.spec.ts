@@ -98,7 +98,7 @@ test("stock, custody, reporting, label preview and accessible core screens", asy
   await expect(page).toHaveURL(/\/boxes\/[0-9a-f-]+$/);
   const boxPath = new URL(page.url()).pathname;
   await page.context().clearCookies(); await page.goto(boxPath); await expect(page).toHaveURL(/\/login\?returnTo=/);
-  await page.getByLabel("Email address").fill(email!); await page.getByLabel("Password", { exact: true }).fill(password!); await page.getByRole("button", { name: "Sign in", exact: true }).click(); await expect(page).toHaveURL(new RegExp(`${boxPath}$`));
+  await signIn(page, email!, password!); await expect(page).toHaveURL(new RegExp(`${boxPath}$`));
   for (const route of ["/dashboard", "/boxes", "/documents", "/templates", "/inventory", "/requests", "/loans", "/reports", "/admin/archive", "/admin/settings", "/admin/users", "/admin/access", "/admin/audit"]) {
     await page.goto(route); await expect(page.locator("main").first()).toBeVisible();
     const scan = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze(); expect(scan.violations, `${route}: ${scan.violations.map((entry) => entry.id).join(", ")}`).toEqual([]);
