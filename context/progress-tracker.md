@@ -64,6 +64,8 @@ Implemented the workflow and release helper; six release invariant tests, action
 
 The authorized initial deployment is complete. The next release work is the outstanding specs 10–13 form/workflow acceptance, off-host backup/alert configuration and a school pilot with a populated-data recovery rehearsal. Deployment does not establish school approval of official forms.
 
+The second [Actions run](https://github.com/shintakino/MATMS/actions/runs/41773818974) passed nine browser tests; the two retries waited their server windows but submitted reset form fields (HTTP 400). The shared helper now refills credentials on each bounded retry and explicitly requires HTTP 200. Production remains unchanged because CI skipped image publication/deployment on both failed runs. All fixes retain the real authentication policy.
+
 ## Completed
 
 - Aligned PRD v1.3 documentation across product, architecture, UI, code/workflow standards, existing specs and root README; corrected the PRD spec-index link, documented the existing `/rpc/*` transport consistently and aligned request-role wording with its four-role matrix.
