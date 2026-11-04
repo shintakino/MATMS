@@ -1,6 +1,6 @@
 # Leave, resource reservations and public availability
 
-Status: revision `74a12df` is deployed through workflow 41858193663. The live sweep found low contrast in the public missing-link error state; a shared-alert correction and revoked/missing-link accessibility regressions passed strict types, the production build and the compiled teacher-link browser scenario. Follow-up release and complete live verification are in progress.
+Status: deployed and verified at https://matms.shintakino.qzz.io, revision `586c9dfb5e2352f51f87b58d06d6670b65cbe27e`, through [workflow 41920281088](https://github.com/shintakino/MATMS/actions/runs/41920281088). Strict types/integrations, all 14 hosted browser scenarios and all three image builds passed. Backup/migration, actual image identities, records/volumes/permanent Admin and the full 27-route live sweep passed; five live accessibility scans found zero violations. Public error-state contrast and midnight-safe fixture dates are corrected and covered. School directory, limits and publication remain Admin configuration.
 
 ## Current contract — on-behalf requests and expiring public links
 

@@ -1,23 +1,22 @@
 {
-  "revision": "74a12df00d8c96caa8b69b4a8b165cd1bfe1b42e",
+  "revision": "586c9dfb5e2352f51f87b58d06d6670b65cbe27e",
   "images": {
-    "web": "ghcr.io/shintakino/matms-web@sha256:7bd8d33c404a3f9a0919a33b4aa937aa809c831bc5a5998a9a8d90969bd46097",
-    "server": "ghcr.io/shintakino/matms-server@sha256:1748d58ea0cafe0f58f2bb5a38ef80bcc8d4387c65b873fd6fe5d5a6cbe20484",
-    "postgres": "ghcr.io/shintakino/matms-postgres@sha256:67da5dc9ce9af132d76bee950bef16fa9a8754ed8029d75a8241b6ea1a07f758"
+    "web": "ghcr.io/shintakino/matms-web@sha256:7dbbf10f4898db87c8bed3c72e1fec206d46bb5f641d569808070a0dcafa6a85",
+    "server": "ghcr.io/shintakino/matms-server@sha256:a5abb7d95e38e9770496a4e2b198557a3add5b7387cb583d5f37bfc3650453bb",
+    "postgres": "ghcr.io/shintakino/matms-postgres@sha256:a39637aa68025344bf3abe231188b90a7c2785161be4cb0a513fb72f32bca935"
   },
-  "web_build_id": "41858193663-1",
-  "deployment_id": "41858193663-1",
+  "web_build_id": "41920281088-1",
+  "deployment_id": "41920281088-1",
   "origin": "https://matms.shintakino.qzz.io",
   "service_uuid": "mt8rqzgbtpkbzedwicy03wnf",
   "status": "verified",
   "volumes_preserved": true,
   "web_and_api_revision_verified": true,
-  "workflow_run_id": "41858193663",
-  "workflow_url": "https://github.com/shintakino/MATMS/actions/runs/41858193663",
-  "github_main_only_environment": true,
+  "workflow_run_id": "41920281088",
+  "workflow_url": "https://github.com/shintakino/MATMS/actions/runs/41920281088",
   "required_jobs": [
     {
-      "name": "Build postgres image",
+      "name": "Types, integration and browser checks",
       "conclusion": "success"
     },
     {
@@ -29,17 +28,28 @@
       "conclusion": "success"
     },
     {
-      "name": "Deploy and verify production",
+      "name": "Build postgres image",
       "conclusion": "success"
     },
     {
-      "name": "Types, integration and browser checks",
+      "name": "Deploy and verify production",
       "conclusion": "success"
     }
   ],
   "administrator_preserved": true,
   "predeploy_backup_exit_code": 0,
   "migration_exit_code": 0,
-  "gateway_service_uuid": "bckcz3zbvmtxuv1ghvrvypn2",
-  "coolify_api_enabled_for_automation": true
+  "new_backup_checksum_verified": true,
+  "actual_container_images_verified": true,
+  "running_components_healthy": true,
+  "baseline_counts_preserved": true,
+  "immutable_history_hashes_preserved": true,
+  "runtime_privileges_verified": true,
+  "audit_update_delete_denied": true,
+  "scheduling_tables_verified": 10,
+  "beneficiary_overlap_verified": true,
+  "capability_constraints_verified": true,
+  "public_routes_verified": 27,
+  "live_wcag_scans_passed": 5,
+  "public_browser_errors": 0
 }

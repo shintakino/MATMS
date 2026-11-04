@@ -4,11 +4,11 @@ These units derive from [MATMS-PRD.md](../../MATMS-PRD.md) v1.3. Read `AGENTS.md
 
 ## Coverage and status
 
-**Active extension:** [14 — Leave and resource bookings](14-leave-and-resource-bookings.md), PRD FR-12. Baseline deployed; on-behalf directory/public-invitation revision implemented and verified locally, pending release. Workflow choices are confirmed; quotas, enrollment and publication require Admin configuration. Existing official-form acceptance gaps remain open.
+**Active extension:** [14 — Leave and resource bookings](14-leave-and-resource-bookings.md), PRD FR-12. On-behalf directory/public-invitation revision deployed and verified (`586c9df`). Workflow choices are confirmed; quotas, enrollment and publication require Admin configuration. Existing official-form acceptance gaps remain open.
 
 | Spec | Scope | PRD requirements | Acceptance coverage | State |
 | --- | --- | --- | --- | --- |
-| [14 — Leave and bookings](14-leave-and-resource-bookings.md) | SHS/JHS/personnel directory, delegated leave, Admin resources, expiring public links, request editing/reapproval, separate calendars | FR-12, §5 | AC-37–AC-41 | Baseline deployed; on-behalf/public-invitation revision verified locally, pending release |
+| [14 — Leave and bookings](14-leave-and-resource-bookings.md) | SHS/JHS/personnel directory, delegated leave, Admin resources, expiring public links, request editing/reapproval, separate calendars | FR-12, §5 | AC-37–AC-41 | Deployed and verified (`586c9df`) |
 | [00 — Foundation](00-project-foundation.md) | Existing workspace, service/db/audit foundation | §§3–4, 8–9, 12 | Foundation for all | Baseline implemented |
 | [01 — Design system](01-design-system.md) | Shared UI/shell; new inventory navigation/forms | §10, §11 accessibility | AC-21, AC-22 | Baseline implemented; extension in progress |
 | [02 — Identity/access](02-authentication-and-access.md) | Accounts/grants; Property Custodian and draft assignments | FR-01, §5 | AC-01, AC-02, AC-03, AC-18, AC-35 | Baseline implemented; extension in progress |

@@ -2,38 +2,49 @@
   "origin": "https://matms.shintakino.qzz.io",
   "https": true,
   "http_redirect_status": 308,
-  "http_redirect_preserves_query": true,
   "administrator_login": true,
   "permanent_password": true,
   "secure_cookie": true,
-  "protected_redirect": true,
+  "administrator_signout": true,
+  "protected_continuation": true,
   "unauthenticated_export_denied": true,
   "malformed_upload_rejected": true,
   "cross_origin_upload_denied": true,
-  "routes_checked": 26,
-  "property_accessibility_violations": 0,
-  "mobile_navigation": true,
-  "browser_errors": [],
-  "public_calendars": [
+  "routes_checked": 27,
+  "accessibility_scans": [
+    {
+      "route": "/property-inventory",
+      "violations": 0
+    },
+    {
+      "route": "/admin/scheduling",
+      "violations": 0
+    },
     {
       "route": "/availability",
-      "anonymous_access": true,
-      "accessibility_violations": 0
+      "violations": 0
     },
     {
       "route": "/leave-calendar",
-      "anonymous_access": true,
-      "accessibility_violations": 0
+      "violations": 0
+    },
+    {
+      "route": "/reservation",
+      "violations": 0
     }
   ],
-  "booking_date_continuation": true,
+  "mobile_navigation": true,
+  "public_request_mobile": true,
+  "browser_errors": [],
+  "public_calendars_verified": true,
+  "delegated_scheduling_controls_verified": true,
+  "public_link_missing_state_verified": true,
+  "capability_post_only_no_store_verified": true,
   "leave_setup_state": {
-    "leave_enabled": false,
-    "public_leave_enabled": false
+    "leave_enabled": true,
+    "public_leave_enabled": true
   },
-  "scheduling_routes_verified": true,
-  "verification_browser_public_ipv4_mapping": true,
-  "workflow_run_id": "41812787826",
-  "revision": "0f6b4772e563ef4e8855eef65b75957fab31d23d",
-  "deployment_id": "41812787826-3"
+  "production_test_records_created": false,
+  "revision": "586c9dfb5e2352f51f87b58d06d6670b65cbe27e",
+  "workflow_run_id": "41920281088"
 }
