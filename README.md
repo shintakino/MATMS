@@ -10,6 +10,8 @@ The workspace implements specs 00–08: identity/access, archive maintenance, te
 
 The initial clean deployment is live at **https://matms.shintakino.qzz.io**, managed by Coolify on the existing Ubuntu host through a dedicated Cloudflare tunnel. Public login, 20 module routes and a clean-database encrypted backup restore are verified. See the [deployment/operator guide](docs/deployment-coolify.md) for startup, permanent administrator credentials, release and recovery procedures. Off-host backups and school pilot acceptance remain open.
 
+The [GitHub Actions workflow](.github/workflows/deploy.yml) checks pull requests and `main`, builds immutable images after checks pass, and deploys `main` when `MATMS_DEPLOY_ENABLED=true` and production secrets are configured. The [progress tracker](context/progress-tracker.md) records activation and actual run evidence. Routine Compose redeployment still briefly interrupts service; automatic deployment does not establish zero downtime.
+
 The Property Custodian register and ledger, physical counts, controlled import and XLSX/print workflows are connected and under verification. [Specs 10–13](context/feature-specs/README.md) remain in progress: rendered comparison against the supplied forms and school approval are still open. See the [workbook reference](context/inventory-workbook-reference.md) and progress tracker for source findings and test evidence.
 
 See the [progress tracker](context/progress-tracker.md) for completed documentation, upcoming work, and unresolved school decisions.

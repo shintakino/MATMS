@@ -1,0 +1,10 @@
+# Only the MATMS deployment APIs are reachable through this hostname.
+# Coolify still authenticates/authorizes every forwarded API request.
+ingress:
+  - hostname: matms-deploy.shintakino.qzz.io
+    path: ^/api/v1/services/mt8rqzgbtpkbzedwicy03wnf(/restart|/storages)?$
+    service: http://host.docker.internal:8001
+  - hostname: matms-deploy.shintakino.qzz.io
+    path: ^/api/v1/servers/y4vgi7k3hkoa7v5sc7x39wg8/registries$
+    service: http://host.docker.internal:8001
+  - service: http_status:404

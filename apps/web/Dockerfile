@@ -7,6 +7,8 @@ RUN --mount=type=secret,id=web_env,target=/app/apps/web/.env.local --mount=type=
 
 ARG SERVER_URL
 ENV SERVER_URL=${SERVER_URL}
+ARG MATMS_RELEASE_SHA
+ENV MATMS_RELEASE_SHA=${MATMS_RELEASE_SHA}
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN --mount=type=secret,id=web_env,target=/app/apps/web/.env.local --mount=type=secret,id=server_env,target=/app/apps/server/.env.local cd apps/web && pnpm run build && rm -f .next/standalone/.env* .next/standalone/apps/web/.env*

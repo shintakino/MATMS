@@ -16,6 +16,25 @@ services:
       timeout: 5s
       retries: 10
     restart: unless-stopped
+  predeploy-backup:
+    image: matms-postgres:MATMS_RELEASE_TAG
+    pull_policy: never
+    exclude_from_hc: true
+    user: postgres
+    entrypoint: [/usr/local/bin/matms-backup.sh]
+    command: [once]
+    environment:
+      PGHOST: postgres
+      PGDATABASE: matms
+      PGUSER: postgres
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      MATMS_BACKUP_KEY: ${MATMS_BACKUP_KEY}
+    volumes:
+      - matms_backups:/backups
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: 'no'
   migrate:
     image: matms-server:MATMS_RELEASE_TAG
     pull_policy: never
@@ -26,6 +45,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      predeploy-backup:
+        condition: service_completed_successfully
     restart: 'no'
   server:
     image: matms-server:MATMS_RELEASE_TAG

@@ -1,0 +1,11 @@
+services:
+  tunnel:
+    image: matms-deploy-gateway:20261104
+    pull_policy: never
+    exclude_from_hc: true
+    command: [tunnel, --no-autoupdate, --config, /etc/cloudflared/config.yml, run]
+    environment:
+      TUNNEL_TOKEN: ${TUNNEL_TOKEN}
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    restart: unless-stopped

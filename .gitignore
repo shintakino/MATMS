@@ -64,6 +64,8 @@ temp
 
 # Host-only deployment credentials
 .deploy-private/
+__pycache__/
+*.py[cod]
 
 # Supplied school workbooks are private local layout references.
 /Appendix 58 - SC.xls

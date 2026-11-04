@@ -170,9 +170,11 @@ app.get("/health/live", (c) => {
 });
 
 app.get("/health/ready", async (c) => {
+  c.header("Cache-Control", "no-store");
   try {
     await db.execute("select 1");
-    return c.json({ status: "ok", correlationId: c.get("correlationId") });
+    const revision = process.env.MATMS_RELEASE_SHA;
+    return c.json({ status: "ok", release: revision && /^[0-9a-f]{40}$/.test(revision) ? revision : null, correlationId: c.get("correlationId") });
   } catch {
     return c.json(
       { status: "unavailable", correlationId: c.get("correlationId") },

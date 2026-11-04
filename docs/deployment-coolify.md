@@ -4,7 +4,7 @@ Public address: **https://matms.shintakino.qzz.io**. Initial deployment verifica
 
 ## Service and credentials
 
-Coolify project **MATMS**, environment **production**, service **MATMS** (`mt8rqzgbtpkbzedwicy03wnf`) manages the web, API, database, migration, backup and Cloudflare tunnel containers. Use the existing Coolify dashboard on this Ubuntu host. Its API was enabled temporarily for provisioning, then restored to its original disabled state and the temporary token revoked.
+Coolify project **MATMS**, environment **production**, service **MATMS** (`mt8rqzgbtpkbzedwicy03wnf`) manages the web, API, database, migration, backup and Cloudflare tunnel containers. Use the existing Coolify dashboard on this Ubuntu host. The initial manual provisioning token was revoked. The automatic deployment implementation uses a separate scoped token and requires Coolify's API to remain enabled; its restricted gateway does not expose the dashboard or unrelated API resources.
 
 The initial permanent administrator is `admin@shintakino.qzz.io`. The generated password is in the host's ignored, mode-0600 `.deploy-private/admin.txt`; it is not a temporary password. Use a password manager to retain it. Create individual accounts through **Administration → Users**; do not share the administrator account with staff. No email delivery has been configured, so the login address does not imply a working mailbox.
 
@@ -33,7 +33,9 @@ The migration container normally exits with code zero. Never use `down --volumes
 
 ## Releases
 
-The initial release tag is `20261104-e9263d0c`; its web image receives the `-https` suffix for the final HTTP redirect correction. Images are local to this server: `matms-web:20261104-e9263d0c-https`, `matms-server:20261104-e9263d0c` and `matms-postgres:20261104-e9263d0c`. Coolify's Compose uses `pull_policy: never` for them. A restart uses the same built code; it does not fetch or build changes from Git. Keep the previous release images available for rollback. Moving to another host requires rebuilding or transferring these images plus secrets and a verified backup.
+The initial manual release used local images `matms-web:20261104-e9263d0c-https`, `matms-server:20261104-e9263d0c` and `matms-postgres:20261104-e9263d0c`. They remain available for compatible rollback. Automated releases use `ghcr.io/shintakino/matms-{web,server,postgres}` with immutable `sha256` digests, linked to one full Git revision. The workflow retains an image manifest and production verification receipt in its Actions artifacts. See the progress tracker for the latest verified activation/run; the original release manifest records the initial deployment.
+
+With automation enabled, use the push-to-deploy instructions below. The following local-build commands remain a manual fallback. A Coolify restart uses its configured image references; it does not rebuild source. Keep previous release images available for rollback. Moving to another host requires those images, secrets and a verified backup.
 
 For a future release, finish the applicable checks, take a backup, choose a new unique tag, and build the three images on the target host. The two build environment files contain build-only values and are mounted as BuildKit secrets; production database passwords and authentication secrets must never be build arguments. Keep `SERVER_URL=http://server:3000` during the web build because Next.js freezes its rewrite destinations.
 
@@ -43,13 +45,31 @@ docker build -f apps/web/Dockerfile --secret id=web_env,src=.deploy-private/buil
 docker build -f deploy/postgres.Dockerfile -t matms-postgres:NEW_RELEASE .
 ```
 
-Update only the three release image tags in the Coolify service Compose editor, save, and deploy. Keep its environment values and volumes. Coolify runs the one-shot reviewed Drizzle migrations before starting the API. Check migration exit status, all long-running health checks, public login, protected routes and one applicable authorized workflow. The runtime database account cannot perform migrations.
+Update the relevant image references in Coolify, including `migrate` for the server image and `predeploy-backup`/`backup` for the PostgreSQL image. Save and deploy while retaining environment values and volumes. The automated template takes an encrypted one-shot backup before reviewed Drizzle migrations; the API waits for successful migration completion. Check backup/migration exit status, long-running health checks, public login, protected routes and one applicable authorized workflow. The runtime database account cannot perform migrations.
 
 For rollback, first check that the previous application image supports the current database schema and writes. If it does, select the previous image tags and redeploy. Do not run automatic down migrations or restore over production to reverse an application-only change. A database recovery needs a maintenance window and an explicit decision about writes after the chosen backup.
 
 ## Applying changes and availability
 
-A Git push saves the source on GitHub; it does **not** update this deployment automatically. The current Coolify Service uses locally built images. After a push, use the release steps above: check the code, create a backup, build uniquely tagged images while the existing containers keep serving, update the relevant image references in Coolify (including the migration image for API releases), and deploy. Keep the existing environment values, authentication secret and database/backup volumes. A normal code release never bootstraps a new administrator or creates a clean database.
+The workflow [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml) implements checked automatic releases. When repository variable `MATMS_DEPLOY_ENABLED` is `true`, pushing to GitHub `main` runs isolated checks, builds three images on GitHub-hosted runners, then deploys through Coolify. Pull requests run checks without production secrets or deployment. Failed checks/builds leave production unchanged. A newer `main` commit supersedes an older queued candidate; deployment itself is never canceled halfway through a migration/restart. A normal release preserves the existing database, administrator, authentication secret and volumes.
+
+1. Develop and test the change, review any migration for compatibility, then commit and push to `main`. From this workspace's local `master` branch, the explicit command is `git push git@github.com:shintakino/MATMS.git HEAD:main`.
+2. Watch **GitHub → MATMS → Actions → Verify and deploy MATMS**. The check job runs all strict types, PostgreSQL integration tests and seeded fictional Chromium workflows. Private workbook comparisons are explicitly skipped in CI because school source files are not published.
+3. Only successful checks may publish the immutable image set. Only successful builds may enter the main-only `production` environment and use its Coolify token. CI sends no production database/authentication/cloudflared credentials to image builders.
+4. The deploy job verifies current storage, supplies a short-lived package-read token, updates only the MATMS Service, pulls all candidate images before container replacement, and waits for matching web/API Git revisions and healthy services. The pre-migration backup must succeed before migrations/API startup. Health/revision probes and storage checks must pass twice before the release is recorded as verified.
+5. Check the `production-deployment` artifact for the revision/image digests and receipt. If deployment fails, inspect Coolify logs. Select a compatible prior image set for application rollback; never automatically restore or downgrade the production database.
+
+## Automatic deployment configuration
+
+Activation and actual Actions-run evidence are recorded in the progress tracker. The required repository variables are `MATMS_DEPLOY_ENABLED`, `MATMS_ORIGIN`, `COOLIFY_URL`, `COOLIFY_SERVICE_UUID` and `COOLIFY_SERVER_UUID`. `MATMS_ORIGIN` is shared with the image build so canonical redirects/QR configuration agree with deployment. The `production` environment permits branch `main` and holds secret `COOLIFY_TOKEN`. The workflow's built-in short-lived `GITHUB_TOKEN` publishes images and supplies registry authentication; no permanent GitHub registry credential is stored in the repository.
+
+The dedicated gateway service `MATMS Deployment Gateway` (`bckcz3zbvmtxuv1ghvrvypn2`) uses tunnel `0b473a5f-7ef3-41b2-a9a6-b6c9265da346` at `https://matms-deploy.shintakino.qzz.io`. Its [ingress configuration](../deploy/automation/cloudflared.yml) permits only the fixed MATMS Service's base/status, restart and storage routes, plus this server's registry-login route. Other paths return 404; permitted paths still require Coolify authentication. The token has `read`, `write`, `deploy` abilities for the existing Coolify team, without `root` or sensitive-read abilities. As with deployment source access, protect this credential as privileged; the ingress boundary is what excludes unrelated resource URLs externally.
+
+Host-only recovery metadata and the token expiry date are in ignored mode-0600 `.deploy-private/automation.json`; tunnel credentials are in `.deploy-private/automation-tunnel.json`. Rotate the automation token before its recorded one-year expiry and update the GitHub environment secret. Infrastructure/bootstrap changes to the gateway are operator-managed independently of app releases. Restore its existing service/image/configuration rather than publishing the full Coolify dashboard.
+
+Pause deployment without stopping CI by setting repository variable `MATMS_DEPLOY_ENABLED` to `false`; re-enable it only after required configuration is verified. **Run workflow** on branch `main` checks/builds/deploys the current revision again. Cached digest images permit ordinary local restarts after the job token expires. A manual forced registry pull needs fresh registry authentication; prefer rerunning the workflow. Keep Docker cleanup from removing all known-good rollback images.
+
+## Availability during updates
 
 Building images keeps the existing site running, subject to the host having enough resources. The current full Service deployment recreates containers, including the tunnel and database, so it has a brief service interruption during replacement/readiness. It is **not a zero-downtime deployment**. Coolify's application-level rolling updates do not apply to this Compose Service; health checks alone do not remove that interruption. See the [official rolling-update limits](https://coolify.io/docs/applications/deployments/rolling-updates).
 

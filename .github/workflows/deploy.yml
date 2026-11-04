@@ -1,0 +1,206 @@
+name: Verify and deploy MATMS
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Never cancel a production deployment half-way through a migration/restart.
+concurrency:
+  group: matms-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  CI: 'true'
+  NEXT_TELEMETRY_DISABLED: '1'
+
+jobs:
+  checks:
+    name: Types, integration and browser checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: matms-ci-only
+          POSTGRES_DB: matms_ci_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d matms_ci_test"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:matms-ci-only@127.0.0.1:5432/matms_ci_test
+      TEST_DATABASE_URL: postgresql://postgres:matms-ci-only@127.0.0.1:5432/matms_ci_test
+      BROWSER_DATABASE_URL: postgresql://postgres:matms-ci-only@127.0.0.1:5432/matms_ci_browser_test
+      MATMS_BROWSER_URL: http://127.0.0.1:3101
+      MATMS_BROWSER_EMAIL: browser-admin@example.test
+      MATMS_BROWSER_PASSWORD: Browser-Fixture-Only-2026!
+      MATMS_BROWSER_STAFF_EMAIL: browser-staff@example.test
+      MATMS_BROWSER_VIEWER_EMAIL: browser-viewer@example.test
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22.22.2
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.4.4
+      - name: Prepare disposable configuration and package manager
+        run: |
+          python3 deploy/automation/prepare-ci.py
+          corepack enable
+          corepack prepare pnpm@11.1.1 --activate
+          pnpm install --frozen-lockfile
+      - name: Verify release invariants and strict workspace types
+        run: |
+          python3 -m unittest discover -s deploy/automation -p 'test_*.py'
+          pnpm --filter web exec next typegen
+          pnpm run check-types
+      - name: Build the API and verify reviewed migrations and integration tests
+        run: |
+          pnpm --filter server build
+          pnpm run db:migrate
+          pnpm test
+      - name: Prepare isolated browser database and fictional accounts
+        run: |
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c 'CREATE DATABASE matms_ci_browser_test'
+          DATABASE_URL="$BROWSER_DATABASE_URL" pnpm run db:migrate
+          INITIAL_ADMIN_NAME='Browser Administrator' INITIAL_ADMIN_EMAIL="$MATMS_BROWSER_EMAIL" INITIAL_ADMIN_PASSWORD="$MATMS_BROWSER_PASSWORD" DATABASE_URL="$BROWSER_DATABASE_URL" pnpm run auth:bootstrap-admin
+          SEED_ADMIN_EMAIL="$MATMS_BROWSER_EMAIL" SEED_DEMO_PASSWORD="$MATMS_BROWSER_PASSWORD" SEED_STAFF_EMAIL="$MATMS_BROWSER_STAFF_EMAIL" SEED_VIEWER_EMAIL="$MATMS_BROWSER_VIEWER_EMAIL" DATABASE_URL="$BROWSER_DATABASE_URL" pnpm run seed:dev
+          pnpm exec playwright install --with-deps chromium
+      - name: Start browser fixtures and wait for readiness
+        run: |
+          DATABASE_URL="$BROWSER_DATABASE_URL" PORT=3100 MATMS_BIND_HOST=127.0.0.1 pnpm --filter server start > "$RUNNER_TEMP/matms-api.log" 2>&1 &
+          SERVER_URL=http://127.0.0.1:3100 MATMS_NEXT_DIST_DIR=.next-ci-browser pnpm --filter web exec next dev --port 3101 --hostname 127.0.0.1 > "$RUNNER_TEMP/matms-web.log" 2>&1 &
+          python3 deploy/automation/wait-ci.py
+      - name: Verify application workflows and access in Chromium
+        run: pnpm run test:browser
+      - name: Retain test diagnostics on failure
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ci-diagnostics
+          path: |
+            /tmp/matms-browser-results
+            ${{ runner.temp }}/matms-api.log
+            ${{ runner.temp }}/matms-web.log
+          retention-days: 7
+
+  images:
+    name: Build ${{ matrix.component }} image
+    needs: checks
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - component: web
+            dockerfile: apps/web/Dockerfile
+          - component: server
+            dockerfile: apps/server/Dockerfile
+          - component: postgres
+            dockerfile: deploy/postgres.Dockerfile
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Generate build-only configuration
+        env:
+          MATMS_ORIGIN: ${{ vars.MATMS_ORIGIN || 'https://matms.shintakino.qzz.io' }}
+        run: python3 deploy/automation/prepare-ci.py --origin "$MATMS_ORIGIN"
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      - uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and publish the verified revision
+        id: build
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          platforms: linux/amd64
+          push: true
+          tags: ghcr.io/shintakino/matms-${{ matrix.component }}:sha-${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/shintakino/MATMS
+            org.opencontainers.image.revision=${{ github.sha }}
+          build-args: |
+            SERVER_URL=http://server:3000
+            MATMS_RELEASE_SHA=${{ github.sha }}
+          secret-files: |
+            web_env=.deploy-private/ci/web.env
+            server_env=.deploy-private/ci/server.env
+          cache-from: type=gha,scope=matms-${{ matrix.component }}
+          cache-to: type=gha,scope=matms-${{ matrix.component }},mode=max
+      - name: Record the immutable image identity
+        env:
+          COMPONENT: ${{ matrix.component }}
+          IMAGE_DIGEST: ${{ steps.build.outputs.digest }}
+        run: |
+          mkdir -p image-metadata
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          component = os.environ['COMPONENT']
+          Path('image-metadata/' + component + '.json').write_text(json.dumps({'component': component, 'revision': os.environ['GITHUB_SHA'], 'image': 'ghcr.io/shintakino/matms-' + component, 'digest': os.environ['IMAGE_DIGEST']}))
+          PY
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: image-${{ matrix.component }}
+          path: image-metadata/*.json
+          retention-days: 30
+
+  deploy:
+    name: Deploy and verify production
+    needs: [checks, images]
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && vars.MATMS_DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    environment:
+      name: production
+      url: https://matms.shintakino.qzz.io
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: image-*
+          path: image-metadata
+          merge-multiple: true
+      - name: Pull candidate images, back up, migrate and deploy through Coolify
+        env:
+          MATMS_IMAGE_DIRECTORY: image-metadata
+          MATMS_ORIGIN: ${{ vars.MATMS_ORIGIN }}
+          COOLIFY_URL: ${{ vars.COOLIFY_URL }}
+          COOLIFY_SERVICE_UUID: ${{ vars.COOLIFY_SERVICE_UUID }}
+          COOLIFY_SERVER_UUID: ${{ vars.COOLIFY_SERVER_UUID }}
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 deploy/automation/coolify-release.py
+      - name: Retain the verified deployment receipt
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: production-deployment
+          path: deployment-result.json
+          if-no-files-found: ignore
+          retention-days: 90

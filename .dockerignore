@@ -39,3 +39,4 @@ local.db-*
 **/.next-*
 **/.agents
 **/.codex
+**/__pycache__

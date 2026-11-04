@@ -14,6 +14,11 @@ const nextConfig: NextConfig = {
   experimental: {
     useTypeScriptCli: false,
   },
+  async headers() {
+    const revision = process.env.MATMS_RELEASE_SHA;
+    if (!revision || !/^[0-9a-f]{40}$/.test(revision)) return [];
+    return [{ source: "/:path*", headers: [{ key: "X-MATMS-Release", value: revision }] }];
+  },
   async redirects() {
     const origin = process.env.MATMS_CANONICAL_ORIGIN;
     if (process.env.NODE_ENV !== "production" || !origin) return [];
@@ -37,6 +42,7 @@ const nextConfig: NextConfig = {
     const serverUrl = (process.env.SERVER_URL ?? "http://localhost:3000").replace(/\/$/, "");
 
     return [
+      { source: "/api/health/ready", destination: `${serverUrl}/health/ready` },
       { source: "/api/auth/:path*", destination: `${serverUrl}/api/auth/:path*` },
       { source: "/api/custodial-imports", destination: `${serverUrl}/api/custodial-imports` },
       { source: "/api/inventory-reports/:path*", destination: `${serverUrl}/api/inventory-reports/:path*` },

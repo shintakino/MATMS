@@ -1,0 +1,17 @@
+{
+  "service_uuid": "mt8rqzgbtpkbzedwicy03wnf",
+  "gateway_service_uuid": "bckcz3zbvmtxuv1ghvrvypn2",
+  "tunnel_uuid": "0b473a5f-7ef3-41b2-a9a6-b6c9265da346",
+  "origin": "https://matms-deploy.shintakino.qzz.io",
+  "authorized_service_status": "running:healthy",
+  "volume_identity_verified": true,
+  "boundary_checks": {
+    "/": 404,
+    "/login": 404,
+    "/api/v1/services": 404,
+    "/api/v1/services/other": 404,
+    "/api/v1/services/mt8rqzgbtpkbzedwicy03wnf/envs": 404,
+    "/api/v1/services/mt8rqzgbtpkbzedwicy03wnf": 401
+  },
+  "token_expires_at": "2027-11-04T03:09:12+00:00"
+}
