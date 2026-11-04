@@ -48,7 +48,7 @@ export function ErrorState({
       <AlertTitle>{title}</AlertTitle>
       <AlertDescription>{description}</AlertDescription>
       {onRetry ? (
-        <Button className="mt-2 w-fit" size="sm" variant="outline" onClick={onRetry}>
+        <Button className="mt-2 w-fit text-foreground" size="sm" variant="outline" onClick={onRetry}>
           Retry
         </Button>
       ) : null}

@@ -1,19 +1,19 @@
 {
-  "revision": "0f6b4772e563ef4e8855eef65b75957fab31d23d",
+  "revision": "74a12df00d8c96caa8b69b4a8b165cd1bfe1b42e",
   "images": {
-    "web": "ghcr.io/shintakino/matms-web@sha256:05b34746cdd91a513c9df7ecc36823f611f22d18f6870e6720724fcf757c68fc",
-    "server": "ghcr.io/shintakino/matms-server@sha256:b03c6dd8a818801a0ceced451f33c8cfdf04bc7fdd2a57e39f76979a62baf142",
-    "postgres": "ghcr.io/shintakino/matms-postgres@sha256:ee2f53231f7ce0a264dd5b9e063a7687f8b732c21f3c59afc690eaa366eabd1e"
+    "web": "ghcr.io/shintakino/matms-web@sha256:7bd8d33c404a3f9a0919a33b4aa937aa809c831bc5a5998a9a8d90969bd46097",
+    "server": "ghcr.io/shintakino/matms-server@sha256:1748d58ea0cafe0f58f2bb5a38ef80bcc8d4387c65b873fd6fe5d5a6cbe20484",
+    "postgres": "ghcr.io/shintakino/matms-postgres@sha256:67da5dc9ce9af132d76bee950bef16fa9a8754ed8029d75a8241b6ea1a07f758"
   },
-  "web_build_id": "41812787826-1",
-  "deployment_id": "41812787826-3",
+  "web_build_id": "41858193663-1",
+  "deployment_id": "41858193663-1",
   "origin": "https://matms.shintakino.qzz.io",
   "service_uuid": "mt8rqzgbtpkbzedwicy03wnf",
   "status": "verified",
   "volumes_preserved": true,
   "web_and_api_revision_verified": true,
-  "workflow_run_id": "41812787826",
-  "workflow_url": "https://github.com/shintakino/MATMS/actions/runs/41812787826",
+  "workflow_run_id": "41858193663",
+  "workflow_url": "https://github.com/shintakino/MATMS/actions/runs/41858193663",
   "github_main_only_environment": true,
   "required_jobs": [
     {
@@ -41,13 +41,5 @@
   "predeploy_backup_exit_code": 0,
   "migration_exit_code": 0,
   "gateway_service_uuid": "bckcz3zbvmtxuv1ghvrvypn2",
-  "coolify_api_enabled_for_automation": true,
-  "predeploy_backup_checksum_verified": true,
-  "database_verification": {
-    "tables_verified": 7,
-    "overlap_and_replay_constraints_verified": true,
-    "runtime_privileges_verified": true,
-    "audit_logs_update_delete_denied": true,
-    "baseline_row_counts_preserved": true
-  }
+  "coolify_api_enabled_for_automation": true
 }

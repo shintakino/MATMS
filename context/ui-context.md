@@ -93,3 +93,5 @@ Printed-template stock operations always open a confirmation before posting; rev
 ## Scheduling delegation and public invitations
 
 The active spec 14 revision adds a separate teacher/personnel directory with SHS/JHS labels and optional personnel account links. Leave forms choose the beneficiary separately from the filer; only Admin sees approval controls. Internal resource actions are Admin-only. Admin generates/copies single-use expiring public links, reviews their expiry/use state and can revoke them. The no-login reservation page explains the bound teacher or public resource choices, unavailable dates, inclusive ranges and pending approval, with retained input on failure and clear expired/used/revoked states. Capability tokens remain in the fragment/browser memory and POST bodies, outside shared query caches. Existing public calendars must not suggest that teachers/students need login credentials.
+
+Error alert descriptions and Retry buttons use foreground text for readable contrast on card and outline-button backgrounds. Destructive titles/icons retain their status color. Verify missing/revoked public-link states alongside valid forms.

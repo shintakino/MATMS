@@ -1,6 +1,6 @@
 # Leave, resource reservations and public availability
 
-Status: the on-behalf, teacher directory and public-invitation revision is implemented and verified locally. Production still runs the previously deployed baseline recorded below; this revision has not been pushed or deployed.
+Status: revision `74a12df` is deployed through workflow 41858193663. The live sweep found low contrast in the public missing-link error state; a shared-alert correction and revoked/missing-link accessibility regressions passed strict types, the production build and the compiled teacher-link browser scenario. Follow-up release and complete live verification are in progress.
 
 ## Current contract — on-behalf requests and expiring public links
 

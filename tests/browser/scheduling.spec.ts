@@ -101,8 +101,8 @@ test("teacher-specific public links show blocked dates, file without login, and 
   await expect(visitor.getByRole("alert").filter({ hasText: "Choose different dates" })).toBeVisible(); await expect(visitor.getByRole("button", { name: "Submit request", exact: true })).toBeDisabled();
   const readyLink = page.getByRole("listitem").filter({ has: page.getByRole("heading", { name: teacher, exact: true }) }).filter({ hasText: "Ready" });
   await readyLink.getByRole("button", { name: /Revoke link/ }).click(); await readyLink.getByRole("button", { name: "Confirm revoke", exact: true }).click(); await expect(readyLink).toHaveCount(0);
-  await visitor.reload(); await expect(visitor.getByRole("alert").filter({ hasText: "Request link unavailable" })).toBeVisible(); await expect(visitor.getByRole("button", { name: "Submit request", exact: true })).toHaveCount(0);
-  await visitor.goto(`${new URL(page.url()).origin}/reservation`); await expect(visitor.getByRole("alert").filter({ hasText: "Request link unavailable" })).toBeVisible();
+  await visitor.reload(); await expect(visitor.getByRole("alert").filter({ hasText: "Request link unavailable" })).toBeVisible(); await expect(visitor.getByRole("button", { name: "Submit request", exact: true })).toHaveCount(0); await accessible(visitor);
+  await visitor.goto(`${new URL(page.url()).origin}/reservation`); await expect(visitor.getByRole("alert").filter({ hasText: "Request link unavailable" })).toBeVisible(); await accessible(visitor);
   await page.goto("/leave"); await decide(page.getByRole("listitem").filter({ hasText: reason }), "Cancel request", "Finish public teacher fixture"); await anonymous.close();
 });
 
