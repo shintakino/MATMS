@@ -1,0 +1,1 @@
+ALTER TABLE "custodial_operations" ADD COLUMN "counterparty" text;

@@ -1,0 +1,37 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "5737c40e-1d07-4a9d-b4b5-b0dd7409d80d",
+  "prevIds": [
+    "ab03e00a-6359-4443-bdbe-d99003a2476b"
+  ],
+  "footprints": [
+    {
+      "statementType": "drop_check",
+      "statementTarget": [
+        "table",
+        "public",
+        "document_checkouts"
+      ],
+      "writes": [
+        "s|ck|public.document_checkouts.document_checkouts_resolution_after_return",
+        "n|ck|public.document_checkouts.document_checkouts_resolution_after_return",
+        "e|ck|public.document_checkouts.document_checkouts_resolution_after_return",
+        "n|con|public.document_checkouts.document_checkouts_resolution_after_return"
+      ],
+      "reads": [
+        "n|tbl|public.document_checkouts",
+        "n|sch|public",
+        "e|col|public.document_checkouts.resolved_at",
+        "e|col|public.document_checkouts.returned_at"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "drop",
+      "key": "checks\u0000[\"public\",\"document_checkouts\",\"document_checkouts_resolution_after_return\"]"
+    }
+  ]
+}

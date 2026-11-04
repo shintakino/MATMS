@@ -1,0 +1,389 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "ff6038d1-c5bc-4f04-8143-dcef57d02e69",
+  "prevIds": [
+    "5ebc17d4-4b4d-4f2f-a7ea-3cf05d10885e"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_count_omissions"
+      ],
+      "writes": [
+        "s|tbl|public.custodial_count_omissions",
+        "n|tbl|public.custodial_count_omissions",
+        "e|tbl|public.custodial_count_omissions",
+        "n|rel|public.custodial_count_omissions",
+        "n|type|public.custodial_count_omissions",
+        "n|rel|public.custodial_count_omissions_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_count_omissions",
+        "custodial_count_omission_unique"
+      ],
+      "writes": [
+        "s|idx|public.custodial_count_omission_unique",
+        "n|idx|public.custodial_count_omission_unique",
+        "e|idx|public.custodial_count_omission_unique",
+        "n|rel|public.custodial_count_omission_unique"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_count_omissions",
+        "n|sch|public",
+        "n|col|public.custodial_count_omissions.count_id",
+        "n|col|public.custodial_count_omissions.lot_id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_count_omissions"
+      ],
+      "writes": [
+        "s|fk|public.custodial_count_omissions.custodial_count_omissions_count_id_custodial_counts_id_fkey",
+        "n|fk|public.custodial_count_omissions.custodial_count_omissions_count_id_custodial_counts_id_fkey",
+        "e|fk|public.custodial_count_omissions.custodial_count_omissions_count_id_custodial_counts_id_fkey",
+        "n|con|public.custodial_count_omissions.custodial_count_omissions_count_id_custodial_counts_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_count_omissions",
+        "n|sch|public",
+        "n|tbl|public.custodial_counts",
+        "n|sch|public",
+        "n|col|public.custodial_count_omissions.count_id",
+        "n|col|public.custodial_counts.id",
+        "e|uniqueness|public.custodial_counts.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_count_omissions"
+      ],
+      "writes": [
+        "s|fk|public.custodial_count_omissions.custodial_count_omissions_lot_id_custodial_lots_id_fkey",
+        "n|fk|public.custodial_count_omissions.custodial_count_omissions_lot_id_custodial_lots_id_fkey",
+        "e|fk|public.custodial_count_omissions.custodial_count_omissions_lot_id_custodial_lots_id_fkey",
+        "n|con|public.custodial_count_omissions.custodial_count_omissions_lot_id_custodial_lots_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_count_omissions",
+        "n|sch|public",
+        "n|tbl|public.custodial_lots",
+        "n|sch|public",
+        "n|col|public.custodial_count_omissions.lot_id",
+        "n|col|public.custodial_lots.id",
+        "e|uniqueness|public.custodial_lots.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_count_omissions"
+      ],
+      "writes": [
+        "s|fk|public.custodial_count_omissions.custodial_count_omissions_decided_by_user_id_fkey",
+        "n|fk|public.custodial_count_omissions.custodial_count_omissions_decided_by_user_id_fkey",
+        "e|fk|public.custodial_count_omissions.custodial_count_omissions_decided_by_user_id_fkey",
+        "n|con|public.custodial_count_omissions.custodial_count_omissions_decided_by_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_count_omissions",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.custodial_count_omissions.decided_by",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "custodial_count_omissions",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_omissions",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_omissions",
+        "name": "count_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_omissions",
+        "name": "lot_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_omissions",
+        "name": "source_fingerprint",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_omissions",
+        "name": "snapshot",
+        "type": "jsonb",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_omissions",
+        "name": "reason",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_omissions",
+        "name": "active",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "true",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_omissions",
+        "name": "decided_by",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_omissions",
+        "name": "decided_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_omissions",
+        "name": "custodial_count_omission_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "count_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "lot_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_omissions",
+        "name": "custodial_count_omissions_count_id_custodial_counts_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "count_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "custodial_counts",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_omissions",
+        "name": "custodial_count_omissions_lot_id_custodial_lots_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "lot_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "custodial_lots",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_omissions",
+        "name": "custodial_count_omissions_decided_by_user_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "decided_by"
+        ],
+        "schemaTo": "public",
+        "tableTo": "user",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_omissions",
+        "name": "custodial_count_omissions_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_omissions",
+        "name": "custodial_count_omission_reason_nonblank",
+        "value": "length(trim(\"reason\")) > 0",
+        "entityType": "checks"
+      }
+    }
+  ]
+}

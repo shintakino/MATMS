@@ -1,0 +1,64 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "d5c95719-b0f2-42a3-85f5-ab3809300e8c",
+  "prevIds": [
+    "c134ae7e-4893-448a-8ad7-0477b938c5ae"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "template_inventory",
+        "template_inventory_search_order_idx"
+      ],
+      "writes": [
+        "s|idx|public.template_inventory_search_order_idx",
+        "n|idx|public.template_inventory_search_order_idx",
+        "e|idx|public.template_inventory_search_order_idx",
+        "n|rel|public.template_inventory_search_order_idx"
+      ],
+      "reads": [
+        "n|tbl|public.template_inventory",
+        "n|sch|public",
+        "n|col|public.template_inventory.template_id"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "template_inventory",
+        "name": "template_inventory_search_order_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "template_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "(\"id\"::text)",
+            "isExpression": true,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    }
+  ]
+}

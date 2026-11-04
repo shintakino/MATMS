@@ -1,0 +1,112 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "4fd47b5e-0b9b-4323-b096-2b7303a96b1c",
+  "prevIds": [
+    "bd89dce3-1fd3-4535-a5b1-4ba58a3e2f62"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_form_profiles",
+        "custodial_form_profile_id_family_unique"
+      ],
+      "writes": [
+        "s|idx|public.custodial_form_profile_id_family_unique",
+        "n|idx|public.custodial_form_profile_id_family_unique",
+        "e|idx|public.custodial_form_profile_id_family_unique",
+        "n|rel|public.custodial_form_profile_id_family_unique"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_form_profiles",
+        "n|sch|public",
+        "n|col|public.custodial_form_profiles.id",
+        "n|col|public.custodial_form_profiles.family"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_counts"
+      ],
+      "writes": [
+        "s|fk|public.custodial_counts.custodial_counts_profile_family_fk",
+        "n|fk|public.custodial_counts.custodial_counts_profile_family_fk",
+        "e|fk|public.custodial_counts.custodial_counts_profile_family_fk",
+        "n|con|public.custodial_counts.custodial_counts_profile_family_fk"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_counts",
+        "n|sch|public",
+        "n|tbl|public.custodial_form_profiles",
+        "n|sch|public",
+        "n|col|public.custodial_counts.profile_id",
+        "n|col|public.custodial_counts.family",
+        "n|col|public.custodial_form_profiles.id",
+        "n|col|public.custodial_form_profiles.family",
+        "e|uniqueness|public.custodial_form_profiles.family.id"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_form_profiles",
+        "name": "custodial_form_profile_id_family_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "family",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "custodial_counts_profile_family_fk",
+        "nameExplicit": true,
+        "columns": [
+          "profile_id",
+          "family"
+        ],
+        "schemaTo": "public",
+        "tableTo": "custodial_form_profiles",
+        "columnsTo": [
+          "id",
+          "family"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    }
+  ]
+}

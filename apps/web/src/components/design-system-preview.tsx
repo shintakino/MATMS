@@ -73,7 +73,7 @@ export function DesignSystemPreview() {
 
   return (
     <AppShell role="admin">
-      <main className="mx-auto w-full max-w-7xl space-y-6 p-4 sm:p-6">
+      <section className="mx-auto w-full max-w-7xl space-y-6 p-4 sm:p-6">
         <section className="flex flex-col gap-4 border-b border-border pb-6 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-1">
             <p className="text-xs font-medium text-muted-foreground">Design-system foundation</p>
@@ -306,7 +306,7 @@ export function DesignSystemPreview() {
             </CardContent>
           </Card>
         </section>
-      </main>
+      </section>
     </AppShell>
   );
 }

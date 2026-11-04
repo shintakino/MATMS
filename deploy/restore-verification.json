@@ -1,0 +1,9 @@
+{
+  "release": "20261104-e9263d0c",
+  "backup": "/backups/matms-20261103T230634Z.dump.enc",
+  "tables_compared": 40,
+  "exact_contents_match": true,
+  "restored_administrator_login": true,
+  "duration_seconds": 35.52,
+  "data_scope": "Initially clean production database, permanent administrator and bootstrap audit; no populated school records."
+}

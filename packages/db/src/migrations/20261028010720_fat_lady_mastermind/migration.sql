@@ -1,0 +1,1 @@
+CREATE INDEX "documents_search_order_idx" ON "documents" (lower("code"),("id"::text));

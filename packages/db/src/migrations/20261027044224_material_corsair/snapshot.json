@@ -1,0 +1,47 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "38936347-c21c-412f-912f-6a9d90a1df07",
+  "prevIds": [
+    "9c7aa243-2515-46e9-b045-c744feb676e6"
+  ],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "request_items",
+        "approved_by_admin"
+      ],
+      "writes": [
+        "s|col|public.request_items.approved_by_admin",
+        "n|col|public.request_items.approved_by_admin",
+        "e|col|public.request_items.approved_by_admin"
+      ],
+      "reads": [
+        "n|tbl|public.request_items",
+        "n|sch|public"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "request_items",
+        "name": "approved_by_admin",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "false",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    }
+  ]
+}

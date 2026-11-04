@@ -1,0 +1,370 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "8538fd49-2aea-4fa5-a45b-5f394ee53ccd",
+  "prevIds": [
+    "8e640213-9ad5-4381-8436-498e578e4e53"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_enum",
+      "statementTarget": [
+        "enum",
+        "public",
+        "custodial_form_family"
+      ],
+      "writes": [
+        "s|enum|public.custodial_form_family",
+        "n|enum|public.custodial_form_family",
+        "e|enum|public.custodial_form_family",
+        "n|type|public.custodial_form_family"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_form_profiles"
+      ],
+      "writes": [
+        "s|tbl|public.custodial_form_profiles",
+        "n|tbl|public.custodial_form_profiles",
+        "e|tbl|public.custodial_form_profiles",
+        "n|rel|public.custodial_form_profiles",
+        "n|type|public.custodial_form_profiles",
+        "n|rel|public.custodial_form_profiles_pkey"
+      ],
+      "reads": [
+        "n|sch|public",
+        "n|enum|public.custodial_form_family"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_form_profiles",
+        "custodial_form_profile_family_version_unique"
+      ],
+      "writes": [
+        "s|idx|public.custodial_form_profile_family_version_unique",
+        "n|idx|public.custodial_form_profile_family_version_unique",
+        "e|idx|public.custodial_form_profile_family_version_unique",
+        "n|rel|public.custodial_form_profile_family_version_unique"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_form_profiles",
+        "n|sch|public",
+        "n|col|public.custodial_form_profiles.family",
+        "n|col|public.custodial_form_profiles.version"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_form_profiles"
+      ],
+      "writes": [
+        "s|fk|public.custodial_form_profiles.custodial_form_profiles_created_by_user_id_fkey",
+        "n|fk|public.custodial_form_profiles.custodial_form_profiles_created_by_user_id_fkey",
+        "e|fk|public.custodial_form_profiles.custodial_form_profiles_created_by_user_id_fkey",
+        "n|con|public.custodial_form_profiles.custodial_form_profiles_created_by_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_form_profiles",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.custodial_form_profiles.created_by",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "custodial_form_profiles",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "custodial_form_family",
+        "values": [
+          "stock_card",
+          "rpcsp",
+          "rpcppe"
+        ],
+        "entityType": "enums"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_form_profiles",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_form_profiles",
+        "name": "family",
+        "type": "custodial_form_family",
+        "typeSchema": "public",
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_form_profiles",
+        "name": "version",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_form_profiles",
+        "name": "effective_from",
+        "type": "date",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_form_profiles",
+        "name": "source_hash",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_form_profiles",
+        "name": "version_note",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_form_profiles",
+        "name": "visual_approval",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_form_profiles",
+        "name": "definition",
+        "type": "jsonb",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_form_profiles",
+        "name": "created_by",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_form_profiles",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_form_profiles",
+        "name": "custodial_form_profile_family_version_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "family",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "version",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_form_profiles",
+        "name": "custodial_form_profiles_created_by_user_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "created_by"
+        ],
+        "schemaTo": "public",
+        "tableTo": "user",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_form_profiles",
+        "name": "custodial_form_profiles_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_form_profiles",
+        "name": "custodial_form_profile_version_positive",
+        "value": "\"version\" > 0",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_form_profiles",
+        "name": "custodial_form_profile_source_hash",
+        "value": "\"source_hash\" ~ '^[0-9a-f]{64}$'",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_form_profiles",
+        "name": "custodial_form_profile_notes_nonblank",
+        "value": "length(trim(\"version_note\")) > 0 AND length(trim(\"visual_approval\")) > 0",
+        "entityType": "checks"
+      }
+    }
+  ]
+}

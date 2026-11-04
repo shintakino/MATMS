@@ -1,0 +1,2622 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "f07069f2-b039-4ea8-a812-ff95e70616d7",
+  "prevIds": [
+    "dabda059-0a7f-422e-b669-c3e3276b461f"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_enum",
+      "statementTarget": [
+        "enum",
+        "public",
+        "custodial_class"
+      ],
+      "writes": [
+        "s|enum|public.custodial_class",
+        "n|enum|public.custodial_class",
+        "e|enum|public.custodial_class",
+        "n|type|public.custodial_class"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_enum",
+      "statementTarget": [
+        "enum",
+        "public",
+        "custodial_operation_type"
+      ],
+      "writes": [
+        "s|enum|public.custodial_operation_type",
+        "n|enum|public.custodial_operation_type",
+        "e|enum|public.custodial_operation_type",
+        "n|type|public.custodial_operation_type"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_balances"
+      ],
+      "writes": [
+        "s|tbl|public.custodial_balances",
+        "n|tbl|public.custodial_balances",
+        "e|tbl|public.custodial_balances",
+        "n|rel|public.custodial_balances",
+        "n|type|public.custodial_balances",
+        "n|rel|public.custodial_balances_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_items"
+      ],
+      "writes": [
+        "s|tbl|public.custodial_items",
+        "n|tbl|public.custodial_items",
+        "e|tbl|public.custodial_items",
+        "n|rel|public.custodial_items",
+        "n|type|public.custodial_items",
+        "n|rel|public.custodial_items_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_lots"
+      ],
+      "writes": [
+        "s|tbl|public.custodial_lots",
+        "n|tbl|public.custodial_lots",
+        "e|tbl|public.custodial_lots",
+        "n|rel|public.custodial_lots",
+        "n|type|public.custodial_lots",
+        "n|rel|public.custodial_lots_pkey"
+      ],
+      "reads": [
+        "n|sch|public",
+        "n|enum|public.custodial_class"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_operations"
+      ],
+      "writes": [
+        "s|tbl|public.custodial_operations",
+        "n|tbl|public.custodial_operations",
+        "e|tbl|public.custodial_operations",
+        "n|rel|public.custodial_operations",
+        "n|type|public.custodial_operations",
+        "n|rel|public.custodial_operations_pkey"
+      ],
+      "reads": [
+        "n|sch|public",
+        "n|enum|public.custodial_operation_type"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_property_exceptions"
+      ],
+      "writes": [
+        "s|tbl|public.custodial_property_exceptions",
+        "n|tbl|public.custodial_property_exceptions",
+        "e|tbl|public.custodial_property_exceptions",
+        "n|rel|public.custodial_property_exceptions",
+        "n|type|public.custodial_property_exceptions",
+        "n|rel|public.custodial_property_exceptions_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_sections"
+      ],
+      "writes": [
+        "s|tbl|public.custodial_sections",
+        "n|tbl|public.custodial_sections",
+        "e|tbl|public.custodial_sections",
+        "n|rel|public.custodial_sections",
+        "n|type|public.custodial_sections",
+        "n|rel|public.custodial_sections_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_transactions"
+      ],
+      "writes": [
+        "s|tbl|public.custodial_transactions",
+        "n|tbl|public.custodial_transactions",
+        "e|tbl|public.custodial_transactions",
+        "n|rel|public.custodial_transactions",
+        "n|type|public.custodial_transactions",
+        "n|rel|public.custodial_transactions_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_balances",
+        "custodial_balances_lot_unique"
+      ],
+      "writes": [
+        "s|idx|public.custodial_balances_lot_unique",
+        "n|idx|public.custodial_balances_lot_unique",
+        "e|idx|public.custodial_balances_lot_unique",
+        "n|rel|public.custodial_balances_lot_unique"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_balances",
+        "n|sch|public",
+        "n|col|public.custodial_balances.item_id",
+        "n|col|public.custodial_balances.lot_id",
+        "n|col|public.custodial_balances.fund_cluster",
+        "n|col|public.custodial_balances.office"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_balances",
+        "custodial_balances_unlotted_unique"
+      ],
+      "writes": [
+        "s|idx|public.custodial_balances_unlotted_unique",
+        "n|idx|public.custodial_balances_unlotted_unique",
+        "e|idx|public.custodial_balances_unlotted_unique",
+        "n|rel|public.custodial_balances_unlotted_unique"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_balances",
+        "n|sch|public",
+        "n|col|public.custodial_balances.item_id",
+        "n|col|public.custodial_balances.fund_cluster",
+        "n|col|public.custodial_balances.office"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_items",
+        "custodial_items_normalized_code_unique"
+      ],
+      "writes": [
+        "s|idx|public.custodial_items_normalized_code_unique",
+        "n|idx|public.custodial_items_normalized_code_unique",
+        "e|idx|public.custodial_items_normalized_code_unique",
+        "n|rel|public.custodial_items_normalized_code_unique"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_items",
+        "n|sch|public",
+        "n|col|public.custodial_items.normalized_code"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_lots",
+        "custodial_lots_item_idx"
+      ],
+      "writes": [
+        "s|idx|public.custodial_lots_item_idx",
+        "n|idx|public.custodial_lots_item_idx",
+        "e|idx|public.custodial_lots_item_idx",
+        "n|rel|public.custodial_lots_item_idx"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_lots",
+        "n|sch|public",
+        "n|col|public.custodial_lots.item_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_lots",
+        "custodial_lots_identity_scope_unique"
+      ],
+      "writes": [
+        "s|idx|public.custodial_lots_identity_scope_unique",
+        "n|idx|public.custodial_lots_identity_scope_unique",
+        "e|idx|public.custodial_lots_identity_scope_unique",
+        "n|rel|public.custodial_lots_identity_scope_unique"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_lots",
+        "n|sch|public",
+        "n|col|public.custodial_lots.id",
+        "n|col|public.custodial_lots.item_id",
+        "n|col|public.custodial_lots.fund_cluster"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_lots",
+        "custodial_lots_property_unique"
+      ],
+      "writes": [
+        "s|idx|public.custodial_lots_property_unique",
+        "n|idx|public.custodial_lots_property_unique",
+        "e|idx|public.custodial_lots_property_unique",
+        "n|rel|public.custodial_lots_property_unique"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_lots",
+        "n|sch|public",
+        "n|col|public.custodial_lots.fund_cluster",
+        "n|col|public.custodial_lots.normalized_property_number"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_operations",
+        "custodial_operations_operation_id_unique"
+      ],
+      "writes": [
+        "s|idx|public.custodial_operations_operation_id_unique",
+        "n|idx|public.custodial_operations_operation_id_unique",
+        "e|idx|public.custodial_operations_operation_id_unique",
+        "n|rel|public.custodial_operations_operation_id_unique"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_operations",
+        "n|sch|public",
+        "n|col|public.custodial_operations.operation_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_operations",
+        "custodial_operations_sequence_unique"
+      ],
+      "writes": [
+        "s|idx|public.custodial_operations_sequence_unique",
+        "n|idx|public.custodial_operations_sequence_unique",
+        "e|idx|public.custodial_operations_sequence_unique",
+        "n|rel|public.custodial_operations_sequence_unique"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_operations",
+        "n|sch|public",
+        "n|col|public.custodial_operations.sequence"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_property_exceptions",
+        "custodial_exception_scope_unique"
+      ],
+      "writes": [
+        "s|idx|public.custodial_exception_scope_unique",
+        "n|idx|public.custodial_exception_scope_unique",
+        "e|idx|public.custodial_exception_scope_unique",
+        "n|rel|public.custodial_exception_scope_unique"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_property_exceptions",
+        "n|sch|public",
+        "n|col|public.custodial_property_exceptions.id",
+        "n|col|public.custodial_property_exceptions.fund_cluster",
+        "n|col|public.custodial_property_exceptions.normalized_property_number"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_sections",
+        "custodial_sections_code_unique"
+      ],
+      "writes": [
+        "s|idx|public.custodial_sections_code_unique",
+        "n|idx|public.custodial_sections_code_unique",
+        "e|idx|public.custodial_sections_code_unique",
+        "n|rel|public.custodial_sections_code_unique"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_sections",
+        "n|sch|public",
+        "n|col|public.custodial_sections.code"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_transactions",
+        "custodial_transactions_balance_idx"
+      ],
+      "writes": [
+        "s|idx|public.custodial_transactions_balance_idx",
+        "n|idx|public.custodial_transactions_balance_idx",
+        "e|idx|public.custodial_transactions_balance_idx",
+        "n|rel|public.custodial_transactions_balance_idx"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_transactions",
+        "n|sch|public",
+        "n|col|public.custodial_transactions.balance_id",
+        "n|col|public.custodial_transactions.created_at"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_balances"
+      ],
+      "writes": [
+        "s|fk|public.custodial_balances.custodial_balances_item_id_custodial_items_id_fkey",
+        "n|fk|public.custodial_balances.custodial_balances_item_id_custodial_items_id_fkey",
+        "e|fk|public.custodial_balances.custodial_balances_item_id_custodial_items_id_fkey",
+        "n|con|public.custodial_balances.custodial_balances_item_id_custodial_items_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_balances",
+        "n|sch|public",
+        "n|tbl|public.custodial_items",
+        "n|sch|public",
+        "n|col|public.custodial_balances.item_id",
+        "n|col|public.custodial_items.id",
+        "e|uniqueness|public.custodial_items.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_balances"
+      ],
+      "writes": [
+        "s|fk|public.custodial_balances.custodial_balances_lot_id_custodial_lots_id_fkey",
+        "n|fk|public.custodial_balances.custodial_balances_lot_id_custodial_lots_id_fkey",
+        "e|fk|public.custodial_balances.custodial_balances_lot_id_custodial_lots_id_fkey",
+        "n|con|public.custodial_balances.custodial_balances_lot_id_custodial_lots_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_balances",
+        "n|sch|public",
+        "n|tbl|public.custodial_lots",
+        "n|sch|public",
+        "n|col|public.custodial_balances.lot_id",
+        "n|col|public.custodial_lots.id",
+        "e|uniqueness|public.custodial_lots.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_balances"
+      ],
+      "writes": [
+        "s|fk|public.custodial_balances.custodial_balances_lot_scope_fk",
+        "n|fk|public.custodial_balances.custodial_balances_lot_scope_fk",
+        "e|fk|public.custodial_balances.custodial_balances_lot_scope_fk",
+        "n|con|public.custodial_balances.custodial_balances_lot_scope_fk"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_balances",
+        "n|sch|public",
+        "n|tbl|public.custodial_lots",
+        "n|sch|public",
+        "n|col|public.custodial_balances.lot_id",
+        "n|col|public.custodial_balances.item_id",
+        "n|col|public.custodial_balances.fund_cluster",
+        "n|col|public.custodial_lots.id",
+        "n|col|public.custodial_lots.item_id",
+        "n|col|public.custodial_lots.fund_cluster",
+        "e|uniqueness|public.custodial_lots.fund_cluster.id.item_id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_items"
+      ],
+      "writes": [
+        "s|fk|public.custodial_items.custodial_items_default_section_id_custodial_sections_id_fkey",
+        "n|fk|public.custodial_items.custodial_items_default_section_id_custodial_sections_id_fkey",
+        "e|fk|public.custodial_items.custodial_items_default_section_id_custodial_sections_id_fkey",
+        "n|con|public.custodial_items.custodial_items_default_section_id_custodial_sections_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_items",
+        "n|sch|public",
+        "n|tbl|public.custodial_sections",
+        "n|sch|public",
+        "n|col|public.custodial_items.default_section_id",
+        "n|col|public.custodial_sections.id",
+        "e|uniqueness|public.custodial_sections.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_lots"
+      ],
+      "writes": [
+        "s|fk|public.custodial_lots.custodial_lots_item_id_custodial_items_id_fkey",
+        "n|fk|public.custodial_lots.custodial_lots_item_id_custodial_items_id_fkey",
+        "e|fk|public.custodial_lots.custodial_lots_item_id_custodial_items_id_fkey",
+        "n|con|public.custodial_lots.custodial_lots_item_id_custodial_items_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_lots",
+        "n|sch|public",
+        "n|tbl|public.custodial_items",
+        "n|sch|public",
+        "n|col|public.custodial_lots.item_id",
+        "n|col|public.custodial_items.id",
+        "e|uniqueness|public.custodial_items.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_lots"
+      ],
+      "writes": [
+        "s|fk|public.custodial_lots.custodial_lots_exception_scope_fk",
+        "n|fk|public.custodial_lots.custodial_lots_exception_scope_fk",
+        "e|fk|public.custodial_lots.custodial_lots_exception_scope_fk",
+        "n|con|public.custodial_lots.custodial_lots_exception_scope_fk"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_lots",
+        "n|sch|public",
+        "n|tbl|public.custodial_property_exceptions",
+        "n|sch|public",
+        "n|col|public.custodial_lots.property_exception_id",
+        "n|col|public.custodial_lots.fund_cluster",
+        "n|col|public.custodial_lots.normalized_property_number",
+        "n|col|public.custodial_property_exceptions.id",
+        "n|col|public.custodial_property_exceptions.fund_cluster",
+        "n|col|public.custodial_property_exceptions.normalized_property_number",
+        "e|uniqueness|public.custodial_property_exceptions.fund_cluster.id.normalized_property_number"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_operations"
+      ],
+      "writes": [
+        "s|fk|public.custodial_operations.custodial_operations_actor_id_user_id_fkey",
+        "n|fk|public.custodial_operations.custodial_operations_actor_id_user_id_fkey",
+        "e|fk|public.custodial_operations.custodial_operations_actor_id_user_id_fkey",
+        "n|con|public.custodial_operations.custodial_operations_actor_id_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_operations",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.custodial_operations.actor_id",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_property_exceptions"
+      ],
+      "writes": [
+        "s|fk|public.custodial_property_exceptions.custodial_property_exceptions_approved_by_user_id_fkey",
+        "n|fk|public.custodial_property_exceptions.custodial_property_exceptions_approved_by_user_id_fkey",
+        "e|fk|public.custodial_property_exceptions.custodial_property_exceptions_approved_by_user_id_fkey",
+        "n|con|public.custodial_property_exceptions.custodial_property_exceptions_approved_by_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_property_exceptions",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.custodial_property_exceptions.approved_by",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_transactions"
+      ],
+      "writes": [
+        "s|fk|public.custodial_transactions.custodial_transactions_FT2YRLyZqO5u_fkey",
+        "n|fk|public.custodial_transactions.custodial_transactions_FT2YRLyZqO5u_fkey",
+        "e|fk|public.custodial_transactions.custodial_transactions_FT2YRLyZqO5u_fkey",
+        "n|con|public.custodial_transactions.custodial_transactions_FT2YRLyZqO5u_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_transactions",
+        "n|sch|public",
+        "n|tbl|public.custodial_operations",
+        "n|sch|public",
+        "n|col|public.custodial_transactions.operation_id",
+        "n|col|public.custodial_operations.id",
+        "e|uniqueness|public.custodial_operations.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_transactions"
+      ],
+      "writes": [
+        "s|fk|public.custodial_transactions.custodial_transactions_balance_id_custodial_balances_id_fkey",
+        "n|fk|public.custodial_transactions.custodial_transactions_balance_id_custodial_balances_id_fkey",
+        "e|fk|public.custodial_transactions.custodial_transactions_balance_id_custodial_balances_id_fkey",
+        "n|con|public.custodial_transactions.custodial_transactions_balance_id_custodial_balances_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_transactions",
+        "n|sch|public",
+        "n|tbl|public.custodial_balances",
+        "n|sch|public",
+        "n|col|public.custodial_transactions.balance_id",
+        "n|col|public.custodial_balances.id",
+        "e|uniqueness|public.custodial_balances.id"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "custodial_balances",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "custodial_items",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "custodial_lots",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "custodial_operations",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "custodial_property_exceptions",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "custodial_sections",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "custodial_transactions",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "custodial_class",
+        "values": [
+          "stock_card",
+          "semi_expendable",
+          "ppe"
+        ],
+        "entityType": "enums"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "custodial_operation_type",
+        "values": [
+          "opening",
+          "receipt",
+          "issue",
+          "return",
+          "transfer",
+          "adjustment"
+        ],
+        "entityType": "enums"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_balances",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_balances",
+        "name": "item_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_balances",
+        "name": "lot_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_balances",
+        "name": "fund_cluster",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_balances",
+        "name": "office",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_balances",
+        "name": "quantity",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_balances",
+        "name": "version",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_items",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_items",
+        "name": "code",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_items",
+        "name": "normalized_code",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_items",
+        "name": "article",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_items",
+        "name": "description",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_items",
+        "name": "unit",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_items",
+        "name": "reorder_point",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_items",
+        "name": "default_section_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_items",
+        "name": "active",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "true",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_items",
+        "name": "notes",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_items",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_items",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "item_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "reporting_class",
+        "type": "custodial_class",
+        "typeSchema": "public",
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "property_number",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "normalized_property_number",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "property_exception_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "unit_value",
+        "type": "numeric(18,2)",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "supplier",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "acquired_on",
+        "type": "date",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "year_label",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "fund_cluster",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "accountable_officer",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "office",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "condition",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "remarks",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "active",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "true",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "version",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_operations",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_operations",
+        "name": "operation_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_operations",
+        "name": "actor_id",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_operations",
+        "name": "operation_type",
+        "type": "custodial_operation_type",
+        "typeSchema": "public",
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_operations",
+        "name": "sequence",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": {
+          "type": "always",
+          "name": "custodial_operations_sequence_seq",
+          "increment": "1",
+          "startWith": "1",
+          "minValue": "1",
+          "maxValue": "2147483647",
+          "cache": 1,
+          "cycle": false
+        },
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_operations",
+        "name": "transaction_date",
+        "type": "date",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_operations",
+        "name": "reference",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_operations",
+        "name": "reason",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_operations",
+        "name": "payload_fingerprint",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_operations",
+        "name": "result",
+        "type": "jsonb",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_operations",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_property_exceptions",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_property_exceptions",
+        "name": "fund_cluster",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_property_exceptions",
+        "name": "normalized_property_number",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_property_exceptions",
+        "name": "reason",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_property_exceptions",
+        "name": "approved_by",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_property_exceptions",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_sections",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_sections",
+        "name": "code",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_sections",
+        "name": "form_family",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_sections",
+        "name": "name",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_sections",
+        "name": "display_order",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_sections",
+        "name": "active",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "true",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_sections",
+        "name": "effective_from",
+        "type": "date",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_sections",
+        "name": "effective_until",
+        "type": "date",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_transactions",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_transactions",
+        "name": "operation_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_transactions",
+        "name": "balance_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_transactions",
+        "name": "delta",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_transactions",
+        "name": "balance_before",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_transactions",
+        "name": "balance_after",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_transactions",
+        "name": "days_to_consume",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_transactions",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_balances",
+        "name": "custodial_balances_lot_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "item_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "lot_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "fund_cluster",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "office",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": "\"lot_id\" IS NOT NULL",
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_balances",
+        "name": "custodial_balances_unlotted_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "item_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "fund_cluster",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "office",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": "\"lot_id\" IS NULL",
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_items",
+        "name": "custodial_items_normalized_code_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "normalized_code",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "custodial_lots_item_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "item_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "custodial_lots_identity_scope_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "item_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "fund_cluster",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "custodial_lots_property_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "fund_cluster",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "normalized_property_number",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": "\"normalized_property_number\" IS NOT NULL AND \"property_exception_id\" IS NULL",
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_operations",
+        "name": "custodial_operations_operation_id_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "operation_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_operations",
+        "name": "custodial_operations_sequence_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "sequence",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_property_exceptions",
+        "name": "custodial_exception_scope_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "fund_cluster",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "normalized_property_number",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_sections",
+        "name": "custodial_sections_code_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "code",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_transactions",
+        "name": "custodial_transactions_balance_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "balance_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "created_at",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_balances",
+        "name": "custodial_balances_item_id_custodial_items_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "item_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "custodial_items",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_balances",
+        "name": "custodial_balances_lot_id_custodial_lots_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "lot_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "custodial_lots",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_balances",
+        "name": "custodial_balances_lot_scope_fk",
+        "nameExplicit": true,
+        "columns": [
+          "lot_id",
+          "item_id",
+          "fund_cluster"
+        ],
+        "schemaTo": "public",
+        "tableTo": "custodial_lots",
+        "columnsTo": [
+          "id",
+          "item_id",
+          "fund_cluster"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_items",
+        "name": "custodial_items_default_section_id_custodial_sections_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "default_section_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "custodial_sections",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "custodial_lots_item_id_custodial_items_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "item_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "custodial_items",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "custodial_lots_exception_scope_fk",
+        "nameExplicit": true,
+        "columns": [
+          "property_exception_id",
+          "fund_cluster",
+          "normalized_property_number"
+        ],
+        "schemaTo": "public",
+        "tableTo": "custodial_property_exceptions",
+        "columnsTo": [
+          "id",
+          "fund_cluster",
+          "normalized_property_number"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_operations",
+        "name": "custodial_operations_actor_id_user_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "actor_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "user",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_property_exceptions",
+        "name": "custodial_property_exceptions_approved_by_user_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "approved_by"
+        ],
+        "schemaTo": "public",
+        "tableTo": "user",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_transactions",
+        "name": "custodial_transactions_FT2YRLyZqO5u_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "operation_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "custodial_operations",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_transactions",
+        "name": "custodial_transactions_balance_id_custodial_balances_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "balance_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "custodial_balances",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_balances",
+        "name": "custodial_balances_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_items",
+        "name": "custodial_items_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "custodial_lots_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_operations",
+        "name": "custodial_operations_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_property_exceptions",
+        "name": "custodial_property_exceptions_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_sections",
+        "name": "custodial_sections_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_transactions",
+        "name": "custodial_transactions_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_balances",
+        "name": "custodial_balances_quantity_nonnegative",
+        "value": "\"quantity\" >= 0",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_balances",
+        "name": "custodial_balances_version_nonnegative",
+        "value": "\"version\" >= 0",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_items",
+        "name": "custodial_items_reorder_nonnegative",
+        "value": "\"reorder_point\" IS NULL OR \"reorder_point\" >= 0",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "custodial_lots_property_fields",
+        "value": "(\"property_number\" IS NULL AND \"normalized_property_number\" IS NULL AND \"property_exception_id\" IS NULL) OR (\"property_number\" IS NOT NULL AND \"normalized_property_number\" IS NOT NULL AND length(trim(\"property_number\")) > 0 AND length(trim(\"normalized_property_number\")) > 0)",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "custodial_lots_value_nonnegative",
+        "value": "\"unit_value\" IS NULL OR \"unit_value\" >= 0",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "custodial_lots_version_nonnegative",
+        "value": "\"version\" >= 0",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_property_exceptions",
+        "name": "custodial_exception_reason_nonblank",
+        "value": "length(trim(\"reason\")) > 0",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_property_exceptions",
+        "name": "custodial_exception_number_nonblank",
+        "value": "length(trim(\"normalized_property_number\")) > 0",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_sections",
+        "name": "custodial_sections_dates",
+        "value": "\"effective_until\" IS NULL OR \"effective_from\" IS NULL OR \"effective_until\" >= \"effective_from\"",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_transactions",
+        "name": "custodial_transactions_arithmetic",
+        "value": "\"delta\" <> 0 AND \"balance_before\" >= 0 AND \"balance_after\" >= 0 AND \"balance_after\" = \"balance_before\" + \"delta\"",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_transactions",
+        "name": "custodial_transactions_days_nonnegative",
+        "value": "\"days_to_consume\" IS NULL OR \"days_to_consume\" >= 0",
+        "entityType": "checks"
+      }
+    }
+  ]
+}

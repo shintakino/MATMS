@@ -1,0 +1,1 @@
+ALTER TYPE "application_role" ADD VALUE 'property_custodian' BEFORE 'staff';

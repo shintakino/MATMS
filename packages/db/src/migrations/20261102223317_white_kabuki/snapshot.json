@@ -1,0 +1,360 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "b808251a-ddf9-48d9-a425-7e50b0c7092f",
+  "prevIds": [
+    "be4b84d1-68e7-4fbe-878e-e7a9791abf37"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_classification_policies"
+      ],
+      "writes": [
+        "s|tbl|public.custodial_classification_policies",
+        "n|tbl|public.custodial_classification_policies",
+        "e|tbl|public.custodial_classification_policies",
+        "n|rel|public.custodial_classification_policies",
+        "n|type|public.custodial_classification_policies",
+        "n|rel|public.custodial_classification_policies_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "custodial_import_batches",
+        "classification_policy_id"
+      ],
+      "writes": [
+        "s|col|public.custodial_import_batches.classification_policy_id",
+        "n|col|public.custodial_import_batches.classification_policy_id",
+        "e|col|public.custodial_import_batches.classification_policy_id"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_import_batches",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_classification_policies",
+        "custodial_classification_policy_version_unique"
+      ],
+      "writes": [
+        "s|idx|public.custodial_classification_policy_version_unique",
+        "n|idx|public.custodial_classification_policy_version_unique",
+        "e|idx|public.custodial_classification_policy_version_unique",
+        "n|rel|public.custodial_classification_policy_version_unique"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_classification_policies",
+        "n|sch|public",
+        "n|col|public.custodial_classification_policies.version"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_classification_policies"
+      ],
+      "writes": [
+        "s|fk|public.custodial_classification_policies.custodial_classification_policies_created_by_user_id_fkey",
+        "n|fk|public.custodial_classification_policies.custodial_classification_policies_created_by_user_id_fkey",
+        "e|fk|public.custodial_classification_policies.custodial_classification_policies_created_by_user_id_fkey",
+        "n|con|public.custodial_classification_policies.custodial_classification_policies_created_by_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_classification_policies",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.custodial_classification_policies.created_by",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_import_batches"
+      ],
+      "writes": [
+        "s|fk|public.custodial_import_batches.custodial_import_batches_YnCWfIHIS2BW_fkey",
+        "n|fk|public.custodial_import_batches.custodial_import_batches_YnCWfIHIS2BW_fkey",
+        "e|fk|public.custodial_import_batches.custodial_import_batches_YnCWfIHIS2BW_fkey",
+        "n|con|public.custodial_import_batches.custodial_import_batches_YnCWfIHIS2BW_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_import_batches",
+        "n|sch|public",
+        "n|tbl|public.custodial_classification_policies",
+        "n|sch|public",
+        "n|col|public.custodial_import_batches.classification_policy_id",
+        "n|col|public.custodial_classification_policies.id",
+        "e|uniqueness|public.custodial_classification_policies.id"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "custodial_classification_policies",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_classification_policies",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_classification_policies",
+        "name": "version",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_classification_policies",
+        "name": "effective_from",
+        "type": "date",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_classification_policies",
+        "name": "threshold",
+        "type": "numeric(15,2)",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_classification_policies",
+        "name": "note",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_classification_policies",
+        "name": "created_by",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_classification_policies",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_import_batches",
+        "name": "classification_policy_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_classification_policies",
+        "name": "custodial_classification_policy_version_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "version",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_classification_policies",
+        "name": "custodial_classification_policies_created_by_user_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "created_by"
+        ],
+        "schemaTo": "public",
+        "tableTo": "user",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_import_batches",
+        "name": "custodial_import_batches_YnCWfIHIS2BW_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "classification_policy_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "custodial_classification_policies",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_classification_policies",
+        "name": "custodial_classification_policies_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_classification_policies",
+        "name": "custodial_classification_policy_version_positive",
+        "value": "\"version\" > 0",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_classification_policies",
+        "name": "custodial_classification_policy_threshold_nonnegative",
+        "value": "\"threshold\" >= 0",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_classification_policies",
+        "name": "custodial_classification_policy_note_nonblank",
+        "value": "length(trim(\"note\")) > 0",
+        "entityType": "checks"
+      }
+    }
+  ]
+}

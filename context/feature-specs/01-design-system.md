@@ -1,6 +1,6 @@
 # 01 — Design System and Application Shell
 
-**Status:** Implemented on 2026-10-26; browser accessibility and full production-build verification remain pending.
+**Status:** Implemented. Production build, automated WCAG A/AA scans on 13 assembled routes, representative mobile/keyboard checks and correction-dialog focus return pass (2026-10-28). Full school assistive-technology acceptance remains open.
 
 **Source:** PRD §10, §11 accessibility, AC-21, AC-22.
 
@@ -14,7 +14,7 @@ Establish shadcn/ui and Tailwind as the shared MATMS UI foundation for faster de
 
 1. Inspect the generated frontend's shadcn configuration, aliases, stylesheet, dependencies, and `cn()` helper. Reuse them. Initialize only what is missing and keep one source for shared primitives.
 2. Add primitives through the supported shadcn CLI into the configured UI directory/package. Start with those needed by the shell and first forms; add later primitives with their consuming features.
-3. Use shared semantic CSS/Tailwind tokens from `context/ui-context.md`. Keep the generated light palette until school branding is agreed. Preserve reusable primitive behavior; use feature wrappers and global tokens for domain customization.
+3. Use shared semantic CSS/Tailwind tokens from `context/ui-context.md`. Use the shared light palette documented in UI context; apply official school branding when agreed. Preserve reusable primitive behavior; use feature wrappers and global tokens for domain customization.
 4. Reuse or add Lucide icons. Keep icon-only controls labeled. Reuse the existing class-merging helper instead of creating another utility path.
 5. Build a responsive shell with Sidebar, mobile Sheet, Breadcrumb, user menu, content header, and role-aware navigation. Wire actual permissions when 02 is ready; fixtures are not authorization.
 6. Provide shared loading, empty, error/retry, unavailable, inline validation, and pending-submit patterns. Add Sonner for transient results and persistent Alert messages for unresolved problems.
@@ -42,3 +42,11 @@ Add date controls and scrolling utilities when needed. Do not install all compon
 - Status labels include text; stock fixtures show Out of stock at 0, Low stock at threshold, and In stock above threshold.
 - Loading/error/empty and narrow-screen states are usable. Pending mutations do not display unconfirmed balances or success.
 - Record AC-21/AC-22 as foundation checks here; repeat relevant accessibility checks on assembled feature screens before release.
+
+## Planned PRD v1.3 extension
+
+Add Property Inventory navigation and `/template-inventory` with `/inventory` compatibility when implementing 10. Compose register/lot/ledger, count entry, import review and official preview workflows described in [UI context](../ui-context.md) and specs 10–13. Add classification/condition/variance/data-quality badges above primitives; custodial reorder is nullable and differs from template Low stock. Desktop count tables and mobile line cards need server-confirmed autosave, unsaved-error visibility and finalization review. Source-faithful printed typography/geometry belongs to 12; surrounding controls use the shared theme. Repeat AC-21/AC-22 on all new assembled screens. These additions are not covered by the baseline status above.
+
+## Visual refresh follow-up
+
+The user-requested interface refresh extends the existing primitives with shared light slate/teal tokens, grouped role-aware navigation, screen-only module composition, dashboard cards, empty states and a responsive sign-in page. See `context/ui-context.md` for the implementation boundaries and the progress tracker for verification. Official form geometry remains owned by spec 12.

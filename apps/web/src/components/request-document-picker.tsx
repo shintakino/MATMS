@@ -1,0 +1,17 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Input } from "@matms/ui/components/input";
+import { Button } from "@matms/ui/components/button";
+import { client } from "@/utils/orpc";
+
+type Selection = { id: string; code: string; title: string };
+export function RequestDocumentPicker({ selected, onChange }: { selected: Selection[]; onChange: (items: Selection[]) => void }) {
+  const [query, setQuery] = useState("");
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  useEffect(() => { const timer = setTimeout(() => { setSearch(query); setPage(1); }, 300); return () => clearTimeout(timer); }, [query]);
+  const result = useQuery({ queryKey: ["request-document-picker", search, page], queryFn: () => client.reporting.search({ filters: { kind: "document", query: search || undefined, lifecycle: "active", recordLifecycle: "active", folderLifecycle: "active" }, page, pageSize: 25 }) });
+  return <fieldset className="space-y-3 md:col-span-2"><legend className="text-sm font-medium">Permitted documents</legend><label>Find documents<Input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search by document code, title or keyword" /></label><p className="text-xs text-muted-foreground">Only active records available to your account are listed. Selection stays when you search or change pages; the server rechecks access when the request is saved.</p><div className="max-h-64 space-y-2 overflow-auto rounded-md border p-3">{result.isLoading ? <p role="status">Loading documents…</p> : result.isError ? <div role="alert">Documents are unavailable. <Button type="button" variant="outline" onClick={() => void result.refetch()}>Retry documents</Button></div> : result.data?.rows.length ? result.data.rows.map((row) => <label className="flex gap-2 text-sm" key={row.id}><input type="checkbox" checked={selected.some((item) => item.id === row.id)} onChange={(event) => onChange(event.target.checked ? [...selected, { id: row.id, code: row.code, title: row.title }] : selected.filter((item) => item.id !== row.id))} /><span className="min-w-0 break-words">{row.code} · {row.title}<span className="block text-xs text-muted-foreground">{row.location}</span></span></label>) : <p>No matching permitted documents. Try a different search or ask an Administrator to check access.</p>}</div><nav aria-label="Document selection pages" className="flex items-center gap-3 text-sm"><Button type="button" variant="outline" disabled={page === 1 || result.isFetching} onClick={() => setPage(page - 1)}>Previous documents</Button><span>Page {page}</span><Button type="button" variant="outline" disabled={!result.data?.hasMore || result.isFetching} onClick={() => setPage(page + 1)}>Next documents</Button></nav><section aria-label="Selected documents" className="rounded-md bg-muted p-3"><p className="text-sm font-medium">{selected.length} document(s) selected</p><ul className="mt-2 space-y-2">{selected.map((item) => <li key={item.id} className="flex items-center justify-between gap-2 text-sm"><span className="min-w-0 break-words">{item.code} · {item.title}</span><input type="hidden" name="documents" value={item.id} /><Button type="button" variant="outline" size="sm" aria-label={`Remove ${item.code}`} onClick={() => onChange(selected.filter((other) => other.id !== item.id))}>Remove</Button></li>)}</ul></section></fieldset>;
+}

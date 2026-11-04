@@ -31,3 +31,11 @@ docker-compose.yml
 local.db
 local.db-*
 .data
+
+# Private reference workbooks and operator credentials are never image assets.
+**/*.xls
+**/*.xlsx
+.deploy-private
+**/.next-*
+**/.agents
+**/.codex

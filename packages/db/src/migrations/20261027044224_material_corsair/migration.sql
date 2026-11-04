@@ -1,0 +1,1 @@
+ALTER TABLE "request_items" ADD COLUMN "approved_by_admin" boolean DEFAULT false NOT NULL;

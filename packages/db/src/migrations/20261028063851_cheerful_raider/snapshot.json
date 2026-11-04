@@ -1,0 +1,47 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "c5c4b8cc-fab2-4168-82bf-a12f6a6bd172",
+  "prevIds": [
+    "4fd47b5e-0b9b-4323-b096-2b7303a96b1c"
+  ],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "custodial_count_lines",
+        "review_required"
+      ],
+      "writes": [
+        "s|col|public.custodial_count_lines.review_required",
+        "n|col|public.custodial_count_lines.review_required",
+        "e|col|public.custodial_count_lines.review_required"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_count_lines",
+        "n|sch|public"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_lines",
+        "name": "review_required",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "false",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    }
+  ]
+}

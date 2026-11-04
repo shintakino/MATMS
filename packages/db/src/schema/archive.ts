@@ -77,6 +77,7 @@ export const boxes = pgTable(
     uniqueIndex("boxes_normalized_code_unique").on(table.normalizedCode),
     index("boxes_category_location_idx").on(table.categoryId, table.shelfLocationId),
     index("boxes_lifecycle_confidentiality_idx").on(table.lifecycle, table.confidentiality),
+    index("boxes_search_order_idx").on(sql`lower(${table.code}) COLLATE "C"`, sql`(${table.id}::text)`),
   ],
 );
 
@@ -101,6 +102,7 @@ export const folders = pgTable(
   (table) => [
     uniqueIndex("folders_normalized_code_unique").on(table.normalizedCode),
     index("folders_box_lifecycle_idx").on(table.boxId, table.lifecycle),
+    index("folders_search_order_idx").on(sql`lower(${table.code}) COLLATE "C"`, sql`(${table.id}::text)`),
   ],
 );
 
@@ -126,6 +128,7 @@ export const documents = pgTable(
   (table) => [
     uniqueIndex("documents_normalized_code_unique").on(table.normalizedCode),
     index("documents_folder_lifecycle_idx").on(table.folderId, table.lifecycle),
+    index("documents_search_order_idx").on(sql`lower(${table.code}) COLLATE "C"`, sql`(${table.id}::text)`),
   ],
 );
 

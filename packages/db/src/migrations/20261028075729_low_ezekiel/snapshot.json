@@ -1,0 +1,154 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "65e30241-52b8-4c5c-8650-aed94c0c7fa9",
+  "prevIds": [
+    "d5769491-6f69-4a82-a791-d46e290ecc62"
+  ],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "custodial_count_lines",
+        "import_batch_id"
+      ],
+      "writes": [
+        "s|col|public.custodial_count_lines.import_batch_id",
+        "n|col|public.custodial_count_lines.import_batch_id",
+        "e|col|public.custodial_count_lines.import_batch_id"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_count_lines",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "custodial_count_lines",
+        "import_evidence"
+      ],
+      "writes": [
+        "s|col|public.custodial_count_lines.import_evidence",
+        "n|col|public.custodial_count_lines.import_evidence",
+        "e|col|public.custodial_count_lines.import_evidence"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_count_lines",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_count_lines"
+      ],
+      "writes": [
+        "s|fk|public.custodial_count_lines.custodial_count_lines_q8P7v6RYhOoJ_fkey",
+        "n|fk|public.custodial_count_lines.custodial_count_lines_q8P7v6RYhOoJ_fkey",
+        "e|fk|public.custodial_count_lines.custodial_count_lines_q8P7v6RYhOoJ_fkey",
+        "n|con|public.custodial_count_lines.custodial_count_lines_q8P7v6RYhOoJ_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_count_lines",
+        "n|sch|public",
+        "n|tbl|public.custodial_import_batches",
+        "n|sch|public",
+        "n|col|public.custodial_count_lines.import_batch_id",
+        "n|col|public.custodial_import_batches.id",
+        "e|uniqueness|public.custodial_import_batches.id"
+      ]
+    },
+    {
+      "statementType": "add_check",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_count_lines"
+      ],
+      "writes": [
+        "s|ck|public.custodial_count_lines.custodial_count_lines_import_evidence",
+        "n|ck|public.custodial_count_lines.custodial_count_lines_import_evidence",
+        "e|ck|public.custodial_count_lines.custodial_count_lines_import_evidence",
+        "n|con|public.custodial_count_lines.custodial_count_lines_import_evidence"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_count_lines",
+        "n|sch|public",
+        "n|col|public.custodial_count_lines.import_batch_id",
+        "n|col|public.custodial_count_lines.import_evidence"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_lines",
+        "name": "import_batch_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_lines",
+        "name": "import_evidence",
+        "type": "jsonb",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_lines",
+        "name": "custodial_count_lines_q8P7v6RYhOoJ_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "import_batch_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "custodial_import_batches",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_lines",
+        "name": "custodial_count_lines_import_evidence",
+        "value": "(\"import_batch_id\" IS NULL AND \"import_evidence\" IS NULL) OR (\"import_batch_id\" IS NOT NULL AND \"import_evidence\" IS NOT NULL)",
+        "entityType": "checks"
+      }
+    }
+  ]
+}

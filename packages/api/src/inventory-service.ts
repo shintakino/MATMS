@@ -1,6 +1,6 @@
 import { writeAuditEntry } from "@matms/db";
 import type { AuditEntry, AuditTransaction, Database } from "@matms/db";
-import { boxes, folders } from "@matms/db/schema/archive";
+import { boxes, categories, folders } from "@matms/db/schema/archive";
 import {
   stockOperations,
   stockTransactions,
@@ -9,7 +9,7 @@ import {
 } from "@matms/db/schema/inventory";
 import { and, eq, gte, sql } from "drizzle-orm";
 
-import { ArchiveServiceError, normalizeCode, requireActiveTemplateFolder, validateApprovedUrl } from "./archive-service";
+import { ArchiveServiceError, normalizeCode, requireActiveTemplateFolder, requireFolderAccess, validateApprovedUrl } from "./archive-service";
 import type { ArchiveActor } from "./archive-service";
 
 export class InventoryServiceError extends Error {
@@ -65,7 +65,7 @@ async function audit(tx: AuditTransaction, entry: Omit<AuditEntry, "actorId"> & 
   await writeAuditEntry(tx, entry);
 }
 
-async function inventoryForMutation(db: Database, actor: ArchiveActor, inventoryId: string) {
+async function inventoryForMutation(db: Pick<Database, "select">, actor: ArchiveActor, inventoryId: string) {
   const [row] = await db
     .select({ inventory: templateInventory, template: templates, folder: folders, box: boxes })
     .from(templateInventory)
@@ -85,12 +85,25 @@ async function inventoryForMutation(db: Database, actor: ArchiveActor, inventory
   return row;
 }
 
+async function lockInventoryBoxes(tx: AuditTransaction, inventoryIds: string[]) {
+  const locked = await tx.execute<{ id: string }>(sql`SELECT b.id FROM boxes b JOIN folders f ON f.box_id = b.id JOIN template_inventory i ON i.folder_id = f.id WHERE i.id IN (${sql.join(inventoryIds.map((id) => sql`${id}::uuid`), sql`, `)}) ORDER BY b.id FOR UPDATE OF b`);
+  return new Set(locked.rows.map((row) => row.id));
+}
+
 export async function createTemplate(db: Database, actor: ArchiveActor, input: { code: string; familyCode: string; name: string; description?: string | null; categoryId: string; revisionLabel: string; revisionDate?: string | null; digitalUrl: string; supersedesId?: string | null; correlationId: string }) {
   requireAdmin(actor);
   const normalizedCode = normalizeCode(input.code);
   const familyCode = normalizeCode(input.familyCode);
   const digitalUrl = validateApprovedUrl(input.digitalUrl);
   return db.transaction(async (tx) => {
+    const [category] = await tx.select().from(categories).where(eq(categories.id, input.categoryId)).for("update").limit(1);
+    if (!category?.active) throw new InventoryServiceError("CONFLICT", "Choose an active category.");
+    if (input.supersedesId) {
+      const [previous] = await tx.select().from(templates).where(eq(templates.id, input.supersedesId)).for("update").limit(1);
+      if (!previous || previous.familyCode !== familyCode || previous.status !== "active") throw new InventoryServiceError("CONFLICT", "Select an active earlier revision in the same family.");
+      await tx.update(templates).set({ status: "superseded" }).where(eq(templates.id, previous.id));
+      await audit(tx, { actorId: actor.id, action: "inventory.template_superseded", targetType: "template", targetId: previous.id, before: { status: previous.status }, after: { status: "superseded", replacementCode: input.code.trim() }, correlationId: input.correlationId });
+    }
     const [template] = await tx.insert(templates).values({ code: input.code.trim(), normalizedCode, familyCode, name: input.name.trim(), description: input.description?.trim() || null, categoryId: input.categoryId, revisionLabel: input.revisionLabel.trim(), revisionDate: input.revisionDate || null, digitalUrl: digitalUrl!, supersedesId: input.supersedesId || null }).returning();
     if (!template) throw new InventoryServiceError("CONFLICT", "The template could not be created.");
     await audit(tx, { actorId: actor.id, action: "inventory.template_created", targetType: "template", targetId: template.id, after: { code: template.code, familyCode: template.familyCode, revisionLabel: template.revisionLabel }, correlationId: input.correlationId });
@@ -98,11 +111,60 @@ export async function createTemplate(db: Database, actor: ArchiveActor, input: {
   });
 }
 
+export async function updateTemplate(db: Database, actor: ArchiveActor, input: { id: string; name: string; description?: string | null; digitalUrl: string; code?: string; familyCode?: string; categoryId?: string; revisionLabel?: string; revisionDate?: string | null; correlationId: string }) {
+  requireAdmin(actor);
+  const digitalUrl = validateApprovedUrl(input.digitalUrl)!;
+  return db.transaction(async (tx) => {
+    const [before] = await tx.select().from(templates).where(eq(templates.id, input.id)).for("update").limit(1);
+    if (!before) throw new InventoryServiceError("UNAVAILABLE", "This template is unavailable.");
+    if (before.status === "retired") throw new InventoryServiceError("CONFLICT", "Retired revisions cannot be edited.");
+    const identity = { code: input.code?.trim() ?? before.code, normalizedCode: normalizeCode(input.code ?? before.code), familyCode: normalizeCode(input.familyCode ?? before.familyCode), categoryId: input.categoryId ?? before.categoryId, revisionLabel: input.revisionLabel?.trim() ?? before.revisionLabel, revisionDate: input.revisionDate === undefined ? before.revisionDate : input.revisionDate };
+    const changedIdentity = identity.normalizedCode !== before.normalizedCode || identity.familyCode !== before.familyCode || identity.categoryId !== before.categoryId || identity.revisionLabel !== before.revisionLabel || identity.revisionDate !== before.revisionDate;
+    if (changedIdentity) {
+      const [history] = await tx.select({ id: stockTransactions.id }).from(stockTransactions).innerJoin(templateInventory, eq(stockTransactions.inventoryId, templateInventory.id)).where(eq(templateInventory.templateId, input.id)).limit(1);
+      const [successor] = await tx.select({ id: templates.id }).from(templates).where(eq(templates.supersedesId, input.id)).limit(1);
+      if (history || before.supersedesId || successor) throw new InventoryServiceError("CONFLICT", "Revision identity is fixed after stock activity or supersession. Create a new revision instead.");
+      const [category] = await tx.select().from(categories).where(eq(categories.id, identity.categoryId)).limit(1);
+      if (!category?.active) throw new InventoryServiceError("CONFLICT", "Choose an active category.");
+    }
+    const [after] = await tx.update(templates).set({ ...identity, name: input.name.trim(), description: input.description?.trim() || null, digitalUrl }).where(eq(templates.id, input.id)).returning();
+    if (!after) throw new InventoryServiceError("UNAVAILABLE", "This template is unavailable.");
+    await audit(tx, { actorId: actor.id, action: "inventory.template_updated", targetType: "template", targetId: after.id, before: { code: before.code, familyCode: before.familyCode, categoryId: before.categoryId, revisionLabel: before.revisionLabel, revisionDate: before.revisionDate, name: before.name, description: before.description, digitalUrl: before.digitalUrl }, after: { ...identity, name: after.name, description: after.description, digitalUrl: after.digitalUrl }, correlationId: input.correlationId });
+    return after;
+  });
+}
+
+export async function setTemplateStatus(db: Database, actor: ArchiveActor, input: { id: string; status: "active" | "superseded" | "retired"; correlationId: string }) {
+  requireAdmin(actor);
+  return db.transaction(async (tx) => {
+    const [before] = await tx.select().from(templates).where(eq(templates.id, input.id)).for("update").limit(1);
+    if (!before) throw new InventoryServiceError("UNAVAILABLE", "This template is unavailable.");
+    if (before.status === "retired" && input.status !== "retired") throw new InventoryServiceError("CONFLICT", "Retired revisions cannot be reactivated.");
+    if (input.status === "retired") {
+      const [stock] = await tx.select({ id: templateInventory.id }).from(templateInventory).where(and(eq(templateInventory.templateId, input.id), gte(templateInventory.count, 1))).limit(1);
+      if (stock) throw new InventoryServiceError("CONFLICT", "Resolve remaining stock before retirement.");
+    }
+    const [after] = await tx.update(templates).set({ status: input.status }).where(eq(templates.id, input.id)).returning();
+    if (!after) throw new InventoryServiceError("UNAVAILABLE", "This template is unavailable.");
+    await audit(tx, { actorId: actor.id, action: "inventory.template_status_changed", targetType: "template", targetId: after.id, before: { status: before.status }, after: { status: after.status }, correlationId: input.correlationId });
+    return after;
+  });
+}
+
+async function lockStockTemplates(tx: AuditTransaction, inventoryIds: string[]) {
+  await tx.execute(sql`SELECT t.id FROM templates t JOIN template_inventory i ON i.template_id = t.id WHERE i.id IN (${sql.join(inventoryIds.map((id) => sql`${id}::uuid`), sql`, `)}) ORDER BY t.id FOR UPDATE OF t`);
+}
+
 export async function createInventoryLine(db: Database, actor: ArchiveActor, input: { templateId: string; folderId: string; threshold?: number; correlationId: string }) {
   requireAdmin(actor);
   nonnegativeInteger(input.threshold ?? 5);
   await requireActiveTemplateFolder(db, actor, input.folderId);
   return db.transaction(async (tx) => {
+    const locked = await tx.execute<{ id: string }>(sql`SELECT b.id FROM boxes b JOIN folders f ON f.box_id = b.id WHERE f.id = ${input.folderId}::uuid FOR UPDATE OF b`);
+    const current = await requireActiveTemplateFolder(tx, actor, input.folderId);
+    if (!locked.rows.some((row) => row.id === current.box.id)) throw new InventoryServiceError("CONFLICT", "The folder location changed. Retry the operation.");
+    const [template] = await tx.select().from(templates).where(eq(templates.id, input.templateId)).for("update").limit(1);
+    if (!template || template.status !== "active") throw new InventoryServiceError("CONFLICT", "Choose an active template revision.");
     const [line] = await tx.insert(templateInventory).values({ templateId: input.templateId, folderId: input.folderId, threshold: input.threshold ?? 5 }).returning();
     if (!line) throw new InventoryServiceError("CONFLICT", "The inventory line could not be created.");
     await audit(tx, { actorId: actor.id, action: "inventory.line_created", targetType: "template_inventory", targetId: line.id, after: { templateId: line.templateId, folderId: line.folderId, threshold: line.threshold }, correlationId: input.correlationId });
@@ -116,6 +178,9 @@ export async function receiveStock(db: Database, actor: ArchiveActor, input: { i
   await inventoryForMutation(db, actor, input.inventoryId);
   const payloadFingerprint = await fingerprint({ actorId: actor.id, type: "receive", inventoryId: input.inventoryId, quantity: input.quantity, reason: input.reason, reference: input.reference ?? null });
   return db.transaction(async (tx) => {
+    const locked = await lockInventoryBoxes(tx, [input.inventoryId]);
+    await lockStockTemplates(tx, [input.inventoryId]);
+    if (!locked.has((await inventoryForMutation(tx, actor, input.inventoryId)).box.id)) throw new InventoryServiceError("CONFLICT", "The inventory location changed. Retry the operation.");
     const prior = await priorOperation(tx, input.operationId, payloadFingerprint);
     if (prior) return prior;
     const [line] = await tx.update(templateInventory).set({ count: sql`${templateInventory.count} + ${input.quantity}`, version: sql`${templateInventory.version} + 1` }).where(eq(templateInventory.id, input.inventoryId)).returning();
@@ -137,6 +202,11 @@ export async function issueStock(db: Database, actor: ArchiveActor, input: { inv
   }
   const payloadFingerprint = await fingerprint({ actorId: actor.id, type: "issue", inventoryId: input.inventoryId, quantity: input.quantity, reason: input.reason, reference: input.reference ?? null, supersededDecision: input.supersededDecision ?? null });
   return db.transaction(async (tx) => {
+    const locked = await lockInventoryBoxes(tx, [input.inventoryId]);
+    await lockStockTemplates(tx, [input.inventoryId]);
+    const current = await inventoryForMutation(tx, actor, input.inventoryId);
+    if (!locked.has(current.box.id)) throw new InventoryServiceError("CONFLICT", "The inventory location changed. Retry the operation.");
+    if (current.template.status === "superseded" && (actor.role !== "admin" || !input.supersededDecision?.trim())) throw new InventoryServiceError("FORBIDDEN", "An Administrator decision is required before issuing superseded stock.");
     const prior = await priorOperation(tx, input.operationId, payloadFingerprint);
     if (prior) return prior;
     const [line] = await tx.update(templateInventory).set({ count: sql`${templateInventory.count} - ${input.quantity}`, version: sql`${templateInventory.version} + 1` }).where(and(eq(templateInventory.id, input.inventoryId), gte(templateInventory.count, input.quantity))).returning();
@@ -158,6 +228,12 @@ export async function transferStock(db: Database, actor: ArchiveActor, input: { 
   if (source.inventory.templateId !== destination.inventory.templateId) throw new InventoryServiceError("VALIDATION", "Transfers require the same template revision.");
   const payloadFingerprint = await fingerprint({ actorId: actor.id, type: "transfer", sourceInventoryId: input.sourceInventoryId, destinationInventoryId: input.destinationInventoryId, quantity: input.quantity, reason: input.reason });
   return db.transaction(async (tx) => {
+    const locked = await lockInventoryBoxes(tx, [input.sourceInventoryId, input.destinationInventoryId]);
+    await lockStockTemplates(tx, [input.sourceInventoryId, input.destinationInventoryId]);
+    const currentSource = await inventoryForMutation(tx, actor, input.sourceInventoryId);
+    const currentDestination = await inventoryForMutation(tx, actor, input.destinationInventoryId);
+    if (!locked.has(currentSource.box.id) || !locked.has(currentDestination.box.id)) throw new InventoryServiceError("CONFLICT", "An inventory location changed. Retry the operation.");
+    if (currentSource.inventory.templateId !== currentDestination.inventory.templateId) throw new InventoryServiceError("VALIDATION", "Transfers require the same template revision.");
     const prior = await priorOperation(tx, input.operationId, payloadFingerprint);
     if (prior) return prior;
     const [debit] = await tx.update(templateInventory).set({ count: sql`${templateInventory.count} - ${input.quantity}`, version: sql`${templateInventory.version} + 1` }).where(and(eq(templateInventory.id, input.sourceInventoryId), gte(templateInventory.count, input.quantity))).returning();
@@ -180,6 +256,9 @@ export async function correctStock(db: Database, actor: ArchiveActor, input: { i
   await inventoryForMutation(db, actor, input.inventoryId);
   const payloadFingerprint = await fingerprint({ actorId: actor.id, type: "correct", inventoryId: input.inventoryId, count: input.count, expectedVersion: input.expectedVersion, reason: input.reason });
   return db.transaction(async (tx) => {
+    const locked = await lockInventoryBoxes(tx, [input.inventoryId]);
+    await lockStockTemplates(tx, [input.inventoryId]);
+    if (!locked.has((await inventoryForMutation(tx, actor, input.inventoryId)).box.id)) throw new InventoryServiceError("CONFLICT", "The inventory location changed. Retry the operation.");
     const prior = await priorOperation(tx, input.operationId, payloadFingerprint);
     if (prior) return prior;
     const [before] = await tx.select().from(templateInventory).where(eq(templateInventory.id, input.inventoryId)).limit(1);
@@ -206,7 +285,26 @@ export async function listInventory(db: Database, actor: ArchiveActor) {
     .orderBy(templates.name, folders.code);
   const visible = [] as Array<(typeof rows)[number]>;
   for (const row of rows) {
-    try { await requireActiveTemplateFolder(db, actor, row.folder.id); visible.push(row); } catch (error) { if (!(error instanceof ArchiveServiceError) && !(error instanceof InventoryServiceError)) throw error; }
+    try { await requireFolderAccess(db, actor, row.folder.id); visible.push(row); } catch (error) { if (!(error instanceof ArchiveServiceError) && !(error instanceof InventoryServiceError)) throw error; }
   }
   return visible.map((row) => ({ ...row.inventory, templateCode: row.template.code, templateName: row.template.name, templateStatus: row.template.status, folderCode: row.folder.code, folderName: row.folder.name, boxCode: row.box.code }));
+}
+
+export async function listTemplates(db: Database, actor: ArchiveActor) {
+  const rows = await db.select().from(templates).orderBy(templates.name, templates.revisionLabel);
+  if (actor.role === "admin") return rows;
+  const visible = new Set((await listInventory(db, actor)).map((line) => line.templateId));
+  return rows.filter((row) => visible.has(row.id));
+}
+
+export async function updateThreshold(db: Database, actor: ArchiveActor, input: { inventoryId: string; threshold: number; correlationId: string }) {
+  requireAdmin(actor);
+  nonnegativeInteger(input.threshold);
+  return db.transaction(async (tx) => {
+    const [before] = await tx.select().from(templateInventory).where(eq(templateInventory.id, input.inventoryId)).for("update").limit(1);
+    if (!before) throw new InventoryServiceError("UNAVAILABLE", "This inventory line is unavailable.");
+    const [after] = await tx.update(templateInventory).set({ threshold: input.threshold }).where(eq(templateInventory.id, input.inventoryId)).returning();
+    await audit(tx, { actorId: actor.id, action: "inventory.threshold_updated", targetType: "template_inventory", targetId: input.inventoryId, before: { threshold: before.threshold }, after: { threshold: input.threshold }, correlationId: input.correlationId });
+    return after!;
+  });
 }

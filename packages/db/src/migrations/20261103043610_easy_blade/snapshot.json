@@ -1,0 +1,47 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "07a9618b-623e-4be4-9924-287ac21ad8bc",
+  "prevIds": [
+    "ab0e6fc8-a6cb-4e25-b03c-4735cbb6776d"
+  ],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "custodial_counts",
+        "section_ids"
+      ],
+      "writes": [
+        "s|col|public.custodial_counts.section_ids",
+        "n|col|public.custodial_counts.section_ids",
+        "e|col|public.custodial_counts.section_ids"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_counts",
+        "n|sch|public"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "section_ids",
+        "type": "jsonb",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'[]'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    }
+  ]
+}

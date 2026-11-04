@@ -1,0 +1,47 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "d5769491-6f69-4a82-a791-d46e290ecc62",
+  "prevIds": [
+    "8c68a664-c9d3-417d-ab20-696fc295edea"
+  ],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "custodial_import_batches",
+        "classification_threshold"
+      ],
+      "writes": [
+        "s|col|public.custodial_import_batches.classification_threshold",
+        "n|col|public.custodial_import_batches.classification_threshold",
+        "e|col|public.custodial_import_batches.classification_threshold"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_import_batches",
+        "n|sch|public"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_import_batches",
+        "name": "classification_threshold",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    }
+  ]
+}

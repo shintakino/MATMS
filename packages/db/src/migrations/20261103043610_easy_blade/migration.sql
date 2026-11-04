@@ -1,0 +1,1 @@
+ALTER TABLE "custodial_counts" ADD COLUMN "section_ids" jsonb DEFAULT '[]' NOT NULL;

@@ -1,0 +1,76 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "ab0e6fc8-a6cb-4e25-b03c-4735cbb6776d",
+  "prevIds": [
+    "bf704735-7f13-473f-8ab8-a19d41b27cfa"
+  ],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "custodial_sections",
+        "version"
+      ],
+      "writes": [
+        "s|col|public.custodial_sections.version",
+        "n|col|public.custodial_sections.version",
+        "e|col|public.custodial_sections.version"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_sections",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_check",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_sections"
+      ],
+      "writes": [
+        "s|ck|public.custodial_sections.custodial_sections_version",
+        "n|ck|public.custodial_sections.custodial_sections_version",
+        "e|ck|public.custodial_sections.custodial_sections_version",
+        "n|con|public.custodial_sections.custodial_sections_version"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_sections",
+        "n|sch|public",
+        "n|col|public.custodial_sections.version"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_sections",
+        "name": "version",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_sections",
+        "name": "custodial_sections_version",
+        "value": "\"version\" >= 0",
+        "entityType": "checks"
+      }
+    }
+  ]
+}

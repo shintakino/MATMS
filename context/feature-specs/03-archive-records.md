@@ -1,6 +1,6 @@
 # 03 — Archive Records and Locations
 
-**Status:** Core hierarchy, authorized reads, movement history, grant enforcement, and zero-inventory retirement guard implemented on 2026-10-26. Retirement guards that depend on request/loan tables remain integrated with 05, as declared below.
+**Status:** Implemented, including metadata updates, Staff relocation, folder/document move forms, full scoped details/history, paged registers and integrated inventory/request/loan guards. Authorization, audit rollback, retired-code protection and concurrent move-snapshot checks pass (2026-10-28).
 
 **Source:** PRD §6, FR-03, FR-04, §§8–10; AC-04, AC-14, AC-15.
 
@@ -18,7 +18,7 @@ Map each physical item to an authorized shelf → box → folder location, with 
 - Folders belong to one box and contain unique code, name, color, template designation, optional urgency, notes, confidentiality, and lifecycle.
 - Documents belong to one folder and contain unique code, title, document date, optional covered period, keywords, description, optional approved digital link, confidentiality, and lifecycle. One record represents one physical item; separate copies/volumes get separate codes.
 - Use UUID primary keys and normalized unique editable codes; retain code-change audit and never reuse retired codes. QR identity does not change with a code.
-- Admin manages categories/locations/boxes/folders. Admin/Staff edit permitted document metadata and relocate permitted records/containers. Viewers read permitted metadata only. Confidentiality changes respect Admin-only downgrade rules.
+- Admin manages categories/locations/boxes/folders. Admin/Property Custodian/Staff edit permitted document metadata and relocate permitted records/containers. Viewers read permitted metadata only. Confidentiality changes respect Admin-only downgrade rules.
 
 ## Workflows and UI
 
@@ -40,3 +40,7 @@ Use `/boxes`, `/boxes/[id]`, `/folders/[id]`, `/documents`, `/documents/[id]`, a
 - Distinguish available, checked-out, archived, and retired records; retain date-only metadata without timezone drift.
 - Block retirement with actionable permitted reasons for active loans, request lines, or remaining stock (AC-15).
 - Rejected writes and failed audit writes leave hierarchy and history unchanged.
+
+## Planned new-role integration
+
+The Property Custodian role joins authorized document metadata and relocation actions under PRD §5, with identical inherited-grant enforcement and Admin-only container configuration/confidentiality downgrade rules. Baseline checks predate that role; add regression coverage through 02/10. Custodial property locations/lots are separate from this archive hierarchy and are not document loans.

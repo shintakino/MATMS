@@ -1,0 +1,1 @@
+ALTER TABLE "custodial_count_lines" ADD COLUMN "review_required" boolean DEFAULT false NOT NULL;

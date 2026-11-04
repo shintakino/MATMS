@@ -1,0 +1,47 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "bf704735-7f13-473f-8ab8-a19d41b27cfa",
+  "prevIds": [
+    "199fd846-a880-4919-9941-e3e85aafb075"
+  ],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "custodial_import_batches",
+        "metadata_evidence"
+      ],
+      "writes": [
+        "s|col|public.custodial_import_batches.metadata_evidence",
+        "n|col|public.custodial_import_batches.metadata_evidence",
+        "e|col|public.custodial_import_batches.metadata_evidence"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_import_batches",
+        "n|sch|public"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_import_batches",
+        "name": "metadata_evidence",
+        "type": "jsonb",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'[]'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    }
+  ]
+}

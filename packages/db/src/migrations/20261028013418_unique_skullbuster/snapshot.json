@@ -1,0 +1,142 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "dabda059-0a7f-422e-b669-c3e3276b461f",
+  "prevIds": [
+    "d5c95719-b0f2-42a3-85f5-ab3809300e8c"
+  ],
+  "footprints": [
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "documents",
+        "documents_search_order_idx"
+      ],
+      "writes": [
+        "s|idx|public.documents_search_order_idx",
+        "n|idx|public.documents_search_order_idx",
+        "e|idx|public.documents_search_order_idx",
+        "n|rel|public.documents_search_order_idx"
+      ],
+      "reads": [
+        "n|tbl|public.documents",
+        "n|sch|public"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "f1bab144774a2ddb"
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "boxes",
+        "boxes_search_order_idx"
+      ],
+      "writes": [
+        "s|idx|public.boxes_search_order_idx",
+        "n|idx|public.boxes_search_order_idx",
+        "e|idx|public.boxes_search_order_idx",
+        "n|rel|public.boxes_search_order_idx"
+      ],
+      "reads": [
+        "n|tbl|public.boxes",
+        "n|sch|public"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "fd2696d86c918aba"
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "folders",
+        "folders_search_order_idx"
+      ],
+      "writes": [
+        "s|idx|public.folders_search_order_idx",
+        "n|idx|public.folders_search_order_idx",
+        "e|idx|public.folders_search_order_idx",
+        "n|rel|public.folders_search_order_idx"
+      ],
+      "reads": [
+        "n|tbl|public.folders",
+        "n|sch|public"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "4f2d50b56f39f9ee"
+    }
+  ],
+  "deltas": [
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"documents_search_order_idx\"]",
+      "set": {
+        "columns": [
+          {
+            "value": "lower(\"code\") COLLATE \"C\"",
+            "isExpression": true,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "(\"id\"::text)",
+            "isExpression": true,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ]
+      }
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"boxes_search_order_idx\"]",
+      "set": {
+        "columns": [
+          {
+            "value": "lower(\"code\") COLLATE \"C\"",
+            "isExpression": true,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "(\"id\"::text)",
+            "isExpression": true,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ]
+      }
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"folders_search_order_idx\"]",
+      "set": {
+        "columns": [
+          {
+            "value": "lower(\"code\") COLLATE \"C\"",
+            "isExpression": true,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "(\"id\"::text)",
+            "isExpression": true,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ]
+      }
+    }
+  ]
+}

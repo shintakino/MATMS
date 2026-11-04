@@ -2,13 +2,21 @@
 
 Meocan Archive & Template Management System for Meocan High School.
 
-MATMS helps authorized school staff locate physical records by shelf, box, and folder; track printed template stock and digital master links; and manage document requests, checkout, return, and movement history.
+MATMS helps authorized school staff locate physical records by shelf, box, and folder; track printed template stock and digital master links; manage document requests, checkout, return and movement history; and maintain Property Custodian inventory and generate matching Stock Card/RPCSP/RPCPPE forms.
 
 ## Current status
 
-Project Foundation is implemented. The workspace has a Next.js presentation app, Bun/Hono API, typed oRPC client, Better Auth configuration with public sign-up disabled, Drizzle migrations, and a shared shadcn/ui package. Identity/access, records, inventory, requests, reports, QR, and production operations are not implemented yet.
+The workspace implements specs 00–08: identity/access, archive maintenance, template inventory, requests and loans, scoped dashboard/search/reports, QR workflows and administration. Audit software gaps have been addressed; integration, strict types, production build and representative Chromium/accessibility checks pass. Actual school-device/printer acceptance remains open; see the [completion audit](docs/feature-completion-audit.md) for evidence and limits.
+
+The initial clean deployment is live at **https://matms.shintakino.qzz.io**, managed by Coolify on the existing Ubuntu host through a dedicated Cloudflare tunnel. Public login, 20 module routes and a clean-database encrypted backup restore are verified. See the [deployment/operator guide](docs/deployment-coolify.md) for startup, permanent administrator credentials, release and recovery procedures. Off-host backups and school pilot acceptance remain open.
+
+The Property Custodian register and ledger, physical counts, controlled import and XLSX/print workflows are connected and under verification. [Specs 10–13](context/feature-specs/README.md) remain in progress: rendered comparison against the supplied forms and school approval are still open. See the [workbook reference](context/inventory-workbook-reference.md) and progress tracker for source findings and test evidence.
 
 See the [progress tracker](context/progress-tracker.md) for completed documentation, upcoming work, and unresolved school decisions.
+
+For step-by-step instructions and fictional examples for staff and administrators, see the [MATMS user guide](docs/user-guide.md).
+
+The light interface uses shared slate/teal styling, grouped module navigation, responsive forms and registers, and a dashboard overview. Official inventory forms retain their own report typography and print layouts. Filing and custody workflows include guided steps and searchable selection; stock operations require explicit confirmation, and administration provides masked password reset, access previews and readable audit filters.
 
 ## Planned stack
 
@@ -51,6 +59,8 @@ INITIAL_ADMIN_NAME="Archive Administrator" INITIAL_ADMIN_EMAIL="admin@example.ed
 
 The browser reaches the API through Next.js same-origin rewrites at `/api/auth/*` and `/rpc/*`; PostgreSQL and the Hono service are not published by the base Compose file. Use `pnpm run db:generate` to create reviewed migrations. `db:push:dev` is local-development-only and is never a production release path.
 
+Set `MATMS_CANONICAL_ORIGIN` in `apps/web/.env` to the school's approved public HTTPS origin before generating labels. Administrators may save school settings, including an origin, in `/admin/settings`; once saved, the database setting takes precedence over the deployment fallback. The origin must have no path, credentials, query, or fragment. Labels use that origin and the box UUID; scan/manual lookup still enforces account and record permissions. Origin changes require a recorded redirect/reprint plan: keep an HTTPS redirect from the old origin to the same `/boxes/{uuid}` paths until affected labels are reprinted and verified. Print actual-size samples and calibrate the label dimensions on the school's printers and devices.
+
 Foundation checks:
 
 ```bash
@@ -60,21 +70,36 @@ TEST_DATABASE_URL=postgresql://.../matms_test pnpm test
 
 The database test refuses a URL that does not end in `_test` and proves an audit-write failure rolls back its associated mutation.
 
+The three supplied school workbooks are private local references and are excluded from Git and images. Core workbook tests use fictional data and run without them. Source-comparison tests explicitly skip when their required references are absent; an authorized operator can place the originals at the paths and verify the hashes in [inventory-workbook-reference.md](context/inventory-workbook-reference.md) to run those checks. A skipped source comparison does not establish form fidelity or school approval.
+
+The web production build uses Next.js's supported webpack builder (`pnpm --filter web build`); Turbopack remains the development default. Run `pnpm run check-types` as the strict type gate before building. `MATMS_NEXT_DIST_DIR` can select a dedicated build directory when checking a build alongside a running development instance.
+
+For repeatable fictional records, use `pnpm run seed:dev` with a `_dev`/`_test` database and `SEED_ADMIN_EMAIL` identifying an existing active Administrator. See the [seed and browser-test guide](docs/user-guide.md#reproducible-fictional-development-data) for setup and `pnpm run test:browser`. Do not run browser workflows against real records; they change stock and create custody history.
+
+Reports export the selected authorized filter scope as CSV, up to 5,000 rows. Narrow the filters if the limit is exceeded. Exports are audited before release and limited to five attempts per account per minute; the row limit is provisional pending pilot data. The optional synthetic reporting load test creates and removes fixtures in an isolated `_test` database:
+
+```bash
+TEST_DATABASE_URL=postgresql://.../matms_test pnpm run test:reporting-load
+```
+
 ## MVP scope
 
-- Admin, Staff, and Viewer roles with inherited restricted-record grants.
+- Roles: Admin, Property Custodian, Staff and Viewer, with inherited archive grants and server-enforced custodial permissions.
 - Categories, shelf locations, boxes, folders, and document metadata.
 - Revision-specific digital master links and printed stock per folder, with atomic updates and immutable ledger history.
+- Custodial item/lot register, referenced ledger/reorder, physical counts/amendments, three supported workbook imports and versioned Appendix 58/Annex A.8/Appendix 73 XLSX/print workflows; final form fidelity and acceptance remain in progress.
 - Requests, approvals, fulfillment, loans, returns, and relocation history.
 - Permission-filtered dashboard, search, reports, CSV export, QR labels, and scanning with manual lookup.
 - Audit, safe retirement, backups, restore rehearsal, and a school pilot.
 
-MVP stores metadata and approved links, not scanned files. Google Drive automation, OCR, bulk import, multi-school support, and formal disposal execution are deferred. The PRD defines the full scope and school policy gates.
+MVP stores metadata and approved links, not scanned files. Google Drive automation, OCR, generic spreadsheet import, XLSX beyond the three inventory form families, multi-school support and formal disposal execution are deferred. Controlled inventory uploads/artifacts are a narrow private exception to metadata/link storage. The PRD defines the full scope and school policy gates.
 
 ## Documentation
 
 | Document | Purpose |
 | --- | --- |
+| [User guide and examples](docs/user-guide.md) | Everyday workflows for archive records, stock, requests, loans, reports, and administration |
+| [Deployment and recovery guide](docs/deployment-coolify.md) | Coolify service, production access, releases, encrypted backups and recovery evidence |
 | [Product requirements](MATMS-PRD.md) | Product baseline, business rules, acceptance criteria, and delivery plan |
 | [Project overview](context/project-overview.md) | Goals, users, workflows, and release boundaries |
 | [Architecture](context/architecture-context.md) | Service boundaries, data model, security, and invariants |
@@ -82,14 +107,15 @@ MVP stores metadata and approved links, not scanned files. Google Drive automati
 | [Code standards](context/code-standards.md) | Implementation and verification conventions |
 | [Development workflow](context/ai-workflow-rules.md) | Incremental delivery and documentation maintenance |
 | [Progress tracker](context/progress-tracker.md) | Actual completion, next steps, and open decisions |
-| [Feature specs](feature-specs/README.md) | Ordered work units mapped to PRD requirements |
+| [Feature specs](context/feature-specs/README.md) | Work units, baseline/extension status and PRD acceptance coverage |
+| [Inventory workbook reference](context/inventory-workbook-reference.md) | Seven source sheets, exact form structures and data anomalies |
 | [Agent instructions](AGENTS.md) | Required read order and repository-specific rules |
 
 ## Starting implementation
 
 1. Follow the context read order in [AGENTS.md](AGENTS.md), then read the relevant PRD sections and active feature spec.
-2. Start with [00 — Project Foundation](feature-specs/00-project-foundation.md). Preserve these documents while generating the workspace, inspect its output, and record the actual toolchain and setup commands.
-3. Establish [01 — Design System](feature-specs/01-design-system.md) using the generated shadcn/ui setup where available, followed by identity/access and archive foundations.
+2. Review [00 — Project Foundation](context/feature-specs/00-project-foundation.md) and the existing workspace and toolchain before making foundation changes.
+3. Review [01 — Design System](context/feature-specs/01-design-system.md) and reuse the generated shared UI setup.
 4. Follow the feature-spec dependencies. Add authorization, audit, and transaction controls with each business operation.
 5. Update the progress tracker with actual implementation and verification results.
 

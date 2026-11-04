@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "custodial_lots_property_exception_unique" ON "custodial_lots" ("property_exception_id") WHERE "property_exception_id" IS NOT NULL;

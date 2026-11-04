@@ -1,0 +1,1642 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "bd89dce3-1fd3-4535-a5b1-4ba58a3e2f62",
+  "prevIds": [
+    "8538fd49-2aea-4fa5-a45b-5f394ee53ccd"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_enum",
+      "statementTarget": [
+        "enum",
+        "public",
+        "custodial_count_line_status"
+      ],
+      "writes": [
+        "s|enum|public.custodial_count_line_status",
+        "n|enum|public.custodial_count_line_status",
+        "e|enum|public.custodial_count_line_status",
+        "n|type|public.custodial_count_line_status"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_enum",
+      "statementTarget": [
+        "enum",
+        "public",
+        "custodial_count_status"
+      ],
+      "writes": [
+        "s|enum|public.custodial_count_status",
+        "n|enum|public.custodial_count_status",
+        "e|enum|public.custodial_count_status",
+        "n|type|public.custodial_count_status"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_count_assignments"
+      ],
+      "writes": [
+        "s|tbl|public.custodial_count_assignments",
+        "n|tbl|public.custodial_count_assignments",
+        "e|tbl|public.custodial_count_assignments",
+        "n|rel|public.custodial_count_assignments",
+        "n|type|public.custodial_count_assignments",
+        "n|rel|public.custodial_count_assignments_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_count_lines"
+      ],
+      "writes": [
+        "s|tbl|public.custodial_count_lines",
+        "n|tbl|public.custodial_count_lines",
+        "e|tbl|public.custodial_count_lines",
+        "n|rel|public.custodial_count_lines",
+        "n|type|public.custodial_count_lines",
+        "n|rel|public.custodial_count_lines_pkey"
+      ],
+      "reads": [
+        "n|sch|public",
+        "n|enum|public.custodial_count_line_status"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_counts"
+      ],
+      "writes": [
+        "s|tbl|public.custodial_counts",
+        "n|tbl|public.custodial_counts",
+        "e|tbl|public.custodial_counts",
+        "n|rel|public.custodial_counts",
+        "n|type|public.custodial_counts",
+        "n|rel|public.custodial_counts_pkey"
+      ],
+      "reads": [
+        "n|sch|public",
+        "n|enum|public.custodial_form_family",
+        "n|enum|public.custodial_count_status"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_count_assignments",
+        "custodial_count_assignments_scope_idx"
+      ],
+      "writes": [
+        "s|idx|public.custodial_count_assignments_scope_idx",
+        "n|idx|public.custodial_count_assignments_scope_idx",
+        "e|idx|public.custodial_count_assignments_scope_idx",
+        "n|rel|public.custodial_count_assignments_scope_idx"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_count_assignments",
+        "n|sch|public",
+        "n|col|public.custodial_count_assignments.count_id",
+        "n|col|public.custodial_count_assignments.user_id",
+        "n|col|public.custodial_count_assignments.active"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_count_assignments",
+        "custodial_count_assignments_session_unique"
+      ],
+      "writes": [
+        "s|idx|public.custodial_count_assignments_session_unique",
+        "n|idx|public.custodial_count_assignments_session_unique",
+        "e|idx|public.custodial_count_assignments_session_unique",
+        "n|rel|public.custodial_count_assignments_session_unique"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_count_assignments",
+        "n|sch|public",
+        "n|col|public.custodial_count_assignments.count_id",
+        "n|col|public.custodial_count_assignments.user_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_count_assignments",
+        "custodial_count_assignments_line_unique"
+      ],
+      "writes": [
+        "s|idx|public.custodial_count_assignments_line_unique",
+        "n|idx|public.custodial_count_assignments_line_unique",
+        "e|idx|public.custodial_count_assignments_line_unique",
+        "n|rel|public.custodial_count_assignments_line_unique"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_count_assignments",
+        "n|sch|public",
+        "n|col|public.custodial_count_assignments.count_id",
+        "n|col|public.custodial_count_assignments.line_id",
+        "n|col|public.custodial_count_assignments.user_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_count_lines",
+        "custodial_count_lines_count_lot_unique"
+      ],
+      "writes": [
+        "s|idx|public.custodial_count_lines_count_lot_unique",
+        "n|idx|public.custodial_count_lines_count_lot_unique",
+        "e|idx|public.custodial_count_lines_count_lot_unique",
+        "n|rel|public.custodial_count_lines_count_lot_unique"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_count_lines",
+        "n|sch|public",
+        "n|col|public.custodial_count_lines.count_id",
+        "n|col|public.custodial_count_lines.lot_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_count_lines",
+        "custodial_count_lines_id_count_unique"
+      ],
+      "writes": [
+        "s|idx|public.custodial_count_lines_id_count_unique",
+        "n|idx|public.custodial_count_lines_id_count_unique",
+        "e|idx|public.custodial_count_lines_id_count_unique",
+        "n|rel|public.custodial_count_lines_id_count_unique"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_count_lines",
+        "n|sch|public",
+        "n|col|public.custodial_count_lines.id",
+        "n|col|public.custodial_count_lines.count_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_counts",
+        "custodial_counts_code_unique"
+      ],
+      "writes": [
+        "s|idx|public.custodial_counts_code_unique",
+        "n|idx|public.custodial_counts_code_unique",
+        "e|idx|public.custodial_counts_code_unique",
+        "n|rel|public.custodial_counts_code_unique"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_counts",
+        "n|sch|public",
+        "n|col|public.custodial_counts.normalized_code"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_count_assignments"
+      ],
+      "writes": [
+        "s|fk|public.custodial_count_assignments.custodial_count_assignments_count_id_custodial_counts_id_fkey",
+        "n|fk|public.custodial_count_assignments.custodial_count_assignments_count_id_custodial_counts_id_fkey",
+        "e|fk|public.custodial_count_assignments.custodial_count_assignments_count_id_custodial_counts_id_fkey",
+        "n|con|public.custodial_count_assignments.custodial_count_assignments_count_id_custodial_counts_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_count_assignments",
+        "n|sch|public",
+        "n|tbl|public.custodial_counts",
+        "n|sch|public",
+        "n|col|public.custodial_count_assignments.count_id",
+        "n|col|public.custodial_counts.id",
+        "e|uniqueness|public.custodial_counts.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_count_assignments"
+      ],
+      "writes": [
+        "s|fk|public.custodial_count_assignments.custodial_count_assignments_NCcBPyQSf7Pb_fkey",
+        "n|fk|public.custodial_count_assignments.custodial_count_assignments_NCcBPyQSf7Pb_fkey",
+        "e|fk|public.custodial_count_assignments.custodial_count_assignments_NCcBPyQSf7Pb_fkey",
+        "n|con|public.custodial_count_assignments.custodial_count_assignments_NCcBPyQSf7Pb_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_count_assignments",
+        "n|sch|public",
+        "n|tbl|public.custodial_count_lines",
+        "n|sch|public",
+        "n|col|public.custodial_count_assignments.line_id",
+        "n|col|public.custodial_count_lines.id",
+        "e|uniqueness|public.custodial_count_lines.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_count_assignments"
+      ],
+      "writes": [
+        "s|fk|public.custodial_count_assignments.custodial_count_assignments_user_id_user_id_fkey",
+        "n|fk|public.custodial_count_assignments.custodial_count_assignments_user_id_user_id_fkey",
+        "e|fk|public.custodial_count_assignments.custodial_count_assignments_user_id_user_id_fkey",
+        "n|con|public.custodial_count_assignments.custodial_count_assignments_user_id_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_count_assignments",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.custodial_count_assignments.user_id",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_count_assignments"
+      ],
+      "writes": [
+        "s|fk|public.custodial_count_assignments.custodial_count_assignments_assigned_by_user_id_fkey",
+        "n|fk|public.custodial_count_assignments.custodial_count_assignments_assigned_by_user_id_fkey",
+        "e|fk|public.custodial_count_assignments.custodial_count_assignments_assigned_by_user_id_fkey",
+        "n|con|public.custodial_count_assignments.custodial_count_assignments_assigned_by_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_count_assignments",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.custodial_count_assignments.assigned_by",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_count_assignments"
+      ],
+      "writes": [
+        "s|fk|public.custodial_count_assignments.custodial_count_assignment_line_scope_fk",
+        "n|fk|public.custodial_count_assignments.custodial_count_assignment_line_scope_fk",
+        "e|fk|public.custodial_count_assignments.custodial_count_assignment_line_scope_fk",
+        "n|con|public.custodial_count_assignments.custodial_count_assignment_line_scope_fk"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_count_assignments",
+        "n|sch|public",
+        "n|tbl|public.custodial_count_lines",
+        "n|sch|public",
+        "n|col|public.custodial_count_assignments.line_id",
+        "n|col|public.custodial_count_assignments.count_id",
+        "n|col|public.custodial_count_lines.id",
+        "n|col|public.custodial_count_lines.count_id",
+        "e|uniqueness|public.custodial_count_lines.count_id.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_count_lines"
+      ],
+      "writes": [
+        "s|fk|public.custodial_count_lines.custodial_count_lines_count_id_custodial_counts_id_fkey",
+        "n|fk|public.custodial_count_lines.custodial_count_lines_count_id_custodial_counts_id_fkey",
+        "e|fk|public.custodial_count_lines.custodial_count_lines_count_id_custodial_counts_id_fkey",
+        "n|con|public.custodial_count_lines.custodial_count_lines_count_id_custodial_counts_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_count_lines",
+        "n|sch|public",
+        "n|tbl|public.custodial_counts",
+        "n|sch|public",
+        "n|col|public.custodial_count_lines.count_id",
+        "n|col|public.custodial_counts.id",
+        "e|uniqueness|public.custodial_counts.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_count_lines"
+      ],
+      "writes": [
+        "s|fk|public.custodial_count_lines.custodial_count_lines_lot_id_custodial_lots_id_fkey",
+        "n|fk|public.custodial_count_lines.custodial_count_lines_lot_id_custodial_lots_id_fkey",
+        "e|fk|public.custodial_count_lines.custodial_count_lines_lot_id_custodial_lots_id_fkey",
+        "n|con|public.custodial_count_lines.custodial_count_lines_lot_id_custodial_lots_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_count_lines",
+        "n|sch|public",
+        "n|tbl|public.custodial_lots",
+        "n|sch|public",
+        "n|col|public.custodial_count_lines.lot_id",
+        "n|col|public.custodial_lots.id",
+        "e|uniqueness|public.custodial_lots.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_counts"
+      ],
+      "writes": [
+        "s|fk|public.custodial_counts.custodial_counts_profile_id_custodial_form_profiles_id_fkey",
+        "n|fk|public.custodial_counts.custodial_counts_profile_id_custodial_form_profiles_id_fkey",
+        "e|fk|public.custodial_counts.custodial_counts_profile_id_custodial_form_profiles_id_fkey",
+        "n|con|public.custodial_counts.custodial_counts_profile_id_custodial_form_profiles_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_counts",
+        "n|sch|public",
+        "n|tbl|public.custodial_form_profiles",
+        "n|sch|public",
+        "n|col|public.custodial_counts.profile_id",
+        "n|col|public.custodial_form_profiles.id",
+        "e|uniqueness|public.custodial_form_profiles.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_counts"
+      ],
+      "writes": [
+        "s|fk|public.custodial_counts.custodial_counts_created_by_user_id_fkey",
+        "n|fk|public.custodial_counts.custodial_counts_created_by_user_id_fkey",
+        "e|fk|public.custodial_counts.custodial_counts_created_by_user_id_fkey",
+        "n|con|public.custodial_counts.custodial_counts_created_by_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_counts",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.custodial_counts.created_by",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_counts"
+      ],
+      "writes": [
+        "s|fk|public.custodial_counts.custodial_counts_finalized_by_user_id_fkey",
+        "n|fk|public.custodial_counts.custodial_counts_finalized_by_user_id_fkey",
+        "e|fk|public.custodial_counts.custodial_counts_finalized_by_user_id_fkey",
+        "n|con|public.custodial_counts.custodial_counts_finalized_by_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_counts",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.custodial_counts.finalized_by",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_counts"
+      ],
+      "writes": [
+        "s|fk|public.custodial_counts.custodial_counts_supersedes_fk",
+        "n|fk|public.custodial_counts.custodial_counts_supersedes_fk",
+        "e|fk|public.custodial_counts.custodial_counts_supersedes_fk",
+        "n|con|public.custodial_counts.custodial_counts_supersedes_fk"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_counts",
+        "n|sch|public",
+        "n|tbl|public.custodial_counts",
+        "n|sch|public",
+        "n|col|public.custodial_counts.supersedes_id",
+        "n|col|public.custodial_counts.id",
+        "e|uniqueness|public.custodial_counts.id"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "custodial_count_assignments",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "custodial_count_lines",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "custodial_counts",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "custodial_count_line_status",
+        "values": [
+          "uncounted",
+          "counted",
+          "excluded",
+          "unavailable"
+        ],
+        "entityType": "enums"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "custodial_count_status",
+        "values": [
+          "draft",
+          "finalized"
+        ],
+        "entityType": "enums"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_assignments",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_assignments",
+        "name": "count_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_assignments",
+        "name": "line_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_assignments",
+        "name": "user_id",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_assignments",
+        "name": "active",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "true",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_assignments",
+        "name": "assigned_by",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_assignments",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_lines",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_lines",
+        "name": "count_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_lines",
+        "name": "lot_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_lines",
+        "name": "snapshot",
+        "type": "jsonb",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_lines",
+        "name": "source_fingerprint",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_lines",
+        "name": "status",
+        "type": "custodial_count_line_status",
+        "typeSchema": "public",
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'uncounted'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_lines",
+        "name": "physical_quantity",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_lines",
+        "name": "condition",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_lines",
+        "name": "remarks",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_lines",
+        "name": "resolution",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_lines",
+        "name": "version",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "code",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "normalized_code",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "family",
+        "type": "custodial_form_family",
+        "typeSchema": "public",
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "profile_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "as_of_date",
+        "type": "date",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "fund_cluster",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "office",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "metadata",
+        "type": "jsonb",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "status",
+        "type": "custodial_count_status",
+        "typeSchema": "public",
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'draft'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "version",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "created_by",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "finalized_by",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "finalized_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "final_payload",
+        "type": "jsonb",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "supersedes_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "amendment_reason",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_assignments",
+        "name": "custodial_count_assignments_scope_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "count_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "user_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "active",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_assignments",
+        "name": "custodial_count_assignments_session_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "count_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "user_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": "\"line_id\" IS NULL",
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_assignments",
+        "name": "custodial_count_assignments_line_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "count_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "line_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "user_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": "\"line_id\" IS NOT NULL",
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_lines",
+        "name": "custodial_count_lines_count_lot_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "count_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "lot_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_lines",
+        "name": "custodial_count_lines_id_count_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "count_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "custodial_counts_code_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "normalized_code",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_assignments",
+        "name": "custodial_count_assignments_count_id_custodial_counts_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "count_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "custodial_counts",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_assignments",
+        "name": "custodial_count_assignments_NCcBPyQSf7Pb_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "line_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "custodial_count_lines",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_assignments",
+        "name": "custodial_count_assignments_user_id_user_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "user_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "user",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_assignments",
+        "name": "custodial_count_assignments_assigned_by_user_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "assigned_by"
+        ],
+        "schemaTo": "public",
+        "tableTo": "user",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_assignments",
+        "name": "custodial_count_assignment_line_scope_fk",
+        "nameExplicit": true,
+        "columns": [
+          "line_id",
+          "count_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "custodial_count_lines",
+        "columnsTo": [
+          "id",
+          "count_id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_lines",
+        "name": "custodial_count_lines_count_id_custodial_counts_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "count_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "custodial_counts",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_lines",
+        "name": "custodial_count_lines_lot_id_custodial_lots_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "lot_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "custodial_lots",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "custodial_counts_profile_id_custodial_form_profiles_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "profile_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "custodial_form_profiles",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "custodial_counts_created_by_user_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "created_by"
+        ],
+        "schemaTo": "public",
+        "tableTo": "user",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "custodial_counts_finalized_by_user_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "finalized_by"
+        ],
+        "schemaTo": "public",
+        "tableTo": "user",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "custodial_counts_supersedes_fk",
+        "nameExplicit": true,
+        "columns": [
+          "supersedes_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "custodial_counts",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_assignments",
+        "name": "custodial_count_assignments_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_lines",
+        "name": "custodial_count_lines_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "custodial_counts_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_lines",
+        "name": "custodial_count_lines_quantity",
+        "value": "(\"status\" = 'counted' AND \"physical_quantity\" IS NOT NULL AND \"physical_quantity\" >= 0) OR (\"status\" <> 'counted' AND \"physical_quantity\" IS NULL)",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_lines",
+        "name": "custodial_count_lines_resolution",
+        "value": "\"status\" NOT IN ('excluded', 'unavailable') OR (\"resolution\" IS NOT NULL AND length(trim(\"resolution\")) > 0)",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_lines",
+        "name": "custodial_count_lines_version",
+        "value": "\"version\" >= 0",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "custodial_counts_family",
+        "value": "\"family\" IN ('rpcsp', 'rpcppe')",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "custodial_counts_version",
+        "value": "\"version\" >= 0",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "custodial_counts_finalization",
+        "value": "(\"status\" = 'draft' AND \"finalized_by\" IS NULL AND \"finalized_at\" IS NULL AND \"final_payload\" IS NULL) OR (\"status\" = 'finalized' AND \"finalized_by\" IS NOT NULL AND \"finalized_at\" IS NOT NULL AND \"final_payload\" IS NOT NULL)",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "custodial_counts_amendment",
+        "value": "(\"supersedes_id\" IS NULL AND \"amendment_reason\" IS NULL) OR (\"supersedes_id\" IS NOT NULL AND \"amendment_reason\" IS NOT NULL AND length(trim(\"amendment_reason\")) > 0 AND \"supersedes_id\" <> \"id\")",
+        "entityType": "checks"
+      }
+    }
+  ]
+}

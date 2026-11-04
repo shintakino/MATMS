@@ -1,0 +1,47 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "b3f6d6a9-4fea-49e0-af06-df17df988e0b",
+  "prevIds": [
+    "ff6038d1-c5bc-4f04-8143-dcef57d02e69"
+  ],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "custodial_count_lines",
+        "reviewer_note"
+      ],
+      "writes": [
+        "s|col|public.custodial_count_lines.reviewer_note",
+        "n|col|public.custodial_count_lines.reviewer_note",
+        "e|col|public.custodial_count_lines.reviewer_note"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_count_lines",
+        "n|sch|public"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_lines",
+        "name": "reviewer_note",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    }
+  ]
+}

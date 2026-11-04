@@ -1,0 +1,96 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "ab03e00a-6359-4443-bdbe-d99003a2476b",
+  "prevIds": [
+    "38936347-c21c-412f-912f-6a9d90a1df07"
+  ],
+  "footprints": [
+    {
+      "statementType": "drop_check",
+      "statementTarget": [
+        "table",
+        "public",
+        "document_checkouts"
+      ],
+      "writes": [
+        "s|ck|public.document_checkouts.document_checkouts_single_closure",
+        "n|ck|public.document_checkouts.document_checkouts_single_closure",
+        "e|ck|public.document_checkouts.document_checkouts_single_closure",
+        "n|con|public.document_checkouts.document_checkouts_single_closure"
+      ],
+      "reads": [
+        "n|tbl|public.document_checkouts",
+        "n|sch|public",
+        "e|col|public.document_checkouts.returned_at",
+        "e|col|public.document_checkouts.resolved_at"
+      ]
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "document_checkouts",
+        "document_checkouts_one_unresolved_per_document"
+      ],
+      "writes": [
+        "s|idx|public.document_checkouts_one_unresolved_per_document",
+        "n|idx|public.document_checkouts_one_unresolved_per_document",
+        "e|idx|public.document_checkouts_one_unresolved_per_document",
+        "n|rel|public.document_checkouts_one_unresolved_per_document"
+      ],
+      "reads": [
+        "n|tbl|public.document_checkouts",
+        "n|sch|public",
+        "n|col|public.document_checkouts.document_id"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "cf23a5017611c6aa"
+    },
+    {
+      "statementType": "add_check",
+      "statementTarget": [
+        "table",
+        "public",
+        "document_checkouts"
+      ],
+      "writes": [
+        "s|ck|public.document_checkouts.document_checkouts_resolution_after_return",
+        "n|ck|public.document_checkouts.document_checkouts_resolution_after_return",
+        "e|ck|public.document_checkouts.document_checkouts_resolution_after_return",
+        "n|con|public.document_checkouts.document_checkouts_resolution_after_return"
+      ],
+      "reads": [
+        "n|tbl|public.document_checkouts",
+        "n|sch|public",
+        "n|col|public.document_checkouts.resolved_at",
+        "n|col|public.document_checkouts.returned_at"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "document_checkouts_resolution_after_return",
+        "value": "\"resolved_at\" IS NULL OR \"returned_at\" IS NULL OR \"resolved_at\" >= \"returned_at\"",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "drop",
+      "key": "checks\u0000[\"public\",\"document_checkouts\",\"document_checkouts_single_closure\"]"
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"document_checkouts_one_unresolved_per_document\"]",
+      "set": {
+        "where": "\"resolved_at\" IS NULL AND (\"returned_at\" IS NULL OR \"exception\" IS NOT NULL)"
+      }
+    }
+  ]
+}

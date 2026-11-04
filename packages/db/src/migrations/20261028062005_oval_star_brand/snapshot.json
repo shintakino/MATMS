@@ -1,0 +1,57 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "8e640213-9ad5-4381-8436-498e578e4e53",
+  "prevIds": [
+    "0aef993d-ad68-4e8d-8f22-49cfe49fd388"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_lots",
+        "custodial_lots_property_exception_unique"
+      ],
+      "writes": [
+        "s|idx|public.custodial_lots_property_exception_unique",
+        "n|idx|public.custodial_lots_property_exception_unique",
+        "e|idx|public.custodial_lots_property_exception_unique",
+        "n|rel|public.custodial_lots_property_exception_unique"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_lots",
+        "n|sch|public",
+        "n|col|public.custodial_lots.property_exception_id"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_lots",
+        "name": "custodial_lots_property_exception_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "property_exception_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": "\"property_exception_id\" IS NOT NULL",
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    }
+  ]
+}

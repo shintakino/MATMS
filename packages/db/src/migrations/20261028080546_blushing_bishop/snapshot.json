@@ -1,0 +1,77 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "cebdb71c-0f55-4ec5-8796-8e8909a93a00",
+  "prevIds": [
+    "65e30241-52b8-4c5c-8650-aed94c0c7fa9"
+  ],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "custodial_import_batches",
+        "commit_details"
+      ],
+      "writes": [
+        "s|col|public.custodial_import_batches.commit_details",
+        "n|col|public.custodial_import_batches.commit_details",
+        "e|col|public.custodial_import_batches.commit_details"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_import_batches",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_check",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_import_batches"
+      ],
+      "writes": [
+        "s|ck|public.custodial_import_batches.custodial_import_commit_details",
+        "n|ck|public.custodial_import_batches.custodial_import_commit_details",
+        "e|ck|public.custodial_import_batches.custodial_import_commit_details",
+        "n|con|public.custodial_import_batches.custodial_import_commit_details"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_import_batches",
+        "n|sch|public",
+        "n|col|public.custodial_import_batches.status",
+        "n|col|public.custodial_import_batches.commit_details"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_import_batches",
+        "name": "commit_details",
+        "type": "jsonb",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_import_batches",
+        "name": "custodial_import_commit_details",
+        "value": "(\"status\" = 'committed' AND \"commit_details\" IS NOT NULL) OR (\"status\" <> 'committed' AND \"commit_details\" IS NULL)",
+        "entityType": "checks"
+      }
+    }
+  ]
+}

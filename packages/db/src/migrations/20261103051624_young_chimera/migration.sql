@@ -1,0 +1,1 @@
+ALTER TABLE "custodial_count_lines" ADD COLUMN "condition_breakdown" jsonb;

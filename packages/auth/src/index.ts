@@ -10,6 +10,7 @@ export type AuthConfig = {
   BETTER_AUTH_SECRET: string;
   CORS_ORIGIN: string;
   NODE_ENV: "development" | "production" | "test";
+  SESSION_IDLE_SECONDS?: number;
 };
 
 export function createAuth(
@@ -28,10 +29,10 @@ export function createAuth(
       // Accounts are provisioned transactionally by the MATMS identity service.
       disableSignUp: true,
     },
-    // A session expires after 30 minutes without a refresh. Every active
-    // procedure additionally enforces the 12-hour absolute lifetime.
+    // The saved school policy supplies the idle limit (30 minutes initially).
+    // Server context separately enforces idle and absolute expiry before renewal.
     session: {
-      expiresIn: 30 * 60,
+      expiresIn: env.SESSION_IDLE_SECONDS ?? 30 * 60,
       updateAge: 60,
     },
     rateLimit: {

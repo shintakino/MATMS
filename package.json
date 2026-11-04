@@ -16,11 +16,16 @@
     "db:studio": "turbo run db:studio -F @matms/db --",
     "db:generate": "turbo run db:generate -F @matms/db --",
     "db:migrate": "turbo run db:migrate -F @matms/db --",
-    "test": "pnpm run test:db && pnpm run test:auth && pnpm run test:archive && pnpm run test:inventory",
-    "test:db": "bun test packages/db/src/audit.integration.test.ts",
-    "test:auth": "bun test packages/auth/src/provisioning.integration.test.ts",
-    "test:archive": "bun test packages/api/src/archive-service.integration.test.ts",
-    "test:inventory": "bun test packages/api/src/inventory-service.integration.test.ts",
+    "test": "pnpm run test:db && pnpm run test:auth && pnpm run test:archive && pnpm run test:inventory && pnpm run test:custodial && pnpm run test:custody && pnpm run test:reporting && pnpm run test:qr",
+    "test:db": "bun test --timeout 30000 packages/db/src/audit.integration.test.ts",
+    "test:auth": "bun test --timeout 30000 packages/auth/src/provisioning.integration.test.ts apps/server/src/session-context.integration.test.ts",
+    "test:archive": "bun test --timeout 30000 packages/api/src/archive-service.integration.test.ts",
+    "test:inventory": "bun test --timeout 30000 packages/api/src/inventory-service.integration.test.ts",
+    "test:custodial": "bun test --timeout 30000 packages/db/src/custodial-schema.integration.test.ts packages/api/src/custodial-ledger.test.ts packages/api/src/physical-count-calculation.test.ts packages/api/src/custodial-workbook.test.ts packages/api/src/custodial-workbook-inspection.test.ts packages/api/src/custodial-zip-preflight.test.ts packages/api/src/custodial-import-isolation.test.ts packages/api/src/custodial-service.integration.test.ts",
+    "test:custody": "bun test --timeout 30000 packages/db/src/custody.integration.test.ts packages/api/src/custody-service.integration.test.ts",
+    "test:reporting": "bun test --timeout 30000 packages/api/src/reporting-service.integration.test.ts",
+    "test:reporting-load": "bun test --timeout 30000 packages/api/src/reporting-load.integration.test.ts",
+    "test:qr": "bun test tests/qr-url.test.ts tests/rpc-url.test.ts",
     "db:start": "docker compose up -d postgres",
     "db:watch": "docker compose up postgres",
     "db:stop": "docker compose stop postgres",
@@ -32,7 +37,9 @@
     "env:generate": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./packages/db/",
     "postinstall": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./packages/db/",
     "auth:generate": "cd apps/server && pnpm run auth:generate",
-    "auth:bootstrap-admin": "pnpm --filter @matms/auth bootstrap-admin"
+    "auth:bootstrap-admin": "pnpm --filter @matms/auth bootstrap-admin",
+    "seed:dev": "bun run packages/api/src/seed-development.ts",
+    "test:browser": "playwright test"
   },
   "engines": {
     "node": "22.22.2",
@@ -43,7 +50,9 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
     "@matms/config": "workspace:*",
+    "@playwright/test": "1.64.1",
     "@types/bun": "catalog:",
     "turbo": "^2.11.7",
     "typescript": "catalog:",

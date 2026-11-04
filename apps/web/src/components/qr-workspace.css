@@ -1,0 +1,16 @@
+.qr-print-sheet { display: flex; flex-wrap: wrap; gap: 3mm; }
+.qr-label { box-sizing: border-box; width: var(--label-width); min-height: var(--label-height); padding: 2mm; display: flex; align-items: center; gap: 2mm; border: 0.2mm solid #555; color: #000; background: #fff; overflow-wrap: anywhere; break-inside: avoid; font-size: 9pt; }
+.qr-label svg { flex: 0 0 auto; width: min(32mm, 45%); height: auto; }
+.qr-label p { margin: 0; }
+@media print {
+  @page { margin: 5mm; }
+  body:has(.qr-print-sheet) [data-slot="sidebar-wrapper"] { display: block !important; min-height: 0 !important; }
+  body:has(.qr-print-sheet) [data-slot="sidebar-gap"], body:has(.qr-print-sheet) [data-slot="sidebar"] { display: none !important; }
+  body:has(.qr-print-sheet) [data-slot="sidebar-inset"] { position: static !important; margin: 0 !important; }
+  body:has(.qr-print-sheet) * { visibility: hidden !important; }
+  body:has(.qr-print-sheet) .qr-print-sheet, body:has(.qr-print-sheet) .qr-print-sheet * { visibility: visible !important; }
+  body:has(.qr-print-sheet) .qr-print-sheet { position: absolute; inset: 0 auto auto 0; width: 100%; gap: 0; }
+  .qr-label { height: var(--label-height); min-height: 0; overflow: hidden; }
+  .qr-single .qr-label { break-after: page; }
+  .qr-single .qr-label:last-child { break-after: auto; }
+}

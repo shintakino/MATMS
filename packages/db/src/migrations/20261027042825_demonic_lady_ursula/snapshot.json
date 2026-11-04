@@ -1,0 +1,137 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "9c7aa243-2515-46e9-b045-c744feb676e6",
+  "prevIds": [
+    "37d03060-9e73-4172-aa63-07945f226579"
+  ],
+  "footprints": [
+    {
+      "statementType": "add_check",
+      "statementTarget": [
+        "table",
+        "public",
+        "document_checkouts"
+      ],
+      "writes": [
+        "s|ck|public.document_checkouts.document_checkouts_acknowledged",
+        "n|ck|public.document_checkouts.document_checkouts_acknowledged",
+        "e|ck|public.document_checkouts.document_checkouts_acknowledged",
+        "n|con|public.document_checkouts.document_checkouts_acknowledged"
+      ],
+      "reads": [
+        "n|tbl|public.document_checkouts",
+        "n|sch|public",
+        "n|col|public.document_checkouts.acknowledged"
+      ]
+    },
+    {
+      "statementType": "add_check",
+      "statementTarget": [
+        "table",
+        "public",
+        "document_checkouts"
+      ],
+      "writes": [
+        "s|ck|public.document_checkouts.document_checkouts_return_details",
+        "n|ck|public.document_checkouts.document_checkouts_return_details",
+        "e|ck|public.document_checkouts.document_checkouts_return_details",
+        "n|con|public.document_checkouts.document_checkouts_return_details"
+      ],
+      "reads": [
+        "n|tbl|public.document_checkouts",
+        "n|sch|public",
+        "n|col|public.document_checkouts.returned_at",
+        "n|col|public.document_checkouts.returned_by",
+        "n|col|public.document_checkouts.return_condition",
+        "n|col|public.document_checkouts.returned_folder_id"
+      ]
+    },
+    {
+      "statementType": "add_check",
+      "statementTarget": [
+        "table",
+        "public",
+        "document_checkouts"
+      ],
+      "writes": [
+        "s|ck|public.document_checkouts.document_checkouts_resolution_details",
+        "n|ck|public.document_checkouts.document_checkouts_resolution_details",
+        "e|ck|public.document_checkouts.document_checkouts_resolution_details",
+        "n|con|public.document_checkouts.document_checkouts_resolution_details"
+      ],
+      "reads": [
+        "n|tbl|public.document_checkouts",
+        "n|sch|public",
+        "n|col|public.document_checkouts.resolved_at",
+        "n|col|public.document_checkouts.resolved_by",
+        "n|col|public.document_checkouts.resolution",
+        "n|col|public.document_checkouts.resolution_notes",
+        "n|col|public.document_checkouts.exception"
+      ]
+    },
+    {
+      "statementType": "add_check",
+      "statementTarget": [
+        "table",
+        "public",
+        "document_checkouts"
+      ],
+      "writes": [
+        "s|ck|public.document_checkouts.document_checkouts_single_closure",
+        "n|ck|public.document_checkouts.document_checkouts_single_closure",
+        "e|ck|public.document_checkouts.document_checkouts_single_closure",
+        "n|con|public.document_checkouts.document_checkouts_single_closure"
+      ],
+      "reads": [
+        "n|tbl|public.document_checkouts",
+        "n|sch|public",
+        "n|col|public.document_checkouts.returned_at",
+        "n|col|public.document_checkouts.resolved_at"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "document_checkouts_acknowledged",
+        "value": "\"acknowledged\" = true",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "document_checkouts_return_details",
+        "value": "(\"returned_at\" IS NULL AND \"returned_by\" IS NULL AND \"return_condition\" IS NULL AND \"returned_folder_id\" IS NULL) OR (\"returned_at\" IS NOT NULL AND \"returned_by\" IS NOT NULL AND \"return_condition\" IS NOT NULL AND \"returned_folder_id\" IS NOT NULL)",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "document_checkouts_resolution_details",
+        "value": "(\"resolved_at\" IS NULL AND \"resolved_by\" IS NULL AND \"resolution\" IS NULL AND \"resolution_notes\" IS NULL) OR (\"resolved_at\" IS NOT NULL AND \"resolved_by\" IS NOT NULL AND \"resolution\" IS NOT NULL AND \"resolution_notes\" IS NOT NULL AND \"exception\" IS NOT NULL)",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "document_checkouts_single_closure",
+        "value": "\"returned_at\" IS NULL OR \"resolved_at\" IS NULL",
+        "entityType": "checks"
+      }
+    }
+  ]
+}

@@ -1,0 +1,2100 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "37d03060-9e73-4172-aa63-07945f226579",
+  "prevIds": [
+    "089cb16e-d65d-45af-804e-f80a788693e1"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_enum",
+      "statementTarget": [
+        "enum",
+        "public",
+        "custody_operation_kind"
+      ],
+      "writes": [
+        "s|enum|public.custody_operation_kind",
+        "n|enum|public.custody_operation_kind",
+        "e|enum|public.custody_operation_kind",
+        "n|type|public.custody_operation_kind"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_enum",
+      "statementTarget": [
+        "enum",
+        "public",
+        "loan_exception_kind"
+      ],
+      "writes": [
+        "s|enum|public.loan_exception_kind",
+        "n|enum|public.loan_exception_kind",
+        "e|enum|public.loan_exception_kind",
+        "n|type|public.loan_exception_kind"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_enum",
+      "statementTarget": [
+        "enum",
+        "public",
+        "request_kind"
+      ],
+      "writes": [
+        "s|enum|public.request_kind",
+        "n|enum|public.request_kind",
+        "e|enum|public.request_kind",
+        "n|type|public.request_kind"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_enum",
+      "statementTarget": [
+        "enum",
+        "public",
+        "request_line_status"
+      ],
+      "writes": [
+        "s|enum|public.request_line_status",
+        "n|enum|public.request_line_status",
+        "e|enum|public.request_line_status",
+        "n|type|public.request_line_status"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_enum",
+      "statementTarget": [
+        "enum",
+        "public",
+        "request_status"
+      ],
+      "writes": [
+        "s|enum|public.request_status",
+        "n|enum|public.request_status",
+        "e|enum|public.request_status",
+        "n|type|public.request_status"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "custody_operation_replays"
+      ],
+      "writes": [
+        "s|tbl|public.custody_operation_replays",
+        "n|tbl|public.custody_operation_replays",
+        "e|tbl|public.custody_operation_replays",
+        "n|rel|public.custody_operation_replays",
+        "n|type|public.custody_operation_replays",
+        "n|rel|public.custody_operation_replays_pkey"
+      ],
+      "reads": [
+        "n|sch|public",
+        "n|enum|public.custody_operation_kind"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "document_checkouts"
+      ],
+      "writes": [
+        "s|tbl|public.document_checkouts",
+        "n|tbl|public.document_checkouts",
+        "e|tbl|public.document_checkouts",
+        "n|rel|public.document_checkouts",
+        "n|type|public.document_checkouts",
+        "n|rel|public.document_checkouts_pkey"
+      ],
+      "reads": [
+        "n|sch|public",
+        "n|enum|public.loan_exception_kind"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "document_requests"
+      ],
+      "writes": [
+        "s|tbl|public.document_requests",
+        "n|tbl|public.document_requests",
+        "e|tbl|public.document_requests",
+        "n|rel|public.document_requests",
+        "n|type|public.document_requests",
+        "n|rel|public.document_requests_pkey"
+      ],
+      "reads": [
+        "n|sch|public",
+        "n|enum|public.request_kind",
+        "n|enum|public.request_status"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "request_items"
+      ],
+      "writes": [
+        "s|tbl|public.request_items",
+        "n|tbl|public.request_items",
+        "e|tbl|public.request_items",
+        "n|rel|public.request_items",
+        "n|type|public.request_items",
+        "n|rel|public.request_items_pkey"
+      ],
+      "reads": [
+        "n|sch|public",
+        "n|enum|public.request_line_status"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "document_checkouts",
+        "document_checkouts_one_unresolved_per_document"
+      ],
+      "writes": [
+        "s|idx|public.document_checkouts_one_unresolved_per_document",
+        "n|idx|public.document_checkouts_one_unresolved_per_document",
+        "e|idx|public.document_checkouts_one_unresolved_per_document",
+        "n|rel|public.document_checkouts_one_unresolved_per_document"
+      ],
+      "reads": [
+        "n|tbl|public.document_checkouts",
+        "n|sch|public",
+        "n|col|public.document_checkouts.document_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "document_checkouts",
+        "document_checkouts_request_item_unique"
+      ],
+      "writes": [
+        "s|idx|public.document_checkouts_request_item_unique",
+        "n|idx|public.document_checkouts_request_item_unique",
+        "e|idx|public.document_checkouts_request_item_unique",
+        "n|rel|public.document_checkouts_request_item_unique"
+      ],
+      "reads": [
+        "n|tbl|public.document_checkouts",
+        "n|sch|public",
+        "n|col|public.document_checkouts.request_item_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "document_checkouts",
+        "document_checkouts_due_idx"
+      ],
+      "writes": [
+        "s|idx|public.document_checkouts_due_idx",
+        "n|idx|public.document_checkouts_due_idx",
+        "e|idx|public.document_checkouts_due_idx",
+        "n|rel|public.document_checkouts_due_idx"
+      ],
+      "reads": [
+        "n|tbl|public.document_checkouts",
+        "n|sch|public",
+        "n|col|public.document_checkouts.due_at"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "document_requests",
+        "document_requests_normalized_code_unique"
+      ],
+      "writes": [
+        "s|idx|public.document_requests_normalized_code_unique",
+        "n|idx|public.document_requests_normalized_code_unique",
+        "e|idx|public.document_requests_normalized_code_unique",
+        "n|rel|public.document_requests_normalized_code_unique"
+      ],
+      "reads": [
+        "n|tbl|public.document_requests",
+        "n|sch|public",
+        "n|col|public.document_requests.normalized_code"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "document_requests",
+        "document_requests_status_created_idx"
+      ],
+      "writes": [
+        "s|idx|public.document_requests_status_created_idx",
+        "n|idx|public.document_requests_status_created_idx",
+        "e|idx|public.document_requests_status_created_idx",
+        "n|rel|public.document_requests_status_created_idx"
+      ],
+      "reads": [
+        "n|tbl|public.document_requests",
+        "n|sch|public",
+        "n|col|public.document_requests.status",
+        "n|col|public.document_requests.created_at"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "request_items",
+        "request_items_request_document_unique"
+      ],
+      "writes": [
+        "s|idx|public.request_items_request_document_unique",
+        "n|idx|public.request_items_request_document_unique",
+        "e|idx|public.request_items_request_document_unique",
+        "n|rel|public.request_items_request_document_unique"
+      ],
+      "reads": [
+        "n|tbl|public.request_items",
+        "n|sch|public",
+        "n|col|public.request_items.request_id",
+        "n|col|public.request_items.document_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "request_items",
+        "request_items_document_status_idx"
+      ],
+      "writes": [
+        "s|idx|public.request_items_document_status_idx",
+        "n|idx|public.request_items_document_status_idx",
+        "e|idx|public.request_items_document_status_idx",
+        "n|rel|public.request_items_document_status_idx"
+      ],
+      "reads": [
+        "n|tbl|public.request_items",
+        "n|sch|public",
+        "n|col|public.request_items.document_id",
+        "n|col|public.request_items.status"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custody_operation_replays"
+      ],
+      "writes": [
+        "s|fk|public.custody_operation_replays.custody_operation_replays_actor_id_user_id_fkey",
+        "n|fk|public.custody_operation_replays.custody_operation_replays_actor_id_user_id_fkey",
+        "e|fk|public.custody_operation_replays.custody_operation_replays_actor_id_user_id_fkey",
+        "n|con|public.custody_operation_replays.custody_operation_replays_actor_id_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custody_operation_replays",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.custody_operation_replays.actor_id",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "document_checkouts"
+      ],
+      "writes": [
+        "s|fk|public.document_checkouts.document_checkouts_request_item_id_request_items_id_fkey",
+        "n|fk|public.document_checkouts.document_checkouts_request_item_id_request_items_id_fkey",
+        "e|fk|public.document_checkouts.document_checkouts_request_item_id_request_items_id_fkey",
+        "n|con|public.document_checkouts.document_checkouts_request_item_id_request_items_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.document_checkouts",
+        "n|sch|public",
+        "n|tbl|public.request_items",
+        "n|sch|public",
+        "n|col|public.document_checkouts.request_item_id",
+        "n|col|public.request_items.id",
+        "e|uniqueness|public.request_items.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "document_checkouts"
+      ],
+      "writes": [
+        "s|fk|public.document_checkouts.document_checkouts_document_id_documents_id_fkey",
+        "n|fk|public.document_checkouts.document_checkouts_document_id_documents_id_fkey",
+        "e|fk|public.document_checkouts.document_checkouts_document_id_documents_id_fkey",
+        "n|con|public.document_checkouts.document_checkouts_document_id_documents_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.document_checkouts",
+        "n|sch|public",
+        "n|tbl|public.documents",
+        "n|sch|public",
+        "n|col|public.document_checkouts.document_id",
+        "n|col|public.documents.id",
+        "e|uniqueness|public.documents.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "document_checkouts"
+      ],
+      "writes": [
+        "s|fk|public.document_checkouts.document_checkouts_home_folder_id_folders_id_fkey",
+        "n|fk|public.document_checkouts.document_checkouts_home_folder_id_folders_id_fkey",
+        "e|fk|public.document_checkouts.document_checkouts_home_folder_id_folders_id_fkey",
+        "n|con|public.document_checkouts.document_checkouts_home_folder_id_folders_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.document_checkouts",
+        "n|sch|public",
+        "n|tbl|public.folders",
+        "n|sch|public",
+        "n|col|public.document_checkouts.home_folder_id",
+        "n|col|public.folders.id",
+        "e|uniqueness|public.folders.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "document_checkouts"
+      ],
+      "writes": [
+        "s|fk|public.document_checkouts.document_checkouts_released_by_user_id_fkey",
+        "n|fk|public.document_checkouts.document_checkouts_released_by_user_id_fkey",
+        "e|fk|public.document_checkouts.document_checkouts_released_by_user_id_fkey",
+        "n|con|public.document_checkouts.document_checkouts_released_by_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.document_checkouts",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.document_checkouts.released_by",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "document_checkouts"
+      ],
+      "writes": [
+        "s|fk|public.document_checkouts.document_checkouts_returned_by_user_id_fkey",
+        "n|fk|public.document_checkouts.document_checkouts_returned_by_user_id_fkey",
+        "e|fk|public.document_checkouts.document_checkouts_returned_by_user_id_fkey",
+        "n|con|public.document_checkouts.document_checkouts_returned_by_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.document_checkouts",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.document_checkouts.returned_by",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "document_checkouts"
+      ],
+      "writes": [
+        "s|fk|public.document_checkouts.document_checkouts_returned_folder_id_folders_id_fkey",
+        "n|fk|public.document_checkouts.document_checkouts_returned_folder_id_folders_id_fkey",
+        "e|fk|public.document_checkouts.document_checkouts_returned_folder_id_folders_id_fkey",
+        "n|con|public.document_checkouts.document_checkouts_returned_folder_id_folders_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.document_checkouts",
+        "n|sch|public",
+        "n|tbl|public.folders",
+        "n|sch|public",
+        "n|col|public.document_checkouts.returned_folder_id",
+        "n|col|public.folders.id",
+        "e|uniqueness|public.folders.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "document_checkouts"
+      ],
+      "writes": [
+        "s|fk|public.document_checkouts.document_checkouts_exception_recorded_by_user_id_fkey",
+        "n|fk|public.document_checkouts.document_checkouts_exception_recorded_by_user_id_fkey",
+        "e|fk|public.document_checkouts.document_checkouts_exception_recorded_by_user_id_fkey",
+        "n|con|public.document_checkouts.document_checkouts_exception_recorded_by_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.document_checkouts",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.document_checkouts.exception_recorded_by",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "document_checkouts"
+      ],
+      "writes": [
+        "s|fk|public.document_checkouts.document_checkouts_resolved_by_user_id_fkey",
+        "n|fk|public.document_checkouts.document_checkouts_resolved_by_user_id_fkey",
+        "e|fk|public.document_checkouts.document_checkouts_resolved_by_user_id_fkey",
+        "n|con|public.document_checkouts.document_checkouts_resolved_by_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.document_checkouts",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.document_checkouts.resolved_by",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "document_requests"
+      ],
+      "writes": [
+        "s|fk|public.document_requests.document_requests_created_by_user_id_fkey",
+        "n|fk|public.document_requests.document_requests_created_by_user_id_fkey",
+        "e|fk|public.document_requests.document_requests_created_by_user_id_fkey",
+        "n|con|public.document_requests.document_requests_created_by_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.document_requests",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.document_requests.created_by",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "request_items"
+      ],
+      "writes": [
+        "s|fk|public.request_items.request_items_request_id_document_requests_id_fkey",
+        "n|fk|public.request_items.request_items_request_id_document_requests_id_fkey",
+        "e|fk|public.request_items.request_items_request_id_document_requests_id_fkey",
+        "n|con|public.request_items.request_items_request_id_document_requests_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.request_items",
+        "n|sch|public",
+        "n|tbl|public.document_requests",
+        "n|sch|public",
+        "n|col|public.request_items.request_id",
+        "n|col|public.document_requests.id",
+        "e|uniqueness|public.document_requests.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "request_items"
+      ],
+      "writes": [
+        "s|fk|public.request_items.request_items_document_id_documents_id_fkey",
+        "n|fk|public.request_items.request_items_document_id_documents_id_fkey",
+        "e|fk|public.request_items.request_items_document_id_documents_id_fkey",
+        "n|con|public.request_items.request_items_document_id_documents_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.request_items",
+        "n|sch|public",
+        "n|tbl|public.documents",
+        "n|sch|public",
+        "n|col|public.request_items.document_id",
+        "n|col|public.documents.id",
+        "e|uniqueness|public.documents.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "request_items"
+      ],
+      "writes": [
+        "s|fk|public.request_items.request_items_decided_by_user_id_fkey",
+        "n|fk|public.request_items.request_items_decided_by_user_id_fkey",
+        "e|fk|public.request_items.request_items_decided_by_user_id_fkey",
+        "n|con|public.request_items.request_items_decided_by_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.request_items",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.request_items.decided_by",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "request_items"
+      ],
+      "writes": [
+        "s|fk|public.request_items.request_items_fulfilled_by_user_id_fkey",
+        "n|fk|public.request_items.request_items_fulfilled_by_user_id_fkey",
+        "e|fk|public.request_items.request_items_fulfilled_by_user_id_fkey",
+        "n|con|public.request_items.request_items_fulfilled_by_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.request_items",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.request_items.fulfilled_by",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "custody_operation_replays",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "document_checkouts",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "document_requests",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "request_items",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "custody_operation_kind",
+        "values": [
+          "release",
+          "return"
+        ],
+        "entityType": "enums"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "loan_exception_kind",
+        "values": [
+          "lost",
+          "damaged"
+        ],
+        "entityType": "enums"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "request_kind",
+        "values": [
+          "inspect",
+          "borrow",
+          "copy"
+        ],
+        "entityType": "enums"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "request_line_status",
+        "values": [
+          "pending",
+          "approved",
+          "rejected",
+          "cancelled",
+          "fulfilled"
+        ],
+        "entityType": "enums"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "request_status",
+        "values": [
+          "draft",
+          "submitted",
+          "approved",
+          "rejected",
+          "cancelled",
+          "in_progress",
+          "completed"
+        ],
+        "entityType": "enums"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custody_operation_replays",
+        "name": "operation_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custody_operation_replays",
+        "name": "kind",
+        "type": "custody_operation_kind",
+        "typeSchema": "public",
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custody_operation_replays",
+        "name": "actor_id",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custody_operation_replays",
+        "name": "scope_fingerprint",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custody_operation_replays",
+        "name": "payload_fingerprint",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custody_operation_replays",
+        "name": "result",
+        "type": "jsonb",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custody_operation_replays",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "request_item_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "document_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "home_folder_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "recipient",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "acknowledged",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "released_by",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "released_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "due_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "returned_by",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "returned_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "return_condition",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "returned_folder_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "exception",
+        "type": "loan_exception_kind",
+        "typeSchema": "public",
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "exception_notes",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "exception_recorded_by",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "exception_recorded_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "resolution",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "resolution_notes",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "resolved_by",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "resolved_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_requests",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_requests",
+        "name": "code",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_requests",
+        "name": "normalized_code",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_requests",
+        "name": "requester_name",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_requests",
+        "name": "office",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_requests",
+        "name": "contact",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_requests",
+        "name": "purpose",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_requests",
+        "name": "kind",
+        "type": "request_kind",
+        "typeSchema": "public",
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_requests",
+        "name": "notes",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_requests",
+        "name": "status",
+        "type": "request_status",
+        "typeSchema": "public",
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'draft'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_requests",
+        "name": "created_by",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_requests",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_requests",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "request_items",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "request_items",
+        "name": "request_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "request_items",
+        "name": "document_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "request_items",
+        "name": "status",
+        "type": "request_line_status",
+        "typeSchema": "public",
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'pending'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "request_items",
+        "name": "decided_by",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "request_items",
+        "name": "decided_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "request_items",
+        "name": "decision_reason",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "request_items",
+        "name": "fulfilled_by",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "request_items",
+        "name": "fulfilled_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "document_checkouts_one_unresolved_per_document",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "document_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": "\"returned_at\" IS NULL AND \"resolved_at\" IS NULL",
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "document_checkouts_request_item_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "request_item_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "document_checkouts_due_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "due_at",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_requests",
+        "name": "document_requests_normalized_code_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "normalized_code",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_requests",
+        "name": "document_requests_status_created_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "status",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "created_at",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "request_items",
+        "name": "request_items_request_document_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "request_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "document_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "request_items",
+        "name": "request_items_document_status_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "document_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "status",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custody_operation_replays",
+        "name": "custody_operation_replays_actor_id_user_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "actor_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "user",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "document_checkouts_request_item_id_request_items_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "request_item_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "request_items",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "document_checkouts_document_id_documents_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "document_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "documents",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "document_checkouts_home_folder_id_folders_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "home_folder_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "folders",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "document_checkouts_released_by_user_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "released_by"
+        ],
+        "schemaTo": "public",
+        "tableTo": "user",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "document_checkouts_returned_by_user_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "returned_by"
+        ],
+        "schemaTo": "public",
+        "tableTo": "user",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "document_checkouts_returned_folder_id_folders_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "returned_folder_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "folders",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "document_checkouts_exception_recorded_by_user_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "exception_recorded_by"
+        ],
+        "schemaTo": "public",
+        "tableTo": "user",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "document_checkouts_resolved_by_user_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "resolved_by"
+        ],
+        "schemaTo": "public",
+        "tableTo": "user",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_requests",
+        "name": "document_requests_created_by_user_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "created_by"
+        ],
+        "schemaTo": "public",
+        "tableTo": "user",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "request_items",
+        "name": "request_items_request_id_document_requests_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "request_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "document_requests",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "request_items",
+        "name": "request_items_document_id_documents_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "document_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "documents",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "request_items",
+        "name": "request_items_decided_by_user_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "decided_by"
+        ],
+        "schemaTo": "public",
+        "tableTo": "user",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "request_items",
+        "name": "request_items_fulfilled_by_user_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "fulfilled_by"
+        ],
+        "schemaTo": "public",
+        "tableTo": "user",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custody_operation_replays",
+        "name": "custody_operation_replays_pkey",
+        "columns": [
+          "operation_id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "document_checkouts_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_requests",
+        "name": "document_requests_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "request_items",
+        "name": "request_items_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "document_checkouts_due_chronology",
+        "value": "\"due_at\" >= \"released_at\"",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "document_checkouts_return_chronology",
+        "value": "\"returned_at\" IS NULL OR \"returned_at\" >= \"released_at\"",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "document_checkouts",
+        "name": "document_checkouts_resolution_chronology",
+        "value": "\"resolved_at\" IS NULL OR \"resolved_at\" >= \"released_at\"",
+        "entityType": "checks"
+      }
+    }
+  ]
+}

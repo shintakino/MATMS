@@ -1,0 +1,1 @@
+ALTER TABLE "document_checkouts" DROP CONSTRAINT "document_checkouts_resolution_after_return";

@@ -1,0 +1,3 @@
+ALTER TABLE "school_settings" ADD COLUMN "session_idle_minutes" integer DEFAULT 30 NOT NULL;--> statement-breakpoint
+ALTER TABLE "school_settings" ADD COLUMN "session_max_hours" integer DEFAULT 12 NOT NULL;--> statement-breakpoint
+ALTER TABLE "school_settings" ADD CONSTRAINT "school_settings_session_policy" CHECK ("session_idle_minutes" BETWEEN 5 AND 120 AND "session_max_hours" BETWEEN 1 AND 24 AND "session_idle_minutes" <= "session_max_hours" * 60);

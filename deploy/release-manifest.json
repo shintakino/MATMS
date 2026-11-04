@@ -1,0 +1,24 @@
+{
+  "release": "20261104-e9263d0c",
+  "web_release": "20261104-e9263d0c-https",
+  "completed_at": "2026-11-03T23:59:33.760751+00:00",
+  "origin": "https://matms.shintakino.qzz.io",
+  "coolify_project_uuid": "tvzyf2xfruuqxg83uo7nbfxd",
+  "coolify_service_uuid": "mt8rqzgbtpkbzedwicy03wnf",
+  "cloudflare_tunnel_uuid": "1f0eb5cf-585b-47dd-a758-1ff491dc789b",
+  "images": {
+    "matms-web:20261104-e9263d0c-https": "sha256:892c190ca696086100dbc4b43a908bb5f30ad1924c58c7d33fceb5281b666f67",
+    "matms-server:20261104-e9263d0c": "sha256:05b90c496e4f695495d1f0799584a6897dcbb7cebf2a5c84bf17c93e86d200b6",
+    "matms-postgres:20261104-e9263d0c": "sha256:c739c5def3d72ef8afd918dd4f25d2e5e353ce5f967f0fafa131bf8d01d1f1bf",
+    "cloudflare/cloudflared:2026.10.3": "sha256:1475624a6d235381d8886c0e0a7ca8694d01ae535370047a09c89787380e9d6c"
+  },
+  "database": "Clean PostgreSQL 18 database with one permanent administrator; no school data copied.",
+  "source": "Current local workspace, including existing uncommitted implementation changes; no source pushed to GitHub.",
+  "database_volume": "mt8rqzgbtpkbzedwicy03wnf_matms-data",
+  "backup_volume": "mt8rqzgbtpkbzedwicy03wnf_matms-backups",
+  "published_application_ports": [],
+  "coolify_api_restored": true,
+  "temporary_token_revoked": true,
+  "database_persistence_after_redeployment_verified": true,
+  "off_host_backups_configured": false
+}

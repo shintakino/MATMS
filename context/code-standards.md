@@ -52,3 +52,15 @@
 ## Verification
 
 Run the generated project's relevant type, lint, test, and build scripts once available. Prioritize meaningful checks for permission inheritance, state transitions, concurrent stock writes, transfer rollback, duplicate operation retries, open-loan uniqueness, and audit rollback. Use browser tests for login/QR continuation, stock issuance, request/return workflows, and accessibility. Documentation-only updates require consistency and link checks, not claims of passing application tests.
+
+## Custodial inventory, import and report conventions
+
+- Keep printed-template and custodial balance/ledger contracts separate. Enforce the four-role target matrix in Hono services, including existing archive/template operations; Staff assignment permits only draft entry, never custodial posting or official exports.
+- Use nonnegative integer quantities/counts/days and nullable reorder points. Use fixed-decimal database and calculation types for money; serialize without binary floating-point loss. Preserve text identifiers, year labels, confirmed zero and unavailable values distinctly.
+- Include effective date, posted timestamp/sequence, reference, actor, durable operation ID/fingerprint and expected versions in custodial writes. Recalculate chronological projections without mutating posted ledger facts. Test back-dated intermediate-negative rejection, transfer rollback, stale corrections and revoked retries.
+- Snapshot count and report inputs; enforce finalized-session and used-profile immutability in service/database boundaries. Use linked amendments and compensating ledger entries. Count import/finalization never silently adjusts stock.
+- Parse supported BIFF/OOXML only within configured byte/decompression/sheet/row/time limits. Treat files as untrusted; do not execute macros/formulas, follow external links or guess missing numeric values. Stage source coordinates/provenance, then explicitly commit selected validated effects atomically/idempotently.
+- XLSX output uses typed string/date/numeric cells and trusted server formulas only. Neutralize user formula-like text in XLSX/CSV/error files. Exclude hidden unrelated records and external workbook references. Audit preview/export and retain immutable payload/profile/data hash/artifact checksum; downloads reauthorize and temporary bytes expire privately.
+- Add structural and rendered golden checks for every source sheet variant, multi-page output and long text. Document font/geometry tolerances before visual approval. Extend performance fixtures to new capacity and 2,000-line generation; old archive benchmarks do not verify custodial queries.
+
+These are implementation requirements for specs 10–13, not claims of current behavior. Documentation-only work uses consistency/link/source checks and does not require application tests.

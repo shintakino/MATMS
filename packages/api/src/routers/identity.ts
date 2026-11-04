@@ -13,7 +13,7 @@ import { z } from "zod";
 import { authenticatedProcedure, protectedProcedure } from "../index";
 import { MatmsError } from "../errors";
 
-const roleSchema = z.enum(["admin", "staff", "viewer"]);
+const roleSchema = z.enum(["admin", "property_custodian", "staff", "viewer"]);
 const passwordSchema = z.string().min(12, "Use at least 12 characters.").max(128);
 
 function requireAdministrator(role: ApplicationRole) {

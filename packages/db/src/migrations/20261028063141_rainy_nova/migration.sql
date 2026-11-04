@@ -1,0 +1,2 @@
+CREATE UNIQUE INDEX "custodial_form_profile_id_family_unique" ON "custodial_form_profiles" ("id","family");--> statement-breakpoint
+ALTER TABLE "custodial_counts" ADD CONSTRAINT "custodial_counts_profile_family_fk" FOREIGN KEY ("profile_id","family") REFERENCES "custodial_form_profiles"("id","family") ON DELETE RESTRICT;

@@ -1,0 +1,111 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "c134ae7e-4893-448a-8ad7-0477b938c5ae",
+  "prevIds": [
+    "382fda88-6f72-41ab-9b99-0cb92ed79551"
+  ],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "school_settings",
+        "session_idle_minutes"
+      ],
+      "writes": [
+        "s|col|public.school_settings.session_idle_minutes",
+        "n|col|public.school_settings.session_idle_minutes",
+        "e|col|public.school_settings.session_idle_minutes"
+      ],
+      "reads": [
+        "n|tbl|public.school_settings",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "school_settings",
+        "session_max_hours"
+      ],
+      "writes": [
+        "s|col|public.school_settings.session_max_hours",
+        "n|col|public.school_settings.session_max_hours",
+        "e|col|public.school_settings.session_max_hours"
+      ],
+      "reads": [
+        "n|tbl|public.school_settings",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_check",
+      "statementTarget": [
+        "table",
+        "public",
+        "school_settings"
+      ],
+      "writes": [
+        "s|ck|public.school_settings.school_settings_session_policy",
+        "n|ck|public.school_settings.school_settings_session_policy",
+        "e|ck|public.school_settings.school_settings_session_policy",
+        "n|con|public.school_settings.school_settings_session_policy"
+      ],
+      "reads": [
+        "n|tbl|public.school_settings",
+        "n|sch|public",
+        "n|col|public.school_settings.session_idle_minutes",
+        "n|col|public.school_settings.session_max_hours"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "school_settings",
+        "name": "session_idle_minutes",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "30",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "school_settings",
+        "name": "session_max_hours",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "12",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "school_settings",
+        "name": "school_settings_session_policy",
+        "value": "\"session_idle_minutes\" BETWEEN 5 AND 120 AND \"session_max_hours\" BETWEEN 1 AND 24 AND \"session_idle_minutes\" <= \"session_max_hours\" * 60",
+        "entityType": "checks"
+      }
+    }
+  ]
+}

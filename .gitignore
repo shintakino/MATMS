@@ -49,6 +49,11 @@ lerna-debug.log*
 
 # Testing
 coverage
+.next-browser-test/
+.next-build-check/
+.next-webpack-check/
+playwright-report/
+test-results/
 .nyc_output
 
 # Misc
@@ -56,3 +61,11 @@ coverage
 .cache
 tmp
 temp
+
+# Host-only deployment credentials
+.deploy-private/
+
+# Supplied school workbooks are private local layout references.
+/Appendix 58 - SC.xls
+/RPCSP 2025-ARAKAN WEST-MEOCAN HIGH SCHOOL.xlsx
+/RPCPPE 2025-ARAKAN WEST-MEOCAN HIGH SCHOOL (1).xlsx

@@ -1,0 +1,113 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "382fda88-6f72-41ab-9b99-0cb92ed79551",
+  "prevIds": [
+    "1ed5af5c-ae3d-4ffa-9aaf-a25f52d57dae"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "boxes",
+        "boxes_search_order_idx"
+      ],
+      "writes": [
+        "s|idx|public.boxes_search_order_idx",
+        "n|idx|public.boxes_search_order_idx",
+        "e|idx|public.boxes_search_order_idx",
+        "n|rel|public.boxes_search_order_idx"
+      ],
+      "reads": [
+        "n|tbl|public.boxes",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "folders",
+        "folders_search_order_idx"
+      ],
+      "writes": [
+        "s|idx|public.folders_search_order_idx",
+        "n|idx|public.folders_search_order_idx",
+        "e|idx|public.folders_search_order_idx",
+        "n|rel|public.folders_search_order_idx"
+      ],
+      "reads": [
+        "n|tbl|public.folders",
+        "n|sch|public"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "boxes",
+        "name": "boxes_search_order_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "lower(\"code\")",
+            "isExpression": true,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "(\"id\"::text)",
+            "isExpression": true,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "folders",
+        "name": "folders_search_order_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "lower(\"code\")",
+            "isExpression": true,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "(\"id\"::text)",
+            "isExpression": true,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    }
+  ]
+}

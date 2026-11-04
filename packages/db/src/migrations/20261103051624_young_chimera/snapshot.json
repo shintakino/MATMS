@@ -1,0 +1,47 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "0df2ac21-a47f-4930-ae93-dc0fe098a01b",
+  "prevIds": [
+    "07a9618b-623e-4be4-9924-287ac21ad8bc"
+  ],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "custodial_count_lines",
+        "condition_breakdown"
+      ],
+      "writes": [
+        "s|col|public.custodial_count_lines.condition_breakdown",
+        "n|col|public.custodial_count_lines.condition_breakdown",
+        "e|col|public.custodial_count_lines.condition_breakdown"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_count_lines",
+        "n|sch|public"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_count_lines",
+        "name": "condition_breakdown",
+        "type": "jsonb",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    }
+  ]
+}

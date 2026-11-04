@@ -1,0 +1,2 @@
+ALTER TABLE "custodial_sections" ADD COLUMN "version" integer DEFAULT 0 NOT NULL;--> statement-breakpoint
+ALTER TABLE "custodial_sections" ADD CONSTRAINT "custodial_sections_version" CHECK ("version" >= 0);

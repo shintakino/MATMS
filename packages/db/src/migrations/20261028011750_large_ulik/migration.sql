@@ -1,0 +1,1 @@
+CREATE INDEX "template_inventory_search_order_idx" ON "template_inventory" ("template_id",("id"::text));

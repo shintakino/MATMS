@@ -1,0 +1,57 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "6fed130b-55aa-4f74-9b68-c192307c35f0",
+  "prevIds": [
+    "1ab0e3fe-68cf-449a-858f-11869057639b"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_counts",
+        "custodial_counts_supersedes_unique"
+      ],
+      "writes": [
+        "s|idx|public.custodial_counts_supersedes_unique",
+        "n|idx|public.custodial_counts_supersedes_unique",
+        "e|idx|public.custodial_counts_supersedes_unique",
+        "n|rel|public.custodial_counts_supersedes_unique"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_counts",
+        "n|sch|public",
+        "n|col|public.custodial_counts.supersedes_id"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_counts",
+        "name": "custodial_counts_supersedes_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "supersedes_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": "\"supersedes_id\" IS NOT NULL",
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    }
+  ]
+}

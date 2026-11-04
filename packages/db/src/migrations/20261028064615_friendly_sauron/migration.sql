@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "custodial_counts_supersedes_unique" ON "custodial_counts" ("supersedes_id") WHERE "supersedes_id" IS NOT NULL;

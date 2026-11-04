@@ -3,7 +3,7 @@ import { boolean, index, pgEnum, pgTable, text, timestamp } from "drizzle-orm/pg
 
 import { user } from "./auth";
 
-export const applicationRole = pgEnum("application_role", ["admin", "staff", "viewer"]);
+export const applicationRole = pgEnum("application_role", ["admin", "property_custodian", "staff", "viewer"]);
 
 /**
  * Application authorization data is deliberately separate from Better Auth's

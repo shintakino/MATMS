@@ -1,6 +1,6 @@
 # 00 — Project Foundation
 
-**Status:** Implemented; production-build/Docker-image verification remains open.
+**Status:** Implemented and verified through migrations, seed, types and a successful Next.js webpack production build (2026-10-28). Docker/deployment verification is deferred with spec 09.
 
 **Source:** PRD §§3–4, 8–9, 12.
 
@@ -29,3 +29,7 @@ Create a reproducible Better T Stack workspace that preserves the existing MATMS
 - A transaction fixture proves that audit failure rolls back its accompanying write.
 - Environment validation rejects missing required configuration without exposing secrets.
 - Documentation records actual setup and commands; the tracker distinguishes scaffold completion from functional domain completion.
+
+## PRD v1.3 extension boundary
+
+The implemented foundation is reused by specs 10–13. Add custodial schema, role contracts, replay, bounded parser/generator dependencies and private artifact configuration incrementally; no new scaffold or alternate auth/business API. Existing verification does not cover these planned additions.

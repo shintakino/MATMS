@@ -1,10 +1,16 @@
 # 09 — Deployment, Backup and Pilot Release
 
-**Status:** Planned.
+**Status:** Initial Coolify/Cloudflare deployment and clean-database restore verified (2026-11-04). Off-host backups/alerts, populated recovery and school pilot acceptance remain open.
 
-**Source:** PRD §§11–17; AC-20 and final AC-01–AC-22 acceptance gate.
+**Source:** PRD §§11–17; AC-20 and final AC-01–AC-36 acceptance gate.
 
 **Dependencies:** Working domain units; school/hosting decisions required before real-data production use.
+
+## Initial deployment evidence — 2026-11-04
+
+The authorized clean deployment is live at `https://matms.shintakino.qzz.io`. Coolify reports the service healthy; migrations exited successfully; the web/API run without root and use a private database with a non-owner runtime role. Public Chromium checks passed on 20 routes, administrator authentication, secure cookies, protected continuation, denied anonymous download, malformed/cross-origin uploads, mobile navigation and Property Inventory accessibility. HTTP 308 preserves the path/query and HTTPS/private health checks remain independent. A Coolify redeployment retained the permanent Administrator and bootstrap audit in the existing volumes. The new database contains one permanent Administrator and no sample inventory.
+
+A checksum-verified encrypted backup restored into isolated temporary database/API containers in 35.52 seconds; all 40 public tables matched and the restored Administrator authenticated. The clean database contained no inventory/custody/report history to reconcile. AC-20's populated recovery checks and the complete release acceptance gate remain open. Daily encrypted backups are currently on the same host; off-host delivery and external alert channels are not configured. See the [operator guide](../../docs/deployment-coolify.md), [release manifest](../../deploy/release-manifest.json) and [progress tracker](../progress-tracker.md).
 
 ## Deployment and operations
 
@@ -26,12 +32,12 @@ Rehearse restore into a clean environment before launch and at least quarterly. 
 
 1. Resolve school-approved shelf/category naming, account list, restricted-record policy, requester-data retention, loan defaults, hosting/domain/TLS, backup ownership, and incident contact.
 2. Complete relevant unit, PostgreSQL integration, API authorization and browser checks from PRD §15. Test concurrency, retries, audit rollback, permissions, state transitions and safe exports.
-3. Verify AC-01–AC-22; run desktop/mobile accessibility checks, real printed-label scans, and representative synthetic-data performance tests.
+3. Verify AC-01–AC-36; run desktop/mobile accessibility checks, real printed-label scans, and representative synthetic-data performance tests.
 4. Pilot one shelf and a small template set. Staff verify physical locations/counts; enter opening balances as attributable transactions and reconcile discrepancies before expansion.
 5. Confirm at least 95% of active pilot boxes/folders have verified locations and at least 90% of pilot lookups succeed within 30 seconds.
 6. Provide an operator guide covering accounts/access, stock adjustment, checkout/return, exceptions, relocation, retirement, backup/restore and escalation. Obtain school pilot sign-off.
 
-The indicative four-week schedule is not proof of readiness. If scope must shrink, preserve authorization, transaction history and backups; camera scanning can give way to manual/phone-native scanning and report presentation can be simplified by an explicit scope update.
+The PRD v1.3 indicative six-week schedule is not proof of readiness. If scope must shrink, preserve authorization, transaction history and backups; camera scanning can give way to manual/phone-native scanning and nonofficial dashboard presentation can be simplified by an explicit scope update. Preserve approved official inventory layouts, immutable counts and custodial ledger integrity.
 
 ## Verification and handoff
 
@@ -40,3 +46,9 @@ The indicative four-week schedule is not proof of readiness. If scope must shrin
 - Reviewed migrations/lockfile, configured secrets/accounts, operator guide, acceptance results and staff sign-off are recorded.
 - No unresolved critical authorization, data-loss or inventory-integrity defect remains.
 - Progress tracker records actual deployment and restore results; do not mark production complete based only on Docker files.
+
+## Expanded inventory release gate — planned
+
+The user authorized an initial clean deployment on 2026-11-04. School/form acceptance remains a separate release gate after 10–13 and their cross-cutting extensions. Include private import/export storage expiry and resource limits, parser/font availability and any required generation worker in deployment/restore procedures. Back up custodial balances/ledger, count snapshots, used profiles/signatories, provenance/export history and retained artifacts where applicable.
+
+Confirm school/accounting form-profile approval, effective threshold, fund/section mappings, property-number exceptions, missing-value treatment, signatories, verified opening inventory and import reconciliation before real-data expansion. Pilot one section from each form family and actual-size printed Appendix 58/RPCSP/RPCPPE samples with Property Custodian sign-off. Extend the operator guide to posting/corrections, back-dating, count finalization/amendment, import review/commit and safe official generation. A restore must reconcile both inventory domains and reproduce historical report data/layout. Complete AC-23–AC-36 alongside the original scenarios; old archive verification does not satisfy the expanded release.

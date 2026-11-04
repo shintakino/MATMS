@@ -6,7 +6,7 @@ import type * as React from "react";
 
 export function LoadingState({ label = "Loading content" }: { label?: string }) {
   return (
-    <div aria-busy="true" aria-label={label} className="space-y-3">
+    <div role="status" aria-busy="true" aria-label={label} className="space-y-3">
       <Skeleton className="h-5 w-40" />
       <Skeleton className="h-20 w-full" />
       <Skeleton className="h-20 w-full" />
@@ -24,10 +24,10 @@ export function EmptyState({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-48 flex-col items-center justify-center border border-dashed border-border p-6 text-center">
-      <InboxIcon aria-hidden="true" className="mb-3 size-5 text-muted-foreground" />
+    <div className="flex min-h-56 flex-col items-center justify-center rounded-xl border border-dashed border-border bg-card p-8 text-center">
+      <InboxIcon aria-hidden="true" className="mb-4 size-10 rounded-xl bg-accent p-2.5 text-primary" />
       <h2 className="text-sm font-medium">{title}</h2>
-      <p className="mt-1 max-w-md text-xs/relaxed text-muted-foreground">{description}</p>
+      <p className="mt-2 max-w-md text-sm/relaxed text-muted-foreground">{description}</p>
       {action ? <div className="mt-4">{action}</div> : null}
     </div>
   );

@@ -1,1 +1,124 @@
 @import "@matms/ui/globals.css";
+
+/* Shared workspace composition; official forms and printed output keep their own geometry. */
+@media screen {
+  :is(.matms-shell, .auth-screen) [data-slot="button"] {
+    border-radius: calc(var(--radius) - 5px);
+    min-height: 2.25rem;
+    font-size: 0.8125rem;
+  }
+  .auth-screen [data-slot="input"] {
+    min-height: 2.75rem;
+    border-radius: calc(var(--radius) - 5px);
+    background-color: var(--card);
+    font-size: 0.875rem;
+  }
+  .workspace-content > :is(section, div) {
+    width: 100%;
+    min-width: 0;
+  }
+  .workspace-content > section {
+    padding: clamp(1.25rem, 3vw, 2.5rem);
+  }
+  .workspace-content h1 {
+    font-size: clamp(1.5rem, 2.4vw, 2rem);
+    line-height: 1.2;
+    letter-spacing: -0.045em;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+  }
+  .workspace-content h1 + p { margin-top: 0.5rem; line-height: 1.65; }
+  .workspace-content > section > :is(header, section:first-child:has(h1)) {
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .workspace-content :is(section, article, details, ul).border,
+  .workspace-content [data-slot="card"] {
+    background-color: var(--card);
+    border-radius: var(--radius);
+    box-shadow: 0 2px 5px -3px color-mix(in oklch, var(--foreground) 12%, transparent);
+  }
+  .workspace-content details > summary {
+    display: list-item;
+    padding-block: 0.25rem;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    list-style-position: inside;
+  }
+  .workspace-content details > summary::marker { color: var(--primary); font-size: 0.8em; }
+  .workspace-content details[open] > summary { margin-bottom: 0.75rem; }
+  .workspace-content label:not(:has(input[type="checkbox"], input[type="radio"])) {
+    display: grid;
+    align-content: start;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    font-weight: 500;
+  }
+  .workspace-content :is(input:not([type="checkbox"], [type="radio"]), select, textarea) {
+    border-radius: calc(var(--radius) - 5px);
+    min-height: 2.5rem;
+    background-color: var(--card);
+    font-size: 0.875rem;
+    font-weight: 400;
+    max-width: 100%;
+    transition: border-color 120ms ease, box-shadow 120ms ease;
+  }
+  .workspace-content :is(select, textarea):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  .workspace-content input:is([type="checkbox"], [type="radio"]) { accent-color: var(--primary); }
+  .workspace-content fieldset { min-width: 0; }
+  .workspace-content :is(form, section) > legend { font-size: 0.875rem; }
+  .workspace-content table:not(#inventory-print table) {
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.8125rem;
+  }
+  .workspace-content table:not(#inventory-print table) th {
+    background: var(--muted);
+    color: var(--muted-foreground);
+    font-size: 0.6875rem;
+    line-height: 1.5;
+    font-weight: 600;
+    letter-spacing: 0.045em;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .workspace-content table:not(#inventory-print table) td {
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .workspace-content table:not(#inventory-print table) tbody tr:hover { background: color-mix(in oklch, var(--accent) 35%, transparent); }
+  .workspace-content nav[aria-label$="pages"] {
+    padding-block: 0.75rem;
+    font-size: 0.8125rem;
+    color: var(--muted-foreground);
+  }
+  .workspace-content a.underline { text-underline-offset: 3px; text-decoration-color: color-mix(in oklch, currentColor 35%, transparent); }
+  .workspace-content a.underline:hover { color: var(--primary); text-decoration-color: currentColor; }
+  .dashboard-hero {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: clamp(1.5rem, 3vw, 2rem);
+    border-top: 3px solid var(--primary);
+  }
+  .workspace-content .metric-card { position: relative; overflow: hidden; }
+  .workspace-content .metric-card [data-slot="card-title"] { color: var(--muted-foreground); font-size: 0.8125rem; font-weight: 500; }
+  .workspace-content .metric-card [data-slot="card-content"] a { font-size: 2rem; letter-spacing: -0.05em; }
+  .metric-card::after { content: ""; position: absolute; right: 0; top: 0; width: 3px; height: 100%; background: var(--accent); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .matms-shell *, .matms-shell *::before, .matms-shell *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
+@media print {
+  .workspace-topbar { display: none; }
+}

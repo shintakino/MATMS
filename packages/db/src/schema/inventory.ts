@@ -69,6 +69,7 @@ export const templateInventory = pgTable(
   },
   (table) => [
     uniqueIndex("template_inventory_template_folder_unique").on(table.templateId, table.folderId),
+    index("template_inventory_search_order_idx").on(table.templateId, sql`(${table.id}::text)`),
     check("template_inventory_count_nonnegative", sql`${table.count} >= 0`),
     check("template_inventory_threshold_nonnegative", sql`${table.threshold} >= 0`),
   ],

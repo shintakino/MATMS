@@ -35,7 +35,7 @@ export function getQueryClient() {
 
 function getApiBaseUrl() {
   if (typeof window !== "undefined") {
-    return "";
+    return window.location.origin;
   }
 
   return (process.env.SERVER_URL ?? "http://localhost:3000").replace(/\/$/, "");
@@ -55,7 +55,7 @@ export const link = new RPCLink({
     }
 
     const { headers } = await import("next/headers");
-    return Object.fromEntries(await headers());
+    return { ...Object.fromEntries(await headers()), "x-matms-server-render": "1" };
   },
 });
 

@@ -1,0 +1,47 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "5ebc17d4-4b4d-4f2f-a7ea-3cf05d10885e",
+  "prevIds": [
+    "cebdb71c-0f55-4ec5-8796-8e8909a93a00"
+  ],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "custodial_operations",
+        "counterparty"
+      ],
+      "writes": [
+        "s|col|public.custodial_operations.counterparty",
+        "n|col|public.custodial_operations.counterparty",
+        "e|col|public.custodial_operations.counterparty"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_operations",
+        "n|sch|public"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_operations",
+        "name": "counterparty",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    }
+  ]
+}

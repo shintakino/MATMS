@@ -1,0 +1,1 @@
+ALTER TABLE "custodial_import_batches" ADD COLUMN "classification_threshold" text;

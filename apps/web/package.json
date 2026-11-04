@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --port 3001",
-    "build": "tsc -b ../../packages/api && next build",
+    "build": "tsc -b ../../packages/api && next build --webpack",
     "check-types": "tsc -b ../../packages/api && tsc --noEmit",
     "start": "next start",
     "env:generate": "varlock codegen"
@@ -18,11 +18,13 @@
     "@swc/helpers": "^0.5.23",
     "@tanstack/react-form": "^1.33.5",
     "@tanstack/react-query": "^5.104.2",
+    "@zxing/browser": "^0.2.1",
     "babel-plugin-react-compiler": "^1.0.0",
     "better-auth": "catalog:",
     "lucide-react": "catalog:",
     "next": "^16.3.4",
     "next-themes": "catalog:",
+    "qrcode.react": "^4.2.0",
     "react": "catalog:",
     "react-dom": "catalog:",
     "sonner": "catalog:",
