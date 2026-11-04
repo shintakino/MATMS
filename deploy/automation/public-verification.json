@@ -1,0 +1,19 @@
+{
+  "origin": "https://matms.shintakino.qzz.io",
+  "https": true,
+  "http_redirect_status": 308,
+  "http_redirect_preserves_query": true,
+  "administrator_login": true,
+  "permanent_password": true,
+  "secure_cookie": true,
+  "protected_redirect": true,
+  "unauthenticated_export_denied": true,
+  "malformed_upload_rejected": true,
+  "cross_origin_upload_denied": true,
+  "routes_checked": 20,
+  "property_accessibility_violations": 0,
+  "mobile_navigation": true,
+  "browser_errors": [],
+  "workflow_run_id": "41775997721",
+  "revision": "d3cd2d9d5504c6fb621b5e0dc8ffd9f3cea6e0d4"
+}

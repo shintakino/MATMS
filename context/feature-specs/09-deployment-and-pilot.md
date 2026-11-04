@@ -1,6 +1,6 @@
 # 09 — Deployment, Backup and Pilot Release
 
-**Status:** Initial Coolify/Cloudflare deployment and clean-database restore verified (2026-11-04). Off-host backups/alerts, populated recovery and school pilot acceptance remain open.
+**Status:** Coolify/Cloudflare deployment, checked automatic releases and clean-database restore verified (2026-11-04). Off-host backups/alerts, populated recovery and school pilot acceptance remain open.
 
 **Source:** PRD §§11–17; AC-20 and final AC-01–AC-36 acceptance gate.
 
@@ -11,6 +11,8 @@
 The authorized clean deployment is live at `https://matms.shintakino.qzz.io`. Coolify reports the service healthy; migrations exited successfully; the web/API run without root and use a private database with a non-owner runtime role. Public Chromium checks passed on 20 routes, administrator authentication, secure cookies, protected continuation, denied anonymous download, malformed/cross-origin uploads, mobile navigation and Property Inventory accessibility. HTTP 308 preserves the path/query and HTTPS/private health checks remain independent. A Coolify redeployment retained the permanent Administrator and bootstrap audit in the existing volumes. The new database contains one permanent Administrator and no sample inventory.
 
 A checksum-verified encrypted backup restored into isolated temporary database/API containers in 35.52 seconds; all 40 public tables matched and the restored Administrator authenticated. The clean database contained no inventory/custody/report history to reconcile. AC-20's populated recovery checks and the complete release acceptance gate remain open. Daily encrypted backups are currently on the same host; off-host delivery and external alert channels are not configured. See the [operator guide](../../docs/deployment-coolify.md), [release manifest](../../deploy/release-manifest.json) and [progress tracker](../progress-tracker.md).
+
+GitHub Actions automatic releases from `main` are enabled. [Run 41775997721](https://github.com/shintakino/MATMS/actions/runs/41775997721) passed hosted strict types, PostgreSQL integrations, six release invariant tests and 11 Chromium scenarios; all three immutable GHCR images published and deployed successfully. Pre-migration encrypted backup and migration tasks exited zero; web/API revision and attempt/build IDs, public login/20 routes, permanent Administrator and volume identities were verified. The deployment gateway blocks dashboard/secrets/unrelated paths and requires authentication for permitted service APIs. Production secret values remain in Coolify; the Actions environment holds the scoped automation token. Compose replacement still briefly interrupts service. The [automation receipt](../../deploy/automation/deployment-verification.json) records the exact images and run.
 
 ## Deployment and operations
 

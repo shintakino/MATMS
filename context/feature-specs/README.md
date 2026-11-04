@@ -19,7 +19,7 @@ These units derive from [MATMS-PRD.md](../../MATMS-PRD.md) v1.3. Read `AGENTS.md
 | [11 — Physical counts](11-physical-count-sessions.md) | Frozen counts, assignments, signed variance, finalize/amend | FR-11 counts, §§6, 8–9 | AC-26, AC-27, AC-34, AC-35, AC-36 | In progress |
 | [12 — Official forms](12-official-inventory-forms.md) | Appendix 58/Annex A.8/Appendix 73 profiles, XLSX/print, fidelity | FR-11 forms/generation, §§8–11 | AC-28, AC-29, AC-30, AC-31, AC-35, AC-36 | In progress |
 | [13 — Controlled import](13-controlled-inventory-import.md) | Three supported structures, preview, mapping, atomic commit | FR-11 import, §§8–11 | AC-32, AC-33, AC-34, AC-35 | In progress |
-| [09 — Deployment/pilot](09-deployment-and-pilot.md) | Operations, restore and full release acceptance | §§11–17 | AC-20; final AC-01–AC-36 gate | Initial Coolify deployment/clean restore verified; off-host backups and pilot open |
+| [09 — Deployment/pilot](09-deployment-and-pilot.md) | Operations, restore and full release acceptance | §§11–17 | AC-20; final AC-01–AC-36 gate | Coolify/automatic releases/clean restore verified; off-host backups and pilot open |
 
 ## Active sequence
 

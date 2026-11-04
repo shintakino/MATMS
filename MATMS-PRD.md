@@ -541,6 +541,7 @@ Maintain development and production configuration separately. Production Compose
 - Build web and server images separately using reproducible multi-stage builds and the pnpm lockfile. Run processes with least privilege.
 - Bun is the selected API runtime; confirm the generated Next.js image's supported runtime rather than forcing Bun into every container.
 - Run reviewed Drizzle migrations as a controlled one-shot release task before application rollout; do not run competing migrations in every replica or use schema push in production.
+- The user-authorized automatic release workflow checks `main` on isolated CI, publishes immutable images only after checks pass, then deploys through Coolify with a pre-migration encrypted backup and verified runtime revisions. Preserve production secrets, accounts and volumes; automation alone does not establish uninterrupted availability.
 - Internal DB access uses the Compose service hostname, not localhost. Browsers use the public app origin, not internal service names.
 - Keep PostgreSQL private. Protect secrets through deployment secret management or host-controlled environment files.
 - Health checks, structured logs, error monitoring, disk/backup alerts, and rollback instructions are required.

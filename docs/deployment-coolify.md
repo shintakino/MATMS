@@ -2,6 +2,8 @@
 
 Public address: **https://matms.shintakino.qzz.io**. Initial deployment verification is recorded in the [progress tracker](../context/progress-tracker.md). School acceptance of official forms remains separate from deployment.
 
+Automatic deployment from `main` is enabled and was verified by [run 41775997721](https://github.com/shintakino/MATMS/actions/runs/41775997721), deploying `d3cd2d9d5504c6fb621b5e0dc8ffd9f3cea6e0d4`. The [receipt](../deploy/automation/deployment-verification.json) pins the three image digests, web build/deployment IDs, successful jobs, preserved volume identities and Administrator, and successful backup/migration tasks. [Live public checks](../deploy/automation/public-verification.json) passed on 20 routes after rollout. The original release manifest remains evidence of the initial manual deployment.
+
 ## Service and credentials
 
 Coolify project **MATMS**, environment **production**, service **MATMS** (`mt8rqzgbtpkbzedwicy03wnf`) manages the web, API, database, migration, backup and Cloudflare tunnel containers. Use the existing Coolify dashboard on this Ubuntu host. The initial manual provisioning token was revoked. The automatic deployment implementation uses a separate scoped token and requires Coolify's API to remain enabled; its restricted gateway does not expose the dashboard or unrelated API resources.
@@ -53,7 +55,7 @@ For rollback, first check that the previous application image supports the curre
 
 The workflow [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml) implements checked automatic releases. When repository variable `MATMS_DEPLOY_ENABLED` is `true`, pushing to GitHub `main` runs isolated checks, builds three images on GitHub-hosted runners, then deploys through Coolify. Pull requests run checks without production secrets or deployment. Failed checks/builds leave production unchanged. A newer `main` commit supersedes an older queued candidate; deployment itself is never canceled halfway through a migration/restart. A normal release preserves the existing database, administrator, authentication secret and volumes.
 
-1. Develop and test the change, review any migration for compatibility, then commit and push to `main`. From this workspace's local `master` branch, the explicit command is `git push git@github.com:shintakino/MATMS.git HEAD:main`.
+1. Develop and test the change, review any migration for compatibility, then commit and push to `main`. This checkout's local `main` tracks `origin/main` and uses SSH for pushing, so `git push` is sufficient.
 2. Watch **GitHub → MATMS → Actions → Verify and deploy MATMS**. The check job runs all strict types, PostgreSQL integration tests and seeded fictional Chromium workflows. If scripted CI sign-ins hit the real rate limit, the shared UI helper waits the server's retry window and retries once; authentication protections remain enabled. Private workbook comparisons are explicitly skipped because school source files are not published.
 3. Only successful checks may publish the immutable image set. Only successful builds may enter the main-only `production` environment and use its Coolify token. CI sends no production database/authentication/cloudflared credentials to image builders.
 4. The deploy job verifies current storage, supplies a short-lived package-read token, updates only the MATMS Service, pulls all candidate images before container replacement, and waits for matching web/API Git revisions and healthy services. The web's build ID and API's deployment-attempt ID distinguish reruns of the same commit from older containers. The pre-migration backup must succeed before migrations/API startup. Health/revision probes must pass twice; storage is checked before and after deployment.
@@ -68,6 +70,8 @@ The dedicated gateway service `MATMS Deployment Gateway` (`bckcz3zbvmtxuv1ghvrvy
 Host-only recovery metadata and the token expiry date are in ignored mode-0600 `.deploy-private/automation.json`; tunnel credentials are in `.deploy-private/automation-tunnel.json`. Rotate the automation token before its recorded one-year expiry and update the GitHub environment secret. Infrastructure/bootstrap changes to the gateway are operator-managed independently of app releases. Restore its existing service/image/configuration rather than publishing the full Coolify dashboard.
 
 Pause deployment without stopping CI by setting repository variable `MATMS_DEPLOY_ENABLED` to `false`; re-enable it only after required configuration is verified. **Run workflow** on branch `main` checks/builds/deploys the current revision again. Cached digest images permit ordinary local restarts after the job token expires. A manual forced registry pull needs fresh registry authentication; prefer rerunning the workflow. Keep Docker cleanup from removing all known-good rollback images.
+
+The verification-only documentation/receipt handoff commit uses GitHub's `[skip ci]` directive to avoid recursively deploying the evidence of its own run. It changes no executable application, workflow or infrastructure code; the deployed-code revision remains the one in the receipt. Normal application commits run the complete pipeline.
 
 ## Availability during updates
 

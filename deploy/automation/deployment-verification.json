@@ -1,0 +1,45 @@
+{
+  "revision": "d3cd2d9d5504c6fb621b5e0dc8ffd9f3cea6e0d4",
+  "images": {
+    "web": "ghcr.io/shintakino/matms-web@sha256:a8866a54a6ea4830fb784fcc94367e9549b657e43af70810573833c835aacee1",
+    "server": "ghcr.io/shintakino/matms-server@sha256:2745c4329a81469cc22b72167fcaabcdb851c785723ece6dfb348c877b3a4518",
+    "postgres": "ghcr.io/shintakino/matms-postgres@sha256:1e60d6274ba6310e5c974bd400dc9286aaecdd881d71447a47810c7480624b5c"
+  },
+  "web_build_id": "41775997721-1",
+  "deployment_id": "41775997721-1",
+  "origin": "https://matms.shintakino.qzz.io",
+  "service_uuid": "mt8rqzgbtpkbzedwicy03wnf",
+  "status": "verified",
+  "volumes_preserved": true,
+  "web_and_api_revision_verified": true,
+  "workflow_run_id": "41775997721",
+  "workflow_url": "https://github.com/shintakino/MATMS/actions/runs/41775997721",
+  "github_main_only_environment": true,
+  "required_jobs": [
+    {
+      "name": "Types, integration and browser checks",
+      "conclusion": "success"
+    },
+    {
+      "name": "Build postgres image",
+      "conclusion": "success"
+    },
+    {
+      "name": "Build web image",
+      "conclusion": "success"
+    },
+    {
+      "name": "Build server image",
+      "conclusion": "success"
+    },
+    {
+      "name": "Deploy and verify production",
+      "conclusion": "success"
+    }
+  ],
+  "administrator_preserved": true,
+  "predeploy_backup_exit_code": 0,
+  "migration_exit_code": 0,
+  "gateway_service_uuid": "bckcz3zbvmtxuv1ghvrvypn2",
+  "coolify_api_enabled_for_automation": true
+}
