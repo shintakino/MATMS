@@ -4,7 +4,9 @@ import { expect, signIn, test } from "./fixtures";
 
 const email = process.env.MATMS_BROWSER_EMAIL, password = process.env.MATMS_BROWSER_PASSWORD, staffEmail = process.env.MATMS_BROWSER_STAFF_EMAIL;
 test.skip(!email || !password, "Supply disposable browser-test credentials.");
-const date = (offset: number) => new Date(Date.parse(`${new Date(Date.now() + 8 * 3600000).toISOString().slice(0, 10)}T00:00:00Z`) + offset * 86400000).toISOString().slice(0, 10);
+// Keep offsets on the same Manila day when a scenario crosses midnight.
+const schedulingDay = new Date(Date.now() + 8 * 3600000).toISOString().slice(0, 10);
+const date = (offset: number) => new Date(Date.parse(`${schedulingDay}T00:00:00Z`) + offset * 86400000).toISOString().slice(0, 10);
 async function login(page: Page, destination = "/admin/scheduling") {
   await page.goto(`/login?returnTo=${encodeURIComponent(destination)}`); await signIn(page, email!, password!);
   await expect(page).toHaveURL(new RegExp(destination.replaceAll("/", "\\/") + "$"), { timeout: 90000 });
