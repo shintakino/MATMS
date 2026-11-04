@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, signIn, test } from "./fixtures";
 import AxeBuilder from "@axe-core/playwright";
 import { readFile } from "node:fs/promises";
 import * as XLSX from "../../packages/api/node_modules/xlsx/xlsx.mjs";
@@ -9,7 +9,7 @@ test.skip(!email || !password, "Supply disposable browser-test credentials.");
 
 test("create, review and finalize a mixed-condition partial count", async ({ page }) => {
   page.setDefaultTimeout(90_000); page.setDefaultNavigationTimeout(90_000);
-  await page.goto("/login"); await page.getByLabel("Email address").fill(email!); await page.getByLabel("Password", { exact: true }).fill(password!); await page.getByRole("button", { name: "Sign in", exact: true }).click(); await expect(page).toHaveURL(/\/dashboard$/);
+  await page.goto("/login"); await signIn(page, email!, password!); await expect(page).toHaveURL(/\/dashboard$/);
   await page.goto("/property-inventory/counts");
   const profile = page.locator("details").filter({ has: page.getByText("Record approved form profile", { exact: true }) });
   await profile.locator(":scope > summary").click();

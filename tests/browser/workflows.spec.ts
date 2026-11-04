@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, signIn, test } from "./fixtures";
 import AxeBuilder from "@axe-core/playwright";
 
 const email = process.env.MATMS_BROWSER_EMAIL;
@@ -9,9 +9,7 @@ test("stock, custody, reporting, label preview and accessible core screens", asy
   const errors: string[] = []; page.on("pageerror", (error) => errors.push(error.message));
   page.on("response", (response) => { if (new URL(response.url()).pathname.startsWith("/rpc/") && response.status() >= 400) errors.push(`RPC ${response.status()}: ${new URL(response.url()).pathname}`); });
   await page.goto("/login?returnTo=%2Fboxes");
-  await page.getByLabel("Email address").fill(email!);
-  await page.getByLabel("Password", { exact: true }).fill(password!);
-  await page.getByRole("button", { name: "Sign in", exact: true }).press("Enter");
+  await signIn(page, email!, password!, true);
   await expect(page).toHaveURL(/\/boxes(?:\?|$)/);
   await page.goto("/documents");
   await page.getByRole("link", { name: "Fictional sample record", exact: true }).click();
@@ -113,7 +111,7 @@ for (const role of ["staff", "viewer"] as const) {
   test(`${role} sees only its permitted browser controls`, async ({ page }) => {
     const account = role === "staff" ? process.env.MATMS_BROWSER_STAFF_EMAIL : process.env.MATMS_BROWSER_VIEWER_EMAIL;
     test.skip(!account, "Supply the optional role-fixture email.");
-    await page.goto("/login"); await page.getByLabel("Email address").fill(account!); await page.getByLabel("Password", { exact: true }).fill(password!); await page.getByRole("button", { name: "Sign in", exact: true }).click();
+    await page.goto("/login"); await signIn(page, account!, password!);
     await expect(page).toHaveURL(/\/dashboard$/);
     await expect(page.getByRole("link", { name: "Users", exact: true })).toHaveCount(0);
     await page.goto("/documents");
@@ -126,7 +124,7 @@ for (const role of ["staff", "viewer"] as const) {
 }
 
 test("printed label layouts isolate the label from navigation", async ({ page }) => {
-  await page.goto("/login"); await page.getByLabel("Email address").fill(email!); await page.getByLabel("Password", { exact: true }).fill(password!); await page.getByRole("button", { name: "Sign in", exact: true }).click(); await expect(page).toHaveURL(/\/dashboard$/);
+  await page.goto("/login"); await signIn(page, email!, password!); await expect(page).toHaveURL(/\/dashboard$/);
   await page.goto("/labels"); await page.getByRole("checkbox", { name: /DEMO-FORMS-01/ }).check();
   await page.evaluate(() => { window.print = () => {}; }); await page.getByRole("button", { name: "Print labels", exact: true }).click();
   await page.emulateMedia({ media: "print" }); await expect(page.locator(".qr-label")).toBeVisible(); await expect(page.getByRole("heading", { name: "Box labels", exact: true })).toBeHidden();
@@ -136,7 +134,7 @@ test("printed label layouts isolate the label from navigation", async ({ page })
 });
 
 test("stock correction dialog supports keyboard cancellation and focus return", async ({ page }) => {
-  await page.goto("/login"); await page.getByLabel("Email address").fill(email!); await page.getByLabel("Password", { exact: true }).fill(password!); await page.getByRole("button", { name: "Sign in", exact: true }).press("Enter"); await expect(page).toHaveURL(/\/dashboard$/);
+  await page.goto("/login"); await signIn(page, email!, password!, true); await expect(page).toHaveURL(/\/dashboard$/);
   await page.goto("/inventory"); const form = page.getByRole("heading", { name: "Stock operation", exact: true }).locator("..");
   await form.locator('[name="inventoryId"]').selectOption({ index: 1 }); await form.locator('[name="action"]').selectOption("correct"); await form.locator('[name="quantity"]').fill("9"); await form.locator('[name="reason"]').fill("Keyboard-only correction review");
   const review = form.getByRole("button", { name: "Review stock operation" }); await review.focus(); await page.keyboard.press("Enter");
@@ -148,7 +146,7 @@ test("stock correction dialog supports keyboard cancellation and focus return", 
 test("archive intake, failed input retention, folder move and document refile", async ({ page }) => {
   const suffix = Date.now();
   const boxCode = `BROWSER-BOX-${suffix}`, folderCode = `BROWSER-FOLDER-${suffix}`, documentCode = `BROWSER-DOC-${suffix}`;
-  await page.goto("/login"); await page.getByLabel("Email address").fill(email!); await page.getByLabel("Password", { exact: true }).fill(password!); await page.getByRole("button", { name: "Sign in", exact: true }).click(); await expect(page).toHaveURL(/\/dashboard$/);
+  await page.goto("/login"); await signIn(page, email!, password!); await expect(page).toHaveURL(/\/dashboard$/);
   await page.goto("/boxes"); await page.getByLabel("Box code", { exact: true }).fill(boxCode);
   await page.getByLabel("Category", { exact: true }).selectOption({ label: "Administrative" }); await page.getByLabel("Shelf location", { exact: true }).selectOption({ label: "Demo room / A / 01" }); await page.getByRole("button", { name: "Create box", exact: true }).click();
   await expect(page.getByText("Box created.", { exact: true })).toBeVisible();

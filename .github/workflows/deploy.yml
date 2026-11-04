@@ -94,6 +94,7 @@ jobs:
             ${{ runner.temp }}/matms-api.log
             ${{ runner.temp }}/matms-web.log
           retention-days: 7
+          overwrite: true
 
   images:
     name: Build ${{ matrix.component }} image
@@ -143,6 +144,7 @@ jobs:
           build-args: |
             SERVER_URL=http://server:3000
             MATMS_RELEASE_SHA=${{ github.sha }}
+            MATMS_BUILD_ID=${{ github.run_id }}-${{ github.run_attempt }}
           secret-files: |
             web_env=.deploy-private/ci/web.env
             server_env=.deploy-private/ci/server.env
@@ -158,13 +160,14 @@ jobs:
           import json, os
           from pathlib import Path
           component = os.environ['COMPONENT']
-          Path('image-metadata/' + component + '.json').write_text(json.dumps({'component': component, 'revision': os.environ['GITHUB_SHA'], 'image': 'ghcr.io/shintakino/matms-' + component, 'digest': os.environ['IMAGE_DIGEST']}))
+          Path('image-metadata/' + component + '.json').write_text(json.dumps({'component': component, 'revision': os.environ['GITHUB_SHA'], 'image': 'ghcr.io/shintakino/matms-' + component, 'digest': os.environ['IMAGE_DIGEST'], 'build_id': os.environ['GITHUB_RUN_ID'] + '-' + os.environ['GITHUB_RUN_ATTEMPT']}))
           PY
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: image-${{ matrix.component }}
           path: image-metadata/*.json
           retention-days: 30
+          overwrite: true
 
   deploy:
     name: Deploy and verify production
@@ -204,3 +207,4 @@ jobs:
           path: deployment-result.json
           if-no-files-found: ignore
           retention-days: 90
+          overwrite: true

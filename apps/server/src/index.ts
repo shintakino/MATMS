@@ -174,7 +174,8 @@ app.get("/health/ready", async (c) => {
   try {
     await db.execute("select 1");
     const revision = process.env.MATMS_RELEASE_SHA;
-    return c.json({ status: "ok", release: revision && /^[0-9a-f]{40}$/.test(revision) ? revision : null, correlationId: c.get("correlationId") });
+    const deployment = process.env.MATMS_DEPLOYMENT_ID;
+    return c.json({ status: "ok", release: revision && /^[0-9a-f]{40}$/.test(revision) ? revision : null, deployment: deployment && /^\d+-\d+$/.test(deployment) ? deployment : null, correlationId: c.get("correlationId") });
   } catch {
     return c.json(
       { status: "unavailable", correlationId: c.get("correlationId") },

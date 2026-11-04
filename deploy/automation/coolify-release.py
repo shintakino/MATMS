@@ -37,23 +37,29 @@ def load_images(directory, revision):
     if not re.fullmatch('[a-f0-9]{40}', revision):
         raise ReleaseError('A full Git revision is required.')
     images = {}
+    build_ids = {}
     for path in Path(directory).glob('*.json'):
         if path.stat().st_size > 4096:
             raise ReleaseError('Unexpected image metadata size.')
         record = json.loads(path.read_text())
-        if set(record) != {'component', 'revision', 'image', 'digest'}:
+        if set(record) != {'component', 'revision', 'image', 'digest', 'build_id'}:
             raise ReleaseError('Unexpected image metadata fields.')
         component = record['component']
         if component not in COMPONENTS or component in images or record['revision'] != revision:
             raise ReleaseError('Missing, duplicate or mixed-revision images.')
         if record['image'] != IMAGE_PREFIX + component or not re.fullmatch(r'sha256:[a-f0-9]{64}', record['digest']):
             raise ReleaseError('Only immutable MATMS GHCR images are allowed.')
+        if not re.fullmatch(r'\d+-\d+', record['build_id']):
+            raise ReleaseError('Invalid image build identity.')
         images[component] = record['image'] + '@' + record['digest']
+        build_ids[component] = record['build_id']
     if set(images) != COMPONENTS:
         raise ReleaseError('All three release images are required.')
-    return images
+    return images, build_ids['web']
 
-def release_compose(template, images, revision):
+def release_compose(template, images, revision, deployment):
+    if not re.fullmatch(r'\d+-\d+', deployment):
+        raise ReleaseError('Invalid deployment identity.')
     if not template.endswith('volumes:\n  matms_data:\n  matms_backups:\n'):
         raise ReleaseError('Production volume definitions changed; operator review required.')
     def replace(match):
@@ -63,7 +69,7 @@ def release_compose(template, images, revision):
         raise ReleaseError('Unexpected production image layout.')
     text = text.replace('    pull_policy: never', '    pull_policy: if_not_present')
     # The API readiness body identifies the runtime, independently of Coolify metadata.
-    text = text.replace("      PORT: '3000'", "      PORT: '3000'\n      MATMS_RELEASE_SHA: '" + revision + "'")
+    text = text.replace("      PORT: '3000'", "      PORT: '3000'\n      MATMS_RELEASE_SHA: '" + revision + "'\n      MATMS_DEPLOYMENT_ID: '" + deployment + "'")
     if text.count('MATMS_RELEASE_SHA:') != 1 or 'MATMS_RELEASE_TAG' in text:
         raise ReleaseError('Unable to bind the API runtime revision.')
     return text
@@ -103,16 +109,16 @@ def request_json(url, method='GET', token=None, data=None):
     except (urllib.error.URLError, TimeoutError, json.JSONDecodeError):
         raise ReleaseError('API request failed or returned invalid JSON.') from None
 
-def public_ready(public_origin, revision):
+def public_ready(public_origin, revision, web_build, deployment):
     opener = urllib.request.build_opener(NoRedirect())
     headers = {'Cache-Control': 'no-cache', 'User-Agent': 'MATMS-release-probe'}
     try:
         req = urllib.request.Request(public_origin + '/login?release=' + revision, headers=headers)
         with opener.open(req, timeout=20) as response:
-            if response.status != 200 or response.headers.get('X-MATMS-Release') != revision:
+            if response.status != 200 or response.headers.get('X-MATMS-Release') != revision or response.headers.get('X-MATMS-Build') != web_build:
                 return False
         value = request_json(public_origin + '/api/health/ready?release=' + revision)
-        return value.get('status') == 'ok' and value.get('release') == revision
+        return value.get('status') == 'ok' and value.get('release') == revision and value.get('deployment') == deployment
     except (ReleaseError, urllib.error.URLError, TimeoutError):
         return False
 
@@ -120,7 +126,8 @@ def main():
     if os.environ.get('GITHUB_REF') != 'refs/heads/main' or os.environ.get('GITHUB_REPOSITORY') != REPOSITORY:
         raise ReleaseError('Only the MATMS main branch may deploy production.')
     revision = os.environ['GITHUB_SHA']
-    images = load_images(os.environ['MATMS_IMAGE_DIRECTORY'], revision)
+    images, web_build = load_images(os.environ['MATMS_IMAGE_DIRECTORY'], revision)
+    deployment = os.environ['GITHUB_RUN_ID'] + '-' + os.environ['GITHUB_RUN_ATTEMPT']
     api = origin(os.environ['COOLIFY_URL']) + '/api/v1'
     public = origin(os.environ['MATMS_ORIGIN'])
     service = identifier(os.environ['COOLIFY_SERVICE_UUID'])
@@ -138,7 +145,7 @@ def main():
     if state.get('uuid') != service:
         raise ReleaseError('Coolify returned an unexpected service.')
     storage_identity(request_json(resource + '/storages', token=token), service)
-    compose = release_compose((ROOT / 'deploy/docker-compose.coolify.yml').read_text(), images, revision)
+    compose = release_compose((ROOT / 'deploy/docker-compose.coolify.yml').read_text(), images, revision, deployment)
     # Token expires when this job finishes. Cached digest images allow later local restarts.
     request_json(api + '/servers/' + server + '/registries', 'POST', token, {'registry': 'ghcr.io', 'username': os.environ['GITHUB_ACTOR'], 'password': registry_token})
     request_json(resource, 'PATCH', token, {'docker_compose_raw': base64.b64encode(compose.encode()).decode(), 'instant_deploy': False, 'redact_all_env_values_in_logs': True, 'description': 'MATMS main revision ' + revision})
@@ -149,11 +156,11 @@ def main():
     while time.monotonic() < deadline:
         try:
             state = request_json(resource, token=token)
-            matches = api_ready(state, images) and public_ready(public, revision)
+            matches = api_ready(state, images) and public_ready(public, revision, web_build, deployment)
             stable = stable + 1 if matches else 0
             if stable >= 2:
                 storage_identity(request_json(resource + '/storages', token=token), service)
-                report = {'revision': revision, 'images': images, 'origin': public, 'service_uuid': service, 'status': 'verified', 'volumes_preserved': True, 'web_and_api_revision_verified': True}
+                report = {'revision': revision, 'images': images, 'web_build_id': web_build, 'deployment_id': deployment, 'origin': public, 'service_uuid': service, 'status': 'verified', 'volumes_preserved': True, 'web_and_api_revision_verified': True}
                 Path('deployment-result.json').write_text(json.dumps(report, indent=2) + '\n')
                 print('Verified production release ' + revision + ': web, API, database health and persistent volume identities.')
                 return

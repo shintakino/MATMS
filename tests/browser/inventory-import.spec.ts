@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, signIn, test } from "./fixtures";
 import * as XLSX from "../../packages/api/node_modules/xlsx/xlsx.mjs";
 
 const email = process.env.MATMS_BROWSER_EMAIL;
@@ -19,7 +19,7 @@ test("stage and review a fictional historical stock card", async ({ page, reques
   page.setDefaultTimeout(90_000); page.setDefaultNavigationTimeout(90_000);
   const anonymous = await request.post("/api/custodial-imports", { headers: { origin: "http://127.0.0.1:3101", "content-type": "application/octet-stream", "x-file-name": "test.xlsx", "x-operation-id": crypto.randomUUID() }, data: fictionalStockCard() });
   expect(anonymous.status()).toBe(401);
-  await page.goto("/login"); await page.getByLabel("Email address").fill(email!); await page.getByLabel("Password", { exact: true }).fill(password!); await page.getByRole("button", { name: "Sign in", exact: true }).click(); await expect(page).toHaveURL(/\/dashboard$/);
+  await page.goto("/login"); await signIn(page, email!, password!); await expect(page).toHaveURL(/\/dashboard$/);
   const crossOrigin = await page.request.post("/api/custodial-imports", { headers: { origin: "https://untrusted.example", "content-type": "application/octet-stream", "x-file-name": "test.xlsx", "x-operation-id": crypto.randomUUID() }, data: fictionalStockCard() });
   expect(crossOrigin.status()).toBe(403);
   const malformed = await page.request.post("/api/custodial-imports", { headers: { origin: "http://127.0.0.1:3101", "content-type": "application/octet-stream", "x-file-name": "test.xlsx", "x-operation-id": crypto.randomUUID() }, data: Buffer.from("not a workbook") });

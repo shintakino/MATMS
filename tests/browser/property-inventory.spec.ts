@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, signIn, test } from "./fixtures";
 import AxeBuilder from "@axe-core/playwright";
 import { readFile } from "node:fs/promises";
 import * as XLSX from "../../packages/api/node_modules/xlsx/xlsx.mjs";
@@ -13,9 +13,7 @@ test("property inventory opening and stock-card workflow", async ({ page }) => {
   const browserErrors: string[] = [];
   page.on("pageerror", (error) => browserErrors.push(error.message));
   await page.goto("/login");
-  await page.getByLabel("Email address").fill(email!);
-  await page.getByLabel("Password", { exact: true }).fill(password!);
-  await page.getByRole("button", { name: "Sign in", exact: true }).click();
+  await signIn(page, email!, password!);
   await expect(page).toHaveURL(/\/dashboard$/);
   await page.goto("/property-inventory/counts");
   const profile = page.locator("details").filter({ has: page.getByText("Record approved form profile", { exact: true }) });

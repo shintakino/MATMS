@@ -17,7 +17,10 @@ const nextConfig: NextConfig = {
   async headers() {
     const revision = process.env.MATMS_RELEASE_SHA;
     if (!revision || !/^[0-9a-f]{40}$/.test(revision)) return [];
-    return [{ source: "/:path*", headers: [{ key: "X-MATMS-Release", value: revision }] }];
+    const headers = [{ key: "X-MATMS-Release", value: revision }];
+    const build = process.env.MATMS_BUILD_ID;
+    if (build && /^\d+-\d+$/.test(build)) headers.push({ key: "X-MATMS-Build", value: build });
+    return [{ source: "/:path*", headers }];
   },
   async redirects() {
     const origin = process.env.MATMS_CANONICAL_ORIGIN;
