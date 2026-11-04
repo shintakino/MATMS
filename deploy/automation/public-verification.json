@@ -10,10 +10,30 @@
   "unauthenticated_export_denied": true,
   "malformed_upload_rejected": true,
   "cross_origin_upload_denied": true,
-  "routes_checked": 20,
+  "routes_checked": 26,
   "property_accessibility_violations": 0,
   "mobile_navigation": true,
   "browser_errors": [],
-  "workflow_run_id": "41775997721",
-  "revision": "d3cd2d9d5504c6fb621b5e0dc8ffd9f3cea6e0d4"
+  "public_calendars": [
+    {
+      "route": "/availability",
+      "anonymous_access": true,
+      "accessibility_violations": 0
+    },
+    {
+      "route": "/leave-calendar",
+      "anonymous_access": true,
+      "accessibility_violations": 0
+    }
+  ],
+  "booking_date_continuation": true,
+  "leave_setup_state": {
+    "leave_enabled": false,
+    "public_leave_enabled": false
+  },
+  "scheduling_routes_verified": true,
+  "verification_browser_public_ipv4_mapping": true,
+  "workflow_run_id": "41812787826",
+  "revision": "0f6b4772e563ef4e8855eef65b75957fab31d23d",
+  "deployment_id": "41812787826-3"
 }

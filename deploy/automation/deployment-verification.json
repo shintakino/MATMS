@@ -1,31 +1,23 @@
 {
-  "revision": "d3cd2d9d5504c6fb621b5e0dc8ffd9f3cea6e0d4",
+  "revision": "0f6b4772e563ef4e8855eef65b75957fab31d23d",
   "images": {
-    "web": "ghcr.io/shintakino/matms-web@sha256:a8866a54a6ea4830fb784fcc94367e9549b657e43af70810573833c835aacee1",
-    "server": "ghcr.io/shintakino/matms-server@sha256:2745c4329a81469cc22b72167fcaabcdb851c785723ece6dfb348c877b3a4518",
-    "postgres": "ghcr.io/shintakino/matms-postgres@sha256:1e60d6274ba6310e5c974bd400dc9286aaecdd881d71447a47810c7480624b5c"
+    "web": "ghcr.io/shintakino/matms-web@sha256:05b34746cdd91a513c9df7ecc36823f611f22d18f6870e6720724fcf757c68fc",
+    "server": "ghcr.io/shintakino/matms-server@sha256:b03c6dd8a818801a0ceced451f33c8cfdf04bc7fdd2a57e39f76979a62baf142",
+    "postgres": "ghcr.io/shintakino/matms-postgres@sha256:ee2f53231f7ce0a264dd5b9e063a7687f8b732c21f3c59afc690eaa366eabd1e"
   },
-  "web_build_id": "41775997721-1",
-  "deployment_id": "41775997721-1",
+  "web_build_id": "41812787826-1",
+  "deployment_id": "41812787826-3",
   "origin": "https://matms.shintakino.qzz.io",
   "service_uuid": "mt8rqzgbtpkbzedwicy03wnf",
   "status": "verified",
   "volumes_preserved": true,
   "web_and_api_revision_verified": true,
-  "workflow_run_id": "41775997721",
-  "workflow_url": "https://github.com/shintakino/MATMS/actions/runs/41775997721",
+  "workflow_run_id": "41812787826",
+  "workflow_url": "https://github.com/shintakino/MATMS/actions/runs/41812787826",
   "github_main_only_environment": true,
   "required_jobs": [
     {
-      "name": "Types, integration and browser checks",
-      "conclusion": "success"
-    },
-    {
       "name": "Build postgres image",
-      "conclusion": "success"
-    },
-    {
-      "name": "Build web image",
       "conclusion": "success"
     },
     {
@@ -33,7 +25,15 @@
       "conclusion": "success"
     },
     {
+      "name": "Build web image",
+      "conclusion": "success"
+    },
+    {
       "name": "Deploy and verify production",
+      "conclusion": "success"
+    },
+    {
+      "name": "Types, integration and browser checks",
       "conclusion": "success"
     }
   ],
@@ -41,5 +41,13 @@
   "predeploy_backup_exit_code": 0,
   "migration_exit_code": 0,
   "gateway_service_uuid": "bckcz3zbvmtxuv1ghvrvypn2",
-  "coolify_api_enabled_for_automation": true
+  "coolify_api_enabled_for_automation": true,
+  "predeploy_backup_checksum_verified": true,
+  "database_verification": {
+    "tables_verified": 7,
+    "overlap_and_replay_constraints_verified": true,
+    "runtime_privileges_verified": true,
+    "audit_logs_update_delete_denied": true,
+    "baseline_row_counts_preserved": true
+  }
 }
