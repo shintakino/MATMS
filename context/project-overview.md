@@ -12,7 +12,7 @@ The Meocan Archive & Template Management System (MATMS) is an authenticated web 
 2. Keep printed-form stock accurate per revision/folder, with low-stock alerts and immutable history.
 3. Maintain attributable custodial opening balances, receipts, issues, returns, transfers and adjustments without negative balances.
 4. Reconcile frozen card balances with physical counts, signed shortage/overage, valuation and condition.
-5. Generate Appendix 58 Stock Card, Annex A.8 RPCSP and Appendix 73 RPCPPE with the supplied workbooks' layout, design, fields and structure.
+5. Generate Appendix 58 Stock Card, Annex A.8 RPCSP, Appendix 73 RPCPPE and Appendix 59 ICS with the supplied workbooks' layout, design, fields and structure.
 6. Protect restricted records and apply role/scope rules to counts, search, imports, reports, exports and print paths.
 7. Support consistent shadcn/ui desktop administration and accessible mobile lookup/count entry.
 8. Let Admin/personnel file leave for SHS/JHS teachers without accounts and other personnel; support Admin-managed resource bookings, expiring public request links and separate public calendars.
@@ -49,7 +49,7 @@ Upload one of the three supported form structures → detect every sheet/section
 - Requests, partial fulfillment, checkout, returns, exceptions and movement history.
 - Custodial item/lot register, office/fund balances, referenced stock ledger, reorder states and Appendix 58 cards.
 - RPCSP/RPCPPE physical counts, condition/variance review, frozen finalization and linked amendments.
-- Versioned form profiles and signatories; source-faithful XLSX and printable/PDF outputs for the three form families.
+- Versioned profiles/signatories and XLSX/print outputs for the three baseline form families; immutable Appendix 59 ICS snapshots and XLSX generation from recorded semi-expendable issues.
 - Controlled preview/commit import of the supplied workbook structures, provenance and error reporting.
 - Scoped dashboard/search/reports/CSV, QR labels/scanning, audit, safe retirement, deployment, backups and restore rehearsal.
 - Shared shadcn/ui + Tailwind, light-first theme and accessible responsive workflows.
@@ -58,7 +58,7 @@ Upload one of the three supported form structures → detect every sheet/section
 
 The user-requested [leave and booking extension](feature-specs/14-leave-and-resource-bookings.md) adds date/range leave requests, equipment/facility scheduling and public availability. It is separate from inventory accounting and archive custody. Production leave limits, approval and public leave visibility require explicit configuration; entitlement/payroll calculations are outside scope.
 
-Google Drive API/OAuth and document automation; scanned uploads/OCR; electronic signatures; email/SMS reminders; procurement/purchase requests; multi-school support; offline sync; generic/custom spreadsheet import; XLSX exports beyond the three custodial form families; report designers; configurable multistep approvals; formal disposal execution; native mobile apps. Password-recovery email is distinct from reminders.
+Google Drive API/OAuth and document automation; scanned uploads/OCR; electronic signatures; email/SMS reminders; procurement/purchase requests; multi-school support; offline sync; generic/custom spreadsheet import; XLSX exports beyond the four supported custodial form families; report designers; configurable multistep approvals; formal disposal execution; native mobile apps. Password-recovery email is distinct from reminders.
 
 Metadata/links remain the archive storage model. Controlled inventory uploads and private generated files are a narrow exception with expiry/provenance rules, not general file storage. Source workbooks are field/layout references, not proof of current legal requirements. The school/accounting owner confirms production profiles, classification thresholds and treatment of missing values.
 

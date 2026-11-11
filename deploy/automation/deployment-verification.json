@@ -1,26 +1,26 @@
 {
-  "revision": "586c9dfb5e2352f51f87b58d06d6670b65cbe27e",
+  "revision": "28ee5824d36595cc2b8393a7bb5b68a7430c8767",
   "images": {
-    "web": "ghcr.io/shintakino/matms-web@sha256:7dbbf10f4898db87c8bed3c72e1fec206d46bb5f641d569808070a0dcafa6a85",
-    "server": "ghcr.io/shintakino/matms-server@sha256:a5abb7d95e38e9770496a4e2b198557a3add5b7387cb583d5f37bfc3650453bb",
-    "postgres": "ghcr.io/shintakino/matms-postgres@sha256:a39637aa68025344bf3abe231188b90a7c2785161be4cb0a513fb72f32bca935"
+    "web": "ghcr.io/shintakino/matms-web@sha256:2b19927b6da75ac0839643ea9c410779245b16828679de876b5ead0a4a53d970",
+    "server": "ghcr.io/shintakino/matms-server@sha256:f47dc8a2372c1dc8a2779f8cc161b6d380b992a12f2ffde1016998ea09f7f2eb",
+    "postgres": "ghcr.io/shintakino/matms-postgres@sha256:c516544a55ea4ec1a52d5428957d76e0c71ad53ab0c82a41496852c7ca21fb3c"
   },
-  "web_build_id": "41920281088-1",
-  "deployment_id": "41920281088-1",
+  "web_build_id": "42963992328-1",
+  "deployment_id": "42963992328-1",
   "origin": "https://matms.shintakino.qzz.io",
   "service_uuid": "mt8rqzgbtpkbzedwicy03wnf",
   "status": "verified",
   "volumes_preserved": true,
   "web_and_api_revision_verified": true,
-  "workflow_run_id": "41920281088",
-  "workflow_url": "https://github.com/shintakino/MATMS/actions/runs/41920281088",
+  "workflow_run_id": "42963992328",
+  "workflow_url": "https://github.com/shintakino/MATMS/actions/runs/42963992328",
   "required_jobs": [
     {
       "name": "Types, integration and browser checks",
       "conclusion": "success"
     },
     {
-      "name": "Build server image",
+      "name": "Build postgres image",
       "conclusion": "success"
     },
     {
@@ -28,7 +28,7 @@
       "conclusion": "success"
     },
     {
-      "name": "Build postgres image",
+      "name": "Build server image",
       "conclusion": "success"
     },
     {
@@ -46,10 +46,13 @@
   "immutable_history_hashes_preserved": true,
   "runtime_privileges_verified": true,
   "audit_update_delete_denied": true,
+  "ics_snapshot_table_verified": true,
+  "ics_immutability_trigger_verified": true,
   "scheduling_tables_verified": 10,
   "beneficiary_overlap_verified": true,
   "capability_constraints_verified": true,
   "public_routes_verified": 27,
-  "live_wcag_scans_passed": 5,
-  "public_browser_errors": 0
+  "live_wcag_scans_passed": 6,
+  "public_browser_errors": 0,
+  "ics_public_interface_verified": true
 }

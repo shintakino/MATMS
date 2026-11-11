@@ -363,6 +363,7 @@ This module is the operational system of record for the school Property Custodia
 
 | Supplied source | Source structure retained | MATMS behavior added around it |
 | --- | --- | --- |
+| Appendix 59 ICS | Quantity, unit, unit/total cost, description, inventory item number, estimated useful life; source entity/fund/number fields and Received from/by blocks | Authorized selection of posted semi-expendable issues, server-calculated costs, immutable snapshots, dynamic XLSX generation and saved downloads; no ICS import or additional stock posting |
 | Appendix 58 Stock Card | Entity/fund/item metadata; Date, Reference, Receipt, Issue, Office, Balance, and Days to Consume; portrait merged-header layout | Transactional ledger, nonnegative balance, reorder status, back-date recalculation, per-item history, source-faithful XLSX/print |
 | RPCSP 2025 workbook | Annex A.8 header; A:J fields; grouped semi-expendable sections; totals; Property Custodian, committee, and School Head blocks; landscape layout | Item/lot register, draft counts, computed signed variance/value, condition review, immutable finalization, all supplied sections, controlled import and export |
 | RPCPPE 2025 workbook | Appendix 73 header; A:L fields including supplier and year acquired; Land, School Buildings, and Other Structures; totals, notes, and signatories; landscape layout | PPE classification, acquisition metadata, count snapshots, computed signed variance/value, threshold profile, immutable finalization, controlled import and export |

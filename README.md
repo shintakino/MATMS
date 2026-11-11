@@ -76,7 +76,7 @@ TEST_DATABASE_URL=postgresql://.../matms_test pnpm test
 
 The database test refuses a URL that does not end in `_test` and proves an audit-write failure rolls back its associated mutation.
 
-The three supplied school workbooks are private local references and are excluded from Git and images. Core workbook tests use fictional data and run without them. Source-comparison tests explicitly skip when their required references are absent; an authorized operator can place the originals at the paths and verify the hashes in [inventory-workbook-reference.md](context/inventory-workbook-reference.md) to run those checks. A skipped source comparison does not establish form fidelity or school approval.
+The supplied school workbooks, including the Appendix 59 ICS reference, are private local references and are excluded from Git and images. Core workbook tests use fictional data and run without them. Source-comparison tests explicitly skip when their required references are absent; an authorized operator can place the originals at the paths and verify the hashes in [inventory-workbook-reference.md](context/inventory-workbook-reference.md) to run those checks. A skipped source comparison does not establish form fidelity or school approval.
 
 The web production build uses Next.js's supported webpack builder (`pnpm --filter web build`); Turbopack remains the development default. Run `pnpm run check-types` as the strict type gate before building. `MATMS_NEXT_DIST_DIR` can select a dedicated build directory when checking a build alongside a running development instance.
 
@@ -98,7 +98,7 @@ TEST_DATABASE_URL=postgresql://.../matms_test pnpm run test:reporting-load
 - Permission-filtered dashboard, search, reports, CSV export, QR labels, and scanning with manual lookup.
 - Audit, safe retirement, backups, restore rehearsal, and a school pilot.
 
-MVP stores metadata and approved links, not scanned files. Google Drive automation, OCR, generic spreadsheet import, XLSX beyond the three inventory form families, multi-school support and formal disposal execution are deferred. Controlled inventory uploads/artifacts are a narrow private exception to metadata/link storage. The PRD defines the full scope and school policy gates.
+MVP stores metadata and approved links, not scanned files. Google Drive automation, OCR, generic spreadsheet import, XLSX beyond the four supported inventory form families, multi-school support and formal disposal execution are deferred. Controlled inventory uploads/artifacts are a narrow private exception to metadata/link storage. The PRD defines the full scope and school policy gates.
 
 ## Documentation
 
@@ -127,4 +127,4 @@ MVP stores metadata and approved links, not scanned files. Google Drive automati
 
 Use fictional development data. Real school data and production rollout require the PRD's policy decisions, verified inventory, access checks, and backup/restore acceptance gates.
 
-Appendix 59 ICS generation is a user-authorized extension under spec 12, using selected posted semi-expendable issues and immutable report snapshots. See spec 12 for its scope and verification gates.
+Appendix 59 ICS is live under **Property Inventory → Reports** for Admin/Property Custodian accounts. Select recorded semi-expendable issues, review slip details and export dynamic Excel; saved slips retain immutable data for later downloads. [Release evidence](deploy/ics-verification.json) records revision `28ee582`, successful migration/data preservation, 15 hosted browser scenarios and the live ICS checks. See [the user guide](docs/user-guide.md#appendix-59--inventory-custodian-slip-ics) for the workflow.

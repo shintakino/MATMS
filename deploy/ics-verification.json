@@ -1,0 +1,55 @@
+{
+  "revision": "28ee5824d36595cc2b8393a7bb5b68a7430c8767",
+  "local_integration_tests_passed": 75,
+  "local_workspace_type_tasks_passed": 6,
+  "targeted_ics_tests_passed": 9,
+  "browser_workflow": "equipment lot, opening stock, recorded issue, ICS review, Excel download, saved re-download, Staff exclusion",
+  "browser_workflows_passed": 1,
+  "wcag_a_aa_violations": 0,
+  "mobile_overflow": false,
+  "source_workbook_unchanged": true,
+  "render_engine": "LibreOffice 26.2.6.3",
+  "render_font_substitution": "Liberation Serif for Times New Roman",
+  "rendered_examples": [
+    {
+      "lines": 1,
+      "pages": 1,
+      "complete_signature_block_last_page": true,
+      "repeated_headers": true
+    },
+    {
+      "lines": 32,
+      "pages": 3,
+      "complete_signature_block_last_page": true,
+      "repeated_headers": true
+    },
+    {
+      "lines": 80,
+      "pages": 4,
+      "complete_signature_block_last_page": true,
+      "repeated_headers": true
+    }
+  ],
+  "source_visual_comparison": "Inspected original and generated Letter-portrait PDF renders; corrected signature-frame borders, source default row heights and signature pagination",
+  "school_printer_and_microsoft_excel_acceptance": "Not performed",
+  "workflow_run_id": "42963992328",
+  "production_status": "verified",
+  "hosted_integration_tests_passed": 67,
+  "hosted_private_source_checks_skipped": 8,
+  "hosted_browser_tests_passed": 15,
+  "hosted_release_invariant_tests_passed": 6,
+  "production_workflow_url": "https://github.com/shintakino/MATMS/actions/runs/42963992328",
+  "migration_exit_code": 0,
+  "predeploy_backup_exit_code": 0,
+  "predeploy_backup_checksum_verified": true,
+  "running_images_verified": true,
+  "existing_data_and_volumes_preserved": true,
+  "ics_snapshot_table_and_trigger_verified": true,
+  "live_ics_module_verified": true,
+  "live_anonymous_ics_access_denied": true,
+  "live_mobile_layout_verified": true,
+  "live_routes_checked": 27,
+  "live_wcag_scans_passed": 6,
+  "live_browser_errors": 0,
+  "production_test_records_created": false
+}
