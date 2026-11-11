@@ -71,3 +71,5 @@ Metadata/links remain the archive storage model. Controlled inventory uploads an
 - Complete AC-01 through AC-36, backup restoration and school/Property Custodian pilot sign-off before full production release.
 
 The PRD's six-week limited-pilot schedule is indicative. Preserve authorization, transaction history, count integrity, official-form fidelity and backups. Track implemented versus planned scope and school decisions in [progress-tracker.md](progress-tracker.md).
+
+Appendix 59 ICS generation is a user-authorized extension under spec 12, using selected posted semi-expendable issues and immutable report snapshots. See spec 12 for its scope and verification gates.

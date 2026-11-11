@@ -325,3 +325,16 @@ export const custodialTransactions = pgTable("custodial_transactions", {
   daysToConsume: integer("days_to_consume"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 }, (t) => [index("custodial_transactions_balance_idx").on(t.balanceId, t.createdAt), check("custodial_transactions_arithmetic", sql`${t.delta} <> 0 AND ${t.balanceBefore} >= 0 AND ${t.balanceAfter} >= 0 AND ${t.balanceAfter} = ${t.balanceBefore} + ${t.delta}`), check("custodial_transactions_days_nonnegative", sql`${t.daysToConsume} IS NULL OR ${t.daysToConsume} >= 0`)]);
+
+/** Appendix 59 snapshots are append-only; they never post stock. */
+export const custodialIcsExports = pgTable("custodial_ics_exports", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  operationId: uuid("operation_id").notNull(),
+  intentHash: text("intent_hash").notNull(),
+  number: text("number").notNull(),
+  payload: jsonb("payload").notNull(),
+  dataHash: text("data_hash").notNull(),
+  checksum: text("checksum").notNull(),
+  createdBy: text("created_by").notNull().references(() => user.id, { onDelete: "restrict" }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+}, (t) => [uniqueIndex("custodial_ics_operation_unique").on(t.operationId), uniqueIndex("custodial_ics_number_unique").on(t.number)]);

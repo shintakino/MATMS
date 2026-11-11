@@ -79,3 +79,7 @@ Both count forms have `Certified Correct by:` and `Noted by:`, a School Property
 | RPCPPE LAND B15 is description-only | Preview as a continuation of row 14, never an extra zero-quantity property. |
 
 These cases are requirements for future importer, calculation and report tests. No workbook was imported into the application during this documentation task.
+
+## Appendix 59 ICS — additional source (2026-11-09)
+
+`Appendix 59 - ICS.xls` contains the blank `ICS` sheet. The meaningful form is A1:H51; formatting extends to J109 and is not inventory data. A9:A11 Quantity, B9:B11 Unit, C9:D9 Amount, C10:C11 Unit Cost, D10:D11 Total Cost, E9:F11 Description, G9:G11 Inventory Item No., H9:H11 Estimated Useful Life. Detail slots are rows 12–43, with E:F merged per row. Received from/by blocks start at row 44; name/signature, position/office and date rows end at 51. Source fonts/styles, widths and heights are extracted by `tools/extract-ics-template.mjs` into `packages/api/src/ics-template.ts`, alongside its SHA-256. Source paper is Letter portrait, margins left 1.25, right 1, top 0.79 and bottom 0.5 inches. Generation corrects source scaling/formatting-only extents and repeats rows 1:11 for growing forms. Original remains unchanged. This structural inspection is not rendered or school visual approval.

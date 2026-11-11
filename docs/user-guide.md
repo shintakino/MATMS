@@ -242,3 +242,11 @@ The browser tests modify fictional stock and create request/loan history, so run
 - **Forgot password:** contact an Administrator for an assisted reset.
 
 Production use still requires the school's approved policies, security review, backup/restore rehearsal, and pilot sign-off. See the [progress tracker](../context/progress-tracker.md) for open work and verification results.
+
+## Appendix 59 — Inventory Custodian Slip (ICS)
+
+Admin and Property Custodian accounts open **Property Inventory → Reports → Appendix 59**. First create the equipment item and a semi-expendable acquisition lot with its inventory item number and unit value. Create the office balance, record verified opening stock and post an Issue to the receiving office/recipient.
+
+In the ICS section, select the recorded issues for the same fund and recipient. Enter a unique ICS number, entity, Received from/by printed names, positions/offices, dates and estimated useful life for each selected issue. Select **Review ICS**, check quantities and costs, then **Confirm and export Excel (.xlsx)**. Quantities and costs come from the server; generation does not issue stock again or record a signed acknowledgement.
+
+Saved ICS slips can be downloaded again from the same page. Their details stay frozen even after item/lot edits. Complete wet signatures on the printed form. Growing forms repeat their headings and place the complete signature block on a separate page. ICS workbook import is not supported.

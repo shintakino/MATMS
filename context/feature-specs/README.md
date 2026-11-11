@@ -33,3 +33,5 @@ Spec 12 explicitly delivers Export Excel (.xlsx): one RPCPPE workbook with all t
 Every protected mutation includes authorization, audit, transactions and durable replay with its implementation. AC-21/AC-22 apply across all new screens. New role permission must be wired into existing archive, template, request and label paths without bypassing inherited restrictions. Ordinary Staff export/label permission does not include official inventory forms.
 
 Source-faithful means matching the supplied layout/fields, with PRD-required pagination and correct server calculations; it does not mean copying defective source formulas. Keep profiles/data separate and historical snapshots reproducible. The workbooks are references, not proof of current legal policy. Record school decisions, verification results and remaining acceptance in the progress tracker after each meaningful change.
+
+Appendix 59 ICS generation is a user-authorized extension under spec 12, using selected posted semi-expendable issues and immutable report snapshots. See spec 12 for its scope and verification gates.

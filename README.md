@@ -126,3 +126,5 @@ MVP stores metadata and approved links, not scanned files. Google Drive automati
 5. Update the progress tracker with actual implementation and verification results.
 
 Use fictional development data. Real school data and production rollout require the PRD's policy decisions, verified inventory, access checks, and backup/restore acceptance gates.
+
+Appendix 59 ICS generation is a user-authorized extension under spec 12, using selected posted semi-expendable issues and immutable report snapshots. See spec 12 for its scope and verification gates.

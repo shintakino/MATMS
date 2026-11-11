@@ -1,3 +1,17 @@
+## 2026-11-11 — ICS release verification in progress
+
+User authorized production activation. Fresh isolated PostgreSQL migrations passed, followed by all 75 local integration tests (including ICS authorization, replay, audit rollback, immutable snapshots and download regeneration) and six strict workspace type tasks. Chromium passed the complete equipment/lot/opening/issue → ICS review → XLSX download → persisted re-download workflow, a zero-violation WCAG A/AA scan, mobile overflow check and Staff exclusion. The original workbook stays private/ignored; CI includes the new tests and explicitly skips only its checksum comparison when the private source is absent.
+
+LibreOffice 26.2 rendering of the original and generated forms exposed signature-edge loss from ExcelJS merges and omitted BIFF default row heights. Both were corrected; the generator now restores physical edge-cell borders and extracts the source default row height. Growing/height-expanded forms place Received from/by and all signature rows together after a deliberate page break. Rendered samples use Liberation Serif where Times New Roman is unavailable; school actual-printer/Excel visual approval remains separate. Rendered 1/32/80-line samples reopened successfully as Letter portrait PDFs with repeated headers and complete final-page signature blocks (1/3/4 pages); a pagination correction keeps the Received labels on the signature page. All nine targeted ICS checks passed after these fixes. Final candidate checks and checked GitHub deployment are in progress; this is not yet a live-release claim.
+
+## 2026-11-09 — Appendix 59 ICS extension
+
+Implemented locally: an Admin/Property Custodian-only ICS section in Property Inventory report history. It pages recorded semi-expendable issues, retains selections across pages, collects estimated useful life and wet-signature metadata, previews server quantities/costs, confirms generation and downloads XLSX. Saved slips retain immutable versioned snapshots with source/data hashes, original-generation checksum, unique ICS number, durable operation retry and atomic audit; downloads regenerate only from saved data. No stock posting occurs during generation. Missing lot value/property number, mixed fund/recipient and duplicate lines are blocked.
+
+Source original `Appendix 59 - ICS.xls` is untouched. A reproducible BIFF style/geometry extractor captures A1:H51 into a renderer template. Dynamic detail rows, long-description continuation, exact-cent total costs, shifted signature blocks, repeated headings, scoped print area and source typography/borders/margins are implemented. Generated an illustrative fictional fan workbook at `/tmp/MATMS-ICS-example.xlsx`.
+
+Verified: seven Node tests pass, including source checksum, exact decimal calculation/precision rejection, invalid/empty payload rejection, formula-like text safety, long-description preservation, and reopened 1/32/33/100/2,000-line XLSX geometry/value assertions. API and web strict type checks passed. Added reviewed migration `20261109063449_complex_silhouette` for append-only ICS snapshots; it has **not been applied to a database**. Database integration/concurrency/audit-rollback and browser interaction checks, rendered Excel/LibreOffice layout comparison, school visual approval and deployment remain unverified. Structural tests do not establish exact rendered fidelity.
+
 # Progress Tracker
 
 Update this file whenever the current phase, active feature, implementation state, or verification results change.

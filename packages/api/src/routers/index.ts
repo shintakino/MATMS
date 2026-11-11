@@ -11,6 +11,7 @@ import { physicalCountsRouter } from "./physical-counts";
 import { custodialInventoryRouter } from "./custodial-inventory";
 import { custodialImportsRouter } from "./custodial-imports";
 import { inventoryReportsRouter } from "./inventory-reports";
+import { inventoryIcsRouter } from "./inventory-ics";
 import { schedulingRouter } from "./scheduling";
 
 export const appRouter = {
@@ -33,6 +34,7 @@ export const appRouter = {
   custodialInventory: custodialInventoryRouter,
   inventoryImports: custodialImportsRouter,
   inventoryReports: inventoryReportsRouter,
+  inventoryIcs: inventoryIcsRouter,
   scheduling: schedulingRouter,
 };
 export type AppRouter = typeof appRouter;

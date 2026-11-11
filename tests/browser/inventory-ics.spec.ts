@@ -1,0 +1,105 @@
+import { expect, signIn, test } from "./fixtures";
+import AxeBuilder from "@axe-core/playwright";
+import { readFile } from "node:fs/promises";
+import * as XLSX from "../../packages/api/node_modules/xlsx/xlsx.mjs";
+
+const email = process.env.MATMS_BROWSER_EMAIL;
+const password = process.env.MATMS_BROWSER_PASSWORD;
+test.skip(!email || !password, "Supply disposable browser-test credentials.");
+
+test("Appendix 59 ICS reviews recorded issues, exports and retains saved slips", async ({page,browser}) => {
+  page.setDefaultTimeout(90_000);
+  page.setDefaultNavigationTimeout(90_000);
+  const errors: string[] = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await page.goto("/login");
+  await signIn(page,email!,password!);
+  await expect(page).toHaveURL(/\/dashboard$/,{timeout:90_000});
+  await page.goto("/property-inventory");
+  const code = `ICS-${crypto.randomUUID()}`;
+  // The register uses a native disclosure for item creation.
+  const intake = page.locator("details").filter({has:page.getByText("Create item",{exact:true})});
+  await intake.locator(":scope > summary").click();
+  await intake.getByLabel("Item / stock code").fill(code);
+  await intake.getByLabel("Article",{exact:true}).fill("Fictional ICS fan");
+  await intake.getByLabel("Description").fill("Hurricane fan HFAN-20HYP — browser fixture");
+  await intake.getByLabel("Unit of measure").fill("unit");
+  await intake.getByRole("button",{name:"Create item",exact:true}).click();
+  await page.getByRole("link",{name:"Continue item setup"}).click();
+  const lot = page.locator("#setup-lot");
+  if(await lot.getAttribute("open")===null) await lot.locator(":scope > summary").click();
+  await lot.getByRole("combobox",{name:"Class",exact:true}).selectOption("semi_expendable");
+  await lot.getByLabel("Property number",{exact:true}).fill(code);
+  await lot.getByLabel("Unit value in PHP (blank if unknown)").fill("1500.00");
+  await lot.getByLabel("Fund cluster",{exact:true}).fill("ICS-BROWSER");
+  await lot.getByLabel("Office / location",{exact:true}).fill("Fictional Stores");
+  await lot.getByRole("button",{name:"Create lot",exact:true}).click();
+  await expect(page.getByText("Lot created.")).toBeVisible();
+  const balance = page.locator("#setup-balance");
+  if(await balance.getAttribute("open")===null) await balance.locator(":scope > summary").click();
+  await balance.getByRole("combobox",{name:"Lot",exact:true}).selectOption({index:1});
+  await balance.getByLabel("Fund cluster",{exact:true}).fill("ICS-BROWSER");
+  await balance.getByLabel("Office / location",{exact:true}).fill("Fictional Stores");
+  await balance.getByRole("button",{name:"Create zero balance"}).click();
+  await expect(page.getByText("Office balance created with zero stock.")).toBeVisible();
+  const operation = page.locator("#setup-operation");
+  if(await operation.getAttribute("open")===null) await operation.locator(":scope > summary").click();
+  for (const type of ["opening","issue"] as const) {
+    await operation.getByRole("combobox",{name:"Action",exact:true}).selectOption(type);
+    await operation.getByRole("combobox",{name:"Balance",exact:true}).selectOption({index:1});
+    await operation.getByLabel("Quantity (new count for correction)").fill(type==="opening"?"5":"2");
+    await operation.getByLabel("Transaction date").fill("2026-01-02");
+    await operation.getByLabel("Reference",{exact:true}).fill(`${code}-${type}`);
+    await operation.getByLabel("Reason / purpose").fill("Fictional ICS browser fixture");
+    if(type==="issue") await operation.getByLabel("Source or receiving / returning office").fill("Fictional Recipient Office");
+    await operation.getByRole("button",{name:"Review operation"}).click();
+    await page.getByRole("alertdialog").getByRole("button",{name:"Confirm operation"}).click();
+    await expect(page.getByText("Stock operation recorded.")).toBeVisible();
+  }
+  await page.goto("/property-inventory/reports");
+  const ics = page.getByRole("region",{name:"Appendix 59 — Inventory Custodian Slip"});
+  await expect(ics).toBeVisible();
+  await ics.getByLabel("ICS number",{exact:true}).fill(code);
+  await ics.getByLabel("Entity name",{exact:true}).fill("Fictional School");
+  for(const [prefix,name,office] of [["Received from","Fictional Issuer","Property Office"],["Received by","Fictional Recipient","Fictional Recipient Office"]]) {
+    await ics.getByLabel(`${prefix} — printed name`,{exact:true}).fill(name!);
+    await ics.getByLabel(`${prefix} — position/office`,{exact:true}).fill(office!);
+    await ics.getByLabel(`${prefix} — date`,{exact:true}).fill("2026-01-02");
+  }
+  await ics.getByRole("checkbox",{name:new RegExp(code)}).check();
+  await ics.getByLabel(new RegExp(`Estimated useful life —.*${code}`)).fill("5 years");
+  await ics.getByRole("button",{name:"Review ICS",exact:true}).click();
+  await expect(ics.getByRole("heading",{name:`Review ICS ${code}`})).toBeVisible();
+  await expect(ics.getByRole("cell",{name:"3000.00",exact:true})).toBeVisible();
+  const scan=await new AxeBuilder({page}).withTags(["wcag2a","wcag2aa"]).analyze();
+  expect(scan.violations).toEqual([]);
+  const pendingDownload = page.waitForEvent("download");
+  await ics.getByRole("button",{name:"Confirm and export Excel (.xlsx)"}).click();
+  const download = await pendingDownload;
+  expect(download.suggestedFilename()).toBe(`ICS-${code}.xlsx`);
+  const bytes = await readFile((await download.path())!);
+  const book = XLSX.read(bytes,{type:"buffer"});
+  expect(book.SheetNames).toEqual(["ICS"]);
+  expect(book.Sheets.ICS!.A12!.v).toBe(2);
+  expect(book.Sheets.ICS!.C12!.v).toBe(1500);
+  expect(book.Sheets.ICS!.D12!.v).toBe(3000);
+  expect(book.Sheets.ICS!.G12!.v).toBe(code);
+  await page.reload();
+  const saved=ics.getByRole("listitem").filter({has:page.getByText(`ICS ${code}`,{exact:true})});
+  await expect(saved).toBeVisible();
+  const again=page.waitForEvent("download");
+  await saved.getByRole("button",{name:"Download Excel"}).click();
+  expect((await again).suggestedFilename()).toBe(`ICS-${code}.xlsx`);
+  await page.setViewportSize({width:390,height:844});
+  await expect(ics).toBeVisible();
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1)).toBe(false);
+  await page.screenshot({path:"/tmp/matms-ics-mobile.png",fullPage:true});
+  expect(errors).toEqual([]);
+  if(process.env.MATMS_BROWSER_STAFF_EMAIL){
+    const context=await browser.newContext();const staff=await context.newPage();
+    await staff.goto("/login");await signIn(staff,process.env.MATMS_BROWSER_STAFF_EMAIL,password!);
+    await staff.goto("/property-inventory/reports");
+    await expect(staff.getByRole("heading",{name:"Appendix 59 — Inventory Custodian Slip"})).toHaveCount(0);
+    await context.close();
+  }
+});
