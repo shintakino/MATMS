@@ -1,0 +1,59 @@
+{
+  "revision": "6c6a9357255218b986add5baaf23f762f6ab77e0",
+  "source_reference": "ICS-2025-11-001.xlsx",
+  "source_original_unchanged": true,
+  "paper": "Long bond / Folio, 8.5 \u00d7 13 inches",
+  "paper_size_points": [
+    612,
+    936
+  ],
+  "font_sizes": "Source Times New Roman 14/12/11 and Calibri 11 retained",
+  "local_application_integrations_passed": 82,
+  "local_strict_workspace_tasks_passed": 6,
+  "hosted_integrations_passed": 73,
+  "hosted_private_source_comparisons_skipped": 9,
+  "hosted_chromium_scenarios_passed": 15,
+  "local_chromium_crud_workflow_passed": true,
+  "numbering": "Current Asia/Manila YYYY-MM-NNN; reserved through delete/restore",
+  "history": "Immutable export revisions; editable document head; delete/restore; prior-version downloads",
+  "migration": "20261112020341_shiny_spitfire",
+  "migration_populated_upgrade_verified": true,
+  "concurrent_numbering_and_edits_verified": true,
+  "audit_rollback_and_role_revocation_verified": true,
+  "legacy_generation_replay_verified": true,
+  "no_stock_ledger_effects": true,
+  "rendering_engine": "LibreOffice 26.2.6.3",
+  "rendered_examples": [
+    {
+      "items": 1,
+      "pages": 1
+    },
+    {
+      "items": 12,
+      "pages": 2
+    },
+    {
+      "items": 1,
+      "long_description_unique_tokens": 180,
+      "pages": 7,
+      "all_tokens_preserved": true
+    }
+  ],
+  "print_header_and_signature_checks": true,
+  "original_reference_normalized_for_comparison": "Copied to /tmp, with only paper/fit settings normalized to long bond; original untouched",
+  "school_printer_and_native_excel_acceptance": "Not performed",
+  "workflow_run_id": "43145665286",
+  "deployment_attempt": 2,
+  "production_status": "verified",
+  "existing_ics_backfill_verified": true,
+  "existing_ics_snapshot_hashes_preserved": true,
+  "backup_and_migration_exit_codes": 0,
+  "live_routes_checked": 27,
+  "live_accessibility_scans": 6,
+  "live_accessibility_violations": 0,
+  "live_browser_errors": 0,
+  "live_ics_crud_controls_verified": true,
+  "live_automatic_number_field_verified": true,
+  "live_mobile_and_anonymous_denial_verified": true,
+  "production_test_records_created": false
+}

@@ -49,10 +49,12 @@
     "public_leave_enabled": true
   },
   "anonymous_ics_access_denied": true,
+  "ics_crud_controls_verified": true,
+  "ics_automatic_number_field_verified": true,
   "ics_module_visible": true,
   "ics_live_queries_succeeded": true,
   "ics_mobile_layout_verified": true,
   "production_test_records_created": false,
-  "revision": "28ee5824d36595cc2b8393a7bb5b68a7430c8767",
-  "workflow_run_id": "42963992328"
+  "revision": "6c6a9357255218b986add5baaf23f762f6ab77e0",
+  "workflow_run_id": "43145665286"
 }

@@ -1,30 +1,22 @@
 {
-  "revision": "28ee5824d36595cc2b8393a7bb5b68a7430c8767",
+  "revision": "6c6a9357255218b986add5baaf23f762f6ab77e0",
   "images": {
-    "web": "ghcr.io/shintakino/matms-web@sha256:2b19927b6da75ac0839643ea9c410779245b16828679de876b5ead0a4a53d970",
-    "server": "ghcr.io/shintakino/matms-server@sha256:f47dc8a2372c1dc8a2779f8cc161b6d380b992a12f2ffde1016998ea09f7f2eb",
-    "postgres": "ghcr.io/shintakino/matms-postgres@sha256:c516544a55ea4ec1a52d5428957d76e0c71ad53ab0c82a41496852c7ca21fb3c"
+    "web": "ghcr.io/shintakino/matms-web@sha256:cbdf37e034d158859d12662de873bc287aa54dcf9baec4489abaf8466a5315c4",
+    "server": "ghcr.io/shintakino/matms-server@sha256:3d74ddc0b6318d13fd998b6858dd82721ba94a051b89124a732d81d1757f9866",
+    "postgres": "ghcr.io/shintakino/matms-postgres@sha256:e8760f5189c5a7f359863f31d202135e33a75ce7159aea4c4d9332038263bf0f"
   },
-  "web_build_id": "42963992328-1",
-  "deployment_id": "42963992328-1",
+  "web_build_id": "43145665286-1",
+  "deployment_id": "43145665286-2",
   "origin": "https://matms.shintakino.qzz.io",
   "service_uuid": "mt8rqzgbtpkbzedwicy03wnf",
   "status": "verified",
   "volumes_preserved": true,
   "web_and_api_revision_verified": true,
-  "workflow_run_id": "42963992328",
-  "workflow_url": "https://github.com/shintakino/MATMS/actions/runs/42963992328",
+  "workflow_run_id": "43145665286",
+  "workflow_url": "https://github.com/shintakino/MATMS/actions/runs/43145665286",
   "required_jobs": [
     {
-      "name": "Types, integration and browser checks",
-      "conclusion": "success"
-    },
-    {
-      "name": "Build postgres image",
-      "conclusion": "success"
-    },
-    {
-      "name": "Build web image",
+      "name": "Deploy and verify production",
       "conclusion": "success"
     },
     {
@@ -32,7 +24,15 @@
       "conclusion": "success"
     },
     {
-      "name": "Deploy and verify production",
+      "name": "Build postgres image",
+      "conclusion": "success"
+    },
+    {
+      "name": "Types, integration and browser checks",
+      "conclusion": "success"
+    },
+    {
+      "name": "Build web image",
       "conclusion": "success"
     }
   ],
@@ -46,13 +46,17 @@
   "immutable_history_hashes_preserved": true,
   "runtime_privileges_verified": true,
   "audit_update_delete_denied": true,
+  "ics_document_tables_verified": true,
+  "ics_document_guards_verified": true,
   "ics_snapshot_table_verified": true,
   "ics_immutability_trigger_verified": true,
   "scheduling_tables_verified": 10,
   "beneficiary_overlap_verified": true,
   "capability_constraints_verified": true,
+  "existing_ics_number_and_original_revision_preserved": true,
   "public_routes_verified": 27,
-  "live_wcag_scans_passed": 6,
-  "public_browser_errors": 0,
-  "ics_public_interface_verified": true
+  "public_accessibility_scans": 6,
+  "public_accessibility_violations": 0,
+  "ics_crud_controls_verified": true,
+  "ics_automatic_number_field_verified": true
 }
