@@ -97,3 +97,5 @@ The active spec 14 revision adds a separate teacher/personnel directory with SHS
 Error alert descriptions and Retry buttons use foreground text for readable contrast on card and outline-button backgrounds. Destructive titles/icons retain their status color. Verify missing/revoked public-link states alongside valid forms.
 
 Appendix 59 ICS generation is a user-authorized extension under spec 12, using selected posted semi-expendable issues and immutable report snapshots. See spec 12 for its scope and verification gates.
+
+The 2026-11-12 ICS revision uses the supplied `ICS-2025-11-001.xlsx` layout, long bond paper, automatic Manila-month numbering, editable versioned slips and Delete/Restore controls. See spec 12 and the user guide for workflow and release evidence.

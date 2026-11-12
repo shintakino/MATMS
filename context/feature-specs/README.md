@@ -35,3 +35,5 @@ Every protected mutation includes authorization, audit, transactions and durable
 Source-faithful means matching the supplied layout/fields, with PRD-required pagination and correct server calculations; it does not mean copying defective source formulas. Keep profiles/data separate and historical snapshots reproducible. The workbooks are references, not proof of current legal policy. Record school decisions, verification results and remaining acceptance in the progress tracker after each meaningful change.
 
 Appendix 59 ICS generation is a user-authorized extension under spec 12, using selected posted semi-expendable issues and immutable report snapshots. See spec 12 for its scope and verification gates.
+
+The 2026-11-12 ICS revision uses the supplied `ICS-2025-11-001.xlsx` layout, long bond paper, automatic Manila-month numbering, editable versioned slips and Delete/Restore controls. See spec 12 and the user guide for workflow and release evidence.

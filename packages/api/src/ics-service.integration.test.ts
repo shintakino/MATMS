@@ -34,7 +34,7 @@ test("ICS migration, authorized generation, retries, audit rollback and immutabl
       const issues = await listIcsIssues(local,ids.property_custodian!,1);
       const issue = issues.rows.find(row => row.code === item.code)!;
       expect(issue.quantity).toBe(3);
-      const details = {number:crypto.randomUUID(),entity:"Fictional School",fromName:"Issuer",fromOffice:"Stores",toName:"Recipient",toOffice:"Test Office",fromDate:"2026-01-02",toDate:"2026-01-02",lines:[{transactionId:issue.transactionId,usefulLife:"5 years"}]};
+      const details = {entity:"Fictional School",fromName:"Issuer",fromOffice:"Stores",toName:"Recipient",toOffice:"Test Office",fromDate:"2026-01-02",toDate:"2026-01-02",lines:[{transactionId:issue.transactionId,usefulLife:"5 years"}]};
       const preview = await previewIcs(local,ids.property_custodian!,details,crypto.randomUUID());
       expect(preview.payload.lines[0]!.totalCost).toBe("3703.68");
       const input = {details,expectedDataHash:preview.dataHash,operationId:crypto.randomUUID()};
@@ -46,7 +46,6 @@ test("ICS migration, authorized generation, retries, audit rollback and immutabl
       const saved = await generateIcs(local,ids.property_custodian!,input,crypto.randomUUID());
       expect(await generateIcs(local,ids.property_custodian!,input,crypto.randomUUID())).toEqual(saved);
       await expect(generateIcs(local,ids.property_custodian!,{...input,details:{...details,entity:"Changed"}},crypto.randomUUID())).rejects.toMatchObject({code:"CONFLICT"});
-      await expect(generateIcs(local,ids.property_custodian!,{...input,operationId:crypto.randomUUID()},crypto.randomUUID())).rejects.toMatchObject({code:"CONFLICT"});
       expect((await listIcs(local,ids.admin!,1)).rows[0]!.id).toBe(saved.id);
       expect(await tx.select().from(custodialTransactions)).toEqual(beforeLedger);
       expect(await tx.select().from(custodialBalances).where(eq(custodialBalances.id,balance.id))).toEqual(beforeBalance);
@@ -69,7 +68,7 @@ test("ICS migration, authorized generation, retries, audit rollback and immutabl
       await workbook.xlsx.load(Buffer.from(file.base64,"base64") as unknown as ExcelJS.Buffer);
       expect(workbook.worksheets[0]!.getCell("E12").value).toBe("Fictional fan\nHFAN-20HYP");
       expect(workbook.worksheets[0]!.getCell("D12").value).toBe(3703.68);
-      await expect(generateIcs(local,ids.admin!,{...input,operationId:crypto.randomUUID(),details:{...details,number:crypto.randomUUID()}},crypto.randomUUID())).rejects.toMatchObject({code:"CONFLICT"});
+      await expect(generateIcs(local,ids.admin!,{...input,operationId:crypto.randomUUID(),details:{...details,entity:"New slip"}},crypto.randomUUID())).rejects.toMatchObject({code:"CONFLICT"});
       await expect(tx.transaction(async nested => {await nested.execute(sql`UPDATE custodial_ics_exports SET number = 'changed' WHERE id = ${saved.id}`);})).rejects.toMatchObject({cause:{message:"ICS snapshots are immutable"}});
       await expect(tx.transaction(async nested => {await nested.execute(sql`DELETE FROM custodial_ics_exports WHERE id = ${saved.id}`);})).rejects.toMatchObject({cause:{message:"ICS snapshots are immutable"}});
       throw rollback;

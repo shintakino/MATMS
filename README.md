@@ -128,3 +128,5 @@ MVP stores metadata and approved links, not scanned files. Google Drive automati
 Use fictional development data. Real school data and production rollout require the PRD's policy decisions, verified inventory, access checks, and backup/restore acceptance gates.
 
 Appendix 59 ICS is live under **Property Inventory → Reports** for Admin/Property Custodian accounts. Select recorded semi-expendable issues, review slip details and export dynamic Excel; saved slips retain immutable data for later downloads. [Release evidence](deploy/ics-verification.json) records revision `28ee582`, successful migration/data preservation, 15 hosted browser scenarios and the live ICS checks. See [the user guide](docs/user-guide.md#appendix-59--inventory-custodian-slip-ics) for the workflow.
+
+The 2026-11-12 ICS revision uses the supplied `ICS-2025-11-001.xlsx` layout, long bond paper, automatic Manila-month numbering, editable versioned slips and Delete/Restore controls. See spec 12 and the user guide for workflow and release evidence.

@@ -337,4 +337,31 @@ export const custodialIcsExports = pgTable("custodial_ics_exports", {
   checksum: text("checksum").notNull(),
   createdBy: text("created_by").notNull().references(() => user.id, { onDelete: "restrict" }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-}, (t) => [uniqueIndex("custodial_ics_operation_unique").on(t.operationId), uniqueIndex("custodial_ics_number_unique").on(t.number)]);
+}, (t) => [uniqueIndex("custodial_ics_operation_unique").on(t.operationId), index("custodial_ics_number_idx").on(t.number)]);
+
+/** Editable head; every issued export revision remains immutable. */
+export const custodialIcsDocuments = pgTable("custodial_ics_documents", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  number: text("number").notNull(),
+  currentExportId: uuid("current_export_id").notNull().references(() => custodialIcsExports.id, { onDelete: "restrict" }),
+  version: integer("version").default(1).notNull(),
+  deletedAt: timestamp("deleted_at", { withTimezone: true }),
+  deletedBy: text("deleted_by").references(() => user.id, { onDelete: "restrict" }),
+  createdBy: text("created_by").notNull().references(() => user.id, { onDelete: "restrict" }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+}, (t) => [uniqueIndex("custodial_ics_document_number_unique").on(t.number), check("custodial_ics_document_version", sql`${t.version} > 0`), check("custodial_ics_deleted_actor", sql`(${t.deletedAt} IS NULL) = (${t.deletedBy} IS NULL)`) ]);
+
+export const custodialIcsVersions = pgTable("custodial_ics_versions", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  documentId: uuid("document_id").notNull().references(() => custodialIcsDocuments.id, { onDelete: "restrict" }),
+  exportId: uuid("export_id").notNull().references(() => custodialIcsExports.id, { onDelete: "restrict" }),
+  version: integer("version").notNull(),
+  reason: text("reason").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+}, (t) => [uniqueIndex("custodial_ics_document_revision_unique").on(t.documentId, t.version), uniqueIndex("custodial_ics_revision_export_unique").on(t.exportId), check("custodial_ics_revision_version", sql`${t.version} > 0`)]);
+
+export const custodialIcsCounters = pgTable("custodial_ics_counters", {
+  period: text("period").primaryKey(),
+  lastValue: integer("last_value").default(0).notNull(),
+}, (t) => [check("custodial_ics_counter_period", sql`${t.period} ~ '^[0-9]{4}-(0[1-9]|1[0-2])$'`), check("custodial_ics_counter_nonnegative", sql`${t.lastValue} >= 0`)]);

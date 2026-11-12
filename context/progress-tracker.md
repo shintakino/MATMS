@@ -1,3 +1,19 @@
+## 2026-11-12 — ICS v2 ready for checked release
+
+Final local checks passed: 82 application integrations, six strict workspace type tasks, the complete extended ICS Chromium workflow and eight targeted v2/lifecycle tests after final compatibility fixes. Legacy generation retries remain replayable after migration. LibreOffice produced 612 × 936 point (8.5 × 13 inch) pages: one-item, 12-item and long-description examples rendered in 1/2/7 pages. The long example retained all 180 unique text tokens, repeated headings and the complete final-page signature block. Single-item font/size/width/header/signature geometry was compared with the supplied reference normalized to the same paper. Original files remain untouched.
+
+Versioned CRUD, concurrent monthly numbering, lifecycle replay/permissions, update audit rollback and source/ledger preservation are verified locally. Checked release/deployment and production preservation checks are next; this entry does not claim activation.
+
+## 2026-11-12 — ICS v2 implementation and local checks
+
+Implemented the revised reference layout with long bond (explicit user choice), unchanged source font sizes, word-aware long-description wrapping and bounded continuation blocks. Retained v1 rendering for historical snapshots. Added editable document heads, immutable revision links, delete/restore, server-assigned Manila-month numbering and reconciliation of existing numbers. New migration backfills existing saved exports without changing their payloads or numbers; guards protect export/version history and document identities.
+
+Local verification passed all 82 integration tests, six strict type tasks, direct source font/merge/width comparisons, 1/32/100/2,000-item XLSX checks, multi-page text preservation, populated upgrade, concurrent numbering and same-version edits, lifecycle/replay/permission/audit-rollback checks and no stock effects. Chromium passed creation → automatic number → edit with long description → earlier-version download → delete → restore, plus mobile/Staff exclusion and zero-violation WCAG scans. LibreOffice visual comparison and release activation are in progress; no v2 deployment is claimed yet.
+
+## 2026-11-12 — ICS reference layout and CRUD/numbering revision in progress
+
+User requested matching `ICS-2025-11-001.xlsx`, dynamic long descriptions, editable/deletable saved ICS slips and automatic year-month sequence numbers. Source inspected without changes; it uses Times New Roman headings/signatures, Calibri 11 detail cells, revised row heights and merged item/signature blocks. Its printer-specific paper code needs a standard-paper choice. Design recorded in spec 12/PRD/architecture before implementation: mutable document lifecycle with immutable export revisions, delete/restore, durable audit/replay and monthly atomic numbering. No new revision has been deployed.
+
 ## 2026-11-11 — Appendix 59 ICS deployed and verified
 
 **Live:** [Property Inventory → Reports](https://matms.shintakino.qzz.io/property-inventory/reports), code revision `28ee5824d36595cc2b8393a7bb5b68a7430c8767`, deployed by [workflow 42963992328](https://github.com/shintakino/MATMS/actions/runs/42963992328). Admin/Property Custodian selects recorded semi-expendable issues, enters slip/signatory/useful-life metadata, reviews server quantities/costs, exports the dynamically expanded XLSX and re-downloads immutable saved slips. Generation does not post stock. The user guide contains the complete setup and issue workflow.

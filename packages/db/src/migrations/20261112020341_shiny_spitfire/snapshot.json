@@ -1,0 +1,884 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "239dba30-f67a-42e4-a186-74569af6032c",
+  "prevIds": [
+    "4e60561e-78fa-4f46-bfe9-25b02a6478ed"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_ics_counters"
+      ],
+      "writes": [
+        "s|tbl|public.custodial_ics_counters",
+        "n|tbl|public.custodial_ics_counters",
+        "e|tbl|public.custodial_ics_counters",
+        "n|rel|public.custodial_ics_counters",
+        "n|type|public.custodial_ics_counters",
+        "n|rel|public.custodial_ics_counters_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_ics_documents"
+      ],
+      "writes": [
+        "s|tbl|public.custodial_ics_documents",
+        "n|tbl|public.custodial_ics_documents",
+        "e|tbl|public.custodial_ics_documents",
+        "n|rel|public.custodial_ics_documents",
+        "n|type|public.custodial_ics_documents",
+        "n|rel|public.custodial_ics_documents_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_ics_versions"
+      ],
+      "writes": [
+        "s|tbl|public.custodial_ics_versions",
+        "n|tbl|public.custodial_ics_versions",
+        "e|tbl|public.custodial_ics_versions",
+        "n|rel|public.custodial_ics_versions",
+        "n|type|public.custodial_ics_versions",
+        "n|rel|public.custodial_ics_versions_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "drop_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_ics_exports",
+        "custodial_ics_number_unique"
+      ],
+      "writes": [
+        "s|idx|public.custodial_ics_number_unique",
+        "n|idx|public.custodial_ics_number_unique",
+        "e|idx|public.custodial_ics_number_unique",
+        "n|rel|public.custodial_ics_number_unique"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_ics_exports",
+        "n|sch|public",
+        "e|col|public.custodial_ics_exports.number"
+      ],
+      "sharedWrites": [
+        "e|uniqueness|public.custodial_ics_exports.number"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_ics_documents",
+        "custodial_ics_document_number_unique"
+      ],
+      "writes": [
+        "s|idx|public.custodial_ics_document_number_unique",
+        "n|idx|public.custodial_ics_document_number_unique",
+        "e|idx|public.custodial_ics_document_number_unique",
+        "n|rel|public.custodial_ics_document_number_unique"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_ics_documents",
+        "n|sch|public",
+        "n|col|public.custodial_ics_documents.number"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_ics_exports",
+        "custodial_ics_number_idx"
+      ],
+      "writes": [
+        "s|idx|public.custodial_ics_number_idx",
+        "n|idx|public.custodial_ics_number_idx",
+        "e|idx|public.custodial_ics_number_idx",
+        "n|rel|public.custodial_ics_number_idx"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_ics_exports",
+        "n|sch|public",
+        "n|col|public.custodial_ics_exports.number"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_ics_versions",
+        "custodial_ics_document_revision_unique"
+      ],
+      "writes": [
+        "s|idx|public.custodial_ics_document_revision_unique",
+        "n|idx|public.custodial_ics_document_revision_unique",
+        "e|idx|public.custodial_ics_document_revision_unique",
+        "n|rel|public.custodial_ics_document_revision_unique"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_ics_versions",
+        "n|sch|public",
+        "n|col|public.custodial_ics_versions.document_id",
+        "n|col|public.custodial_ics_versions.version"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_ics_versions",
+        "custodial_ics_revision_export_unique"
+      ],
+      "writes": [
+        "s|idx|public.custodial_ics_revision_export_unique",
+        "n|idx|public.custodial_ics_revision_export_unique",
+        "e|idx|public.custodial_ics_revision_export_unique",
+        "n|rel|public.custodial_ics_revision_export_unique"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_ics_versions",
+        "n|sch|public",
+        "n|col|public.custodial_ics_versions.export_id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_ics_documents"
+      ],
+      "writes": [
+        "s|fk|public.custodial_ics_documents.custodial_ics_documents_UObzkA0nnZcl_fkey",
+        "n|fk|public.custodial_ics_documents.custodial_ics_documents_UObzkA0nnZcl_fkey",
+        "e|fk|public.custodial_ics_documents.custodial_ics_documents_UObzkA0nnZcl_fkey",
+        "n|con|public.custodial_ics_documents.custodial_ics_documents_UObzkA0nnZcl_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_ics_documents",
+        "n|sch|public",
+        "n|tbl|public.custodial_ics_exports",
+        "n|sch|public",
+        "n|col|public.custodial_ics_documents.current_export_id",
+        "n|col|public.custodial_ics_exports.id",
+        "e|uniqueness|public.custodial_ics_exports.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_ics_documents"
+      ],
+      "writes": [
+        "s|fk|public.custodial_ics_documents.custodial_ics_documents_deleted_by_user_id_fkey",
+        "n|fk|public.custodial_ics_documents.custodial_ics_documents_deleted_by_user_id_fkey",
+        "e|fk|public.custodial_ics_documents.custodial_ics_documents_deleted_by_user_id_fkey",
+        "n|con|public.custodial_ics_documents.custodial_ics_documents_deleted_by_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_ics_documents",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.custodial_ics_documents.deleted_by",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_ics_documents"
+      ],
+      "writes": [
+        "s|fk|public.custodial_ics_documents.custodial_ics_documents_created_by_user_id_fkey",
+        "n|fk|public.custodial_ics_documents.custodial_ics_documents_created_by_user_id_fkey",
+        "e|fk|public.custodial_ics_documents.custodial_ics_documents_created_by_user_id_fkey",
+        "n|con|public.custodial_ics_documents.custodial_ics_documents_created_by_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_ics_documents",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.custodial_ics_documents.created_by",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_ics_versions"
+      ],
+      "writes": [
+        "s|fk|public.custodial_ics_versions.custodial_ics_versions_pT8auOXbkdEo_fkey",
+        "n|fk|public.custodial_ics_versions.custodial_ics_versions_pT8auOXbkdEo_fkey",
+        "e|fk|public.custodial_ics_versions.custodial_ics_versions_pT8auOXbkdEo_fkey",
+        "n|con|public.custodial_ics_versions.custodial_ics_versions_pT8auOXbkdEo_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_ics_versions",
+        "n|sch|public",
+        "n|tbl|public.custodial_ics_documents",
+        "n|sch|public",
+        "n|col|public.custodial_ics_versions.document_id",
+        "n|col|public.custodial_ics_documents.id",
+        "e|uniqueness|public.custodial_ics_documents.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_ics_versions"
+      ],
+      "writes": [
+        "s|fk|public.custodial_ics_versions.custodial_ics_versions_export_id_custodial_ics_exports_id_fkey",
+        "n|fk|public.custodial_ics_versions.custodial_ics_versions_export_id_custodial_ics_exports_id_fkey",
+        "e|fk|public.custodial_ics_versions.custodial_ics_versions_export_id_custodial_ics_exports_id_fkey",
+        "n|con|public.custodial_ics_versions.custodial_ics_versions_export_id_custodial_ics_exports_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_ics_versions",
+        "n|sch|public",
+        "n|tbl|public.custodial_ics_exports",
+        "n|sch|public",
+        "n|col|public.custodial_ics_versions.export_id",
+        "n|col|public.custodial_ics_exports.id",
+        "e|uniqueness|public.custodial_ics_exports.id"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "custodial_ics_counters",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "custodial_ics_documents",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "custodial_ics_versions",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_counters",
+        "name": "period",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_counters",
+        "name": "last_value",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_documents",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_documents",
+        "name": "number",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_documents",
+        "name": "current_export_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_documents",
+        "name": "version",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "1",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_documents",
+        "name": "deleted_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_documents",
+        "name": "deleted_by",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_documents",
+        "name": "created_by",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_documents",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_documents",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_versions",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_versions",
+        "name": "document_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_versions",
+        "name": "export_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_versions",
+        "name": "version",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_versions",
+        "name": "reason",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_versions",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_documents",
+        "name": "custodial_ics_document_number_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "number",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_exports",
+        "name": "custodial_ics_number_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "number",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_versions",
+        "name": "custodial_ics_document_revision_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "document_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "version",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_versions",
+        "name": "custodial_ics_revision_export_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "export_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_documents",
+        "name": "custodial_ics_documents_UObzkA0nnZcl_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "current_export_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "custodial_ics_exports",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_documents",
+        "name": "custodial_ics_documents_deleted_by_user_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "deleted_by"
+        ],
+        "schemaTo": "public",
+        "tableTo": "user",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_documents",
+        "name": "custodial_ics_documents_created_by_user_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "created_by"
+        ],
+        "schemaTo": "public",
+        "tableTo": "user",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_versions",
+        "name": "custodial_ics_versions_pT8auOXbkdEo_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "document_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "custodial_ics_documents",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_versions",
+        "name": "custodial_ics_versions_export_id_custodial_ics_exports_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "export_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "custodial_ics_exports",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_counters",
+        "name": "custodial_ics_counters_pkey",
+        "columns": [
+          "period"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_documents",
+        "name": "custodial_ics_documents_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_versions",
+        "name": "custodial_ics_versions_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_counters",
+        "name": "custodial_ics_counter_period",
+        "value": "\"period\" ~ '^[0-9]{4}-(0[1-9]|1[0-2])$'",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_counters",
+        "name": "custodial_ics_counter_nonnegative",
+        "value": "\"last_value\" >= 0",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_documents",
+        "name": "custodial_ics_document_version",
+        "value": "\"version\" > 0",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_documents",
+        "name": "custodial_ics_deleted_actor",
+        "value": "(\"deleted_at\" IS NULL) = (\"deleted_by\" IS NULL)",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_ics_versions",
+        "name": "custodial_ics_revision_version",
+        "value": "\"version\" > 0",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "drop",
+      "key": "indexes\u0000[\"public\",\"custodial_ics_number_unique\"]"
+    }
+  ]
+}
