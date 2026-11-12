@@ -26,8 +26,9 @@ test.skipIf(!existsSync(reference))("ICS v2 matches the private reference fonts,
   expect(sheet.getCell("A45").value).toBe("Fictional Issuer");
   expect(sheet.getCell("F45").value).toBe("Fictional Recipient");
 });
-for(const count of [1,32,100,2000])test(`ICS v2 renders ${count} items as dynamic long-bond print data without fixed row limits`,async()=>{
+for(const version of ["ics-v2","ics-v3"] as const)for(const count of [1,32,100,2000])test(`ICS ${version} renders ${count} items as dynamic long-bond print data without fixed row limits`,async()=>{
   const book=new ExcelJS.Workbook();const data=fixture(count);
+  data.version=version;
   await book.xlsx.load(await renderIcs(data) as unknown as ExcelJS.Buffer);
   const sheet=book.worksheets[0]!;
   expect(sheet.pageSetup.paperSize).toBe(14 as ExcelJS.PaperSize);
@@ -53,4 +54,45 @@ test("ICS v2 keeps long text intact, uses bounded rows and never turns descripti
   const xml=new TextDecoder().decode(archive.files["xl/worksheets/sheet1.xml"]!.content);
   expect(xml).toContain("<rowBreaks");
   expect(sheet.getCell("E12").font.size).toBe(11);
+});
+test("ICS v3 reserves complete line boxes for cost headers, metadata and every signature label",async()=>{
+  const data=fixture(1);data.version="ics-v3";
+  data.details.fromOffice="Administrative Officer II / Property Custodian";
+  data.details.toOffice="Teacher I / School Clinic";
+  const book=new ExcelJS.Workbook();await book.xlsx.load(await renderIcs(data) as unknown as ExcelJS.Buffer);
+  const sheet=book.worksheets[0]!;
+  expect(sheet.getCell("C10").value).toBe("Unit Cost");
+  expect(sheet.getRow(10).height!+sheet.getRow(11).height!).toBeGreaterThanOrEqual(36);
+  for(const row of [7,9,44,47,49,51])expect(sheet.getRow(row).height!).toBeGreaterThanOrEqual(18);
+  for(const address of ["A7","C10","D10","A44","F44","A47","F47","A49","F49","A51","F51"]){
+    const cell=sheet.getCell(address);
+    expect(cell.alignment.vertical).toBe("middle");expect(cell.alignment.wrapText).toBe(true);
+    expect(cell.font.name).toBe("Times New Roman");
+  }
+  expect(sheet.getCell("C10").font.size).toBe(12);
+  expect(sheet.getCell("A47").font.size).toBe(11);
+  expect(sheet.model.merges).toContain("A44:E44");
+  expect(sheet.model.merges).toContain("F44:H44");
+  const old=new ExcelJS.Workbook();data.version="ics-v2";
+  await old.xlsx.load(await renderIcs(data) as unknown as ExcelJS.Buffer);
+  expect(old.worksheets[0]!.getRow(47).height).toBe(11.55);
+  expect(old.worksheets[0]!.getRow(10).height!+old.worksheets[0]!.getRow(11).height!).toBe(24.6);
+});
+test("ICS v3 keeps long signature offices and descriptions complete with bounded continuation rows",async()=>{
+  const data=fixture(1,"wide equipment description 漢字 ".repeat(220));data.version="ics-v3";
+  data.details.fromName="Fictional Property Custodian With A Long Printed Name";
+  data.details.toOffice="Senior Teacher / Department of Science / School Clinic and Emergency Response Office";
+  const book=new ExcelJS.Workbook();await book.xlsx.load(await renderIcs(data) as unknown as ExcelJS.Buffer);
+  const sheet=book.worksheets[0]!;
+  let description="",footer=0;
+  sheet.eachRow(row=>{
+    const cell=row.getCell(5);
+    if(row.number>=12&&cell.address===cell.master.address&&typeof cell.value==="string")description+=cell.value;
+    if(row.getCell(1).value==="Received  from:")footer=row.number;
+    expect(row.height??0).toBeLessThan(409);
+  });
+  expect(description).toBe(data.lines[0]!.description);
+  expect(sheet.getCell(footer+4,6).value).toBe(data.details.toOffice);
+  expect(sheet.getRow(footer+4).height).toBeGreaterThan(22);
+  for(const offset of [0,3,5,7])expect(sheet.getRow(footer+offset).height).toBeGreaterThanOrEqual(18);
 });

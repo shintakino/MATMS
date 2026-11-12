@@ -90,7 +90,7 @@ async function snapshot(tx:AuditTransaction,raw:IcsDraftDetails,number:string,ba
     try {totalCost=icsCost(row.unitCost,-row.quantity);} catch {throw new MatmsError("VALIDATION_ERROR","An issued value exceeds supported Excel precision.");}
     return {transactionId:row.transactionId,quantity:-row.quantity,unit:row.unit,description:selection.description??`${row.article}\n${row.description}`,itemNumber:row.propertyNumber,unitCost:row.unitCost,totalCost,usefulLife:selection.usefulLife};
   });
-  return icsPayload.parse({version:"ics-v2",sourceHash:template.sourceHash,details:{...details,number},fundCluster,lines});
+  return icsPayload.parse({version:"ics-v3",sourceHash:template.sourceHash,details:{...details,number},fundCluster,lines});
 }
 export type IcsEditScope={id:string;expectedVersion:number};
 export async function previewIcs(db:Database,actorId:string,details:IcsDraftDetails,correlationId:string,edit?:IcsEditScope) {

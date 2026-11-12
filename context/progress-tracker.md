@@ -1,3 +1,11 @@
+## 2026-11-12 — ICS print clipping correction in progress
+
+User screenshot shows clipped Unit Cost and signature labels despite the earlier structural/PDF text checks. The reference's fixed 11.55-point signature rows and 24.6-point two-line cost header are too short for reliable rendering. Implement a new `ics-v3` renderer with padded header/metadata/signature heights and explicit alignment, retaining fonts/widths and historical v1/v2 renderers. Rendered label inspection, long/multiple-item checks and checked deployment remain pending.
+
+Implemented v3 minimum line boxes, explicit middle/wrapped alignment and merged Received labels. All 22 targeted ICS tests passed; the lifecycle test also passed after asserting new revisions use v3 and the expanded cost header. LibreOffice 26.2 rendered single/multiple/long-description/long-office examples in 1/2/7/1 pages, all 612 × 936 points. Visually inspected the complete single page and final multi-page/signature pages: cost labels and every signature label are visible without clipping. PDF text retains all required labels and 180 long-description tokens. Production baseline recorded across 54 tables before release. Checked deployment remains pending.
+
+All six strict workspace type tasks passed. The corrected renderer is ready for the checked release; no frontend or database schema changes are needed.
+
 ## 2026-11-12 — ICS v2 deployed and verified
 
 **Live:** [Property Inventory → Reports](https://matms.shintakino.qzz.io/property-inventory/reports), executable revision `6c6a9357255218b986add5baaf23f762f6ab77e0`, [workflow 43145665286](https://github.com/shintakino/MATMS/actions/runs/43145665286). New/edited exports follow the supplied `ICS-2025-11-001.xlsx` layout and reference font sizes on user-selected long bond (8.5 × 13 inches). Long descriptions continue across pages with repeated headings and complete signatures. Numbers are assigned at save using the current Manila `YYYY-MM-NNN` sequence. Saved slips support Edit, earlier-version downloads, Delete and Restore; existing numbers and original export snapshots are retained.
