@@ -80,11 +80,13 @@ test("ICS populated upgrade, monthly numbering concurrency, revision CRUD, audit
     expect(results.filter(result=>result.status==="fulfilled")).toHaveLength(1);
     expect(results.filter(result=>result.status==="rejected")).toHaveLength(1);
     const current=await getIcs(db,"ics-owner",saved.id);expect(current.version).toBe(2);expect(current.history).toHaveLength(2);
-    expect(current.payload.version).toBe("ics-v3");
+    expect(current.payload.version).toBe("ics-v4");
+    expect(current.payload.details.fromDate).toBe("2026-01-02");
     const original=await downloadIcs(db,"ics-owner",saved.id,crypto.randomUUID(),1);
     const firstBook=new ExcelJS.Workbook();await firstBook.xlsx.load(Buffer.from(original.base64,"base64") as unknown as ExcelJS.Buffer);
     expect(firstBook.worksheets[0]!.getCell("E12").value).toBe("Fictional fan\nSerial-TEST");
     expect(firstBook.worksheets[0]!.getRow(10).height!+firstBook.worksheets[0]!.getRow(11).height!).toBeGreaterThanOrEqual(36);
+    expect(firstBook.worksheets[0]!.getCell(`A${firstBook.worksheets[0]!.rowCount-1}`).value).toBe("01-02-2026");
     const deleteInput={id:saved.id,expectedVersion:2,deleted:true,operationId:crypto.randomUUID(),reason:"Old slip removed"};
     const deletion=await setIcsDeleted(db,"ics-owner",deleteInput,crypto.randomUUID());
     expect(await setIcsDeleted(db,"ics-owner",deleteInput,crypto.randomUUID())).toEqual(deletion);

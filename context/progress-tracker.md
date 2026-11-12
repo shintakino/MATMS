@@ -1,3 +1,11 @@
+## 2026-11-12 — ICS printed date format and one-command release in progress
+
+User confirmed the print-spacing fix and requested month-day-year printed dates and a command to deploy the latest pushed changes. New/edited slips will use renderer v4 for `MM-DD-YYYY` signature dates, preserving ISO snapshot dates and historical v1–v3 exports. Add `pnpm deploy:latest` to dispatch the existing checked `main` workflow; normal main pushes already deploy automatically. Implementation/checks and activation are pending.
+
+Implemented v4 as a date-format adapter over the unchanged v3 renderer. All 23 targeted ICS tests pass, including leap day, distinct dates, immutable ISO payloads, old v3 dates, service generation/edit/history and preserved padded headings. LibreOffice single/multiple/long-description/long-office samples retain 1/2/7/1 long-bond pages; both dates print `11-12-2026`, labels and all 180 long-description tokens remain intact, and the single page was visually inspected. `pnpm deploy:latest --help` confirmed the alias invokes `gh workflow run deploy.yml --ref main`. Final strict types and checked activation remain pending.
+
+All six strict workspace tasks passed. The release is ready for the checked automatic main pipeline; production activation remains pending.
+
 ## 2026-11-12 — ICS print clipping correction deployed and verified
 
 **Live:** revision `1e31104cabb0f4a29372709696f82fe6075b7950`, [workflow 43156490719](https://github.com/shintakino/MATMS/actions/runs/43156490719), web/API build `43156490719-1`. Renderer `ics-v3` adds sufficient line-height/padding for cost headings, metadata and signature captions, middle alignment and merged Received labels. Reference fonts, widths, long-bond geometry and historical v1/v2 renderers remain intact. Existing slips adopt the corrected layout through an explicit Edit → Review → Save changes and export Excel, retaining their number and original versions.

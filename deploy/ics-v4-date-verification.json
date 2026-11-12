@@ -1,0 +1,21 @@
+{
+  "renderer": "ics-v4",
+  "printed_signature_date_format": "MM-DD-YYYY",
+  "example": "11-12-2026",
+  "canonical_iso_dates_preserved": true,
+  "historical_v1_v2_v3_renderers_unchanged": true,
+  "v3_print_spacing_retained": true,
+  "targeted_ics_tests_passed": 23,
+  "strict_workspace_tasks_passed": 6,
+  "leap_day_and_distinct_signature_dates_verified": true,
+  "rendering_engine": "LibreOffice 26.2.6.3",
+  "paper_size_points": [612, 936],
+  "single_multiple_long_description_long_office_pages": [1, 2, 7, 1],
+  "both_signature_dates_rendered_as_requested": true,
+  "required_labels_and_180_long_description_tokens_preserved": true,
+  "deploy_command": "pnpm deploy:latest",
+  "deploy_command_target": "Latest remote main via existing checked GitHub workflow",
+  "deploy_command_cli_arguments_verified_with_help": true,
+  "normal_main_pushes_deploy_automatically": true,
+  "production_status": "pending"
+}

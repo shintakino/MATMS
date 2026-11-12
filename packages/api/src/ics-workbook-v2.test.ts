@@ -96,3 +96,20 @@ test("ICS v3 keeps long signature offices and descriptions complete with bounded
   expect(sheet.getRow(footer+4).height).toBeGreaterThan(22);
   for(const offset of [0,3,5,7])expect(sheet.getRow(footer+offset).height).toBeGreaterThanOrEqual(18);
 });
+test("ICS v4 prints both dates as MM-DD-YYYY while preserving ISO snapshots and older print versions",async()=>{
+  const data=fixture(1);data.version="ics-v4";
+  data.details.fromDate="2024-02-29";data.details.toDate="2026-11-12";
+  const original=structuredClone(data),book=new ExcelJS.Workbook();
+  await book.xlsx.load(await renderIcs(data) as unknown as ExcelJS.Buffer);
+  const sheet=book.worksheets[0]!;
+  expect(sheet.getCell(`A${sheet.rowCount-1}`).value).toBe("02-29-2024");
+  expect(sheet.getCell(`F${sheet.rowCount-1}`).value).toBe("11-12-2026");
+  expect(sheet.getRow(10).height!+sheet.getRow(11).height!).toBeGreaterThanOrEqual(36);
+  expect(sheet.getCell(`A${sheet.rowCount-1}`).font.size).toBe(11);
+  expect(sheet.pageSetup.paperSize).toBe(14 as ExcelJS.PaperSize);
+  expect(data).toEqual(original);
+  const older=new ExcelJS.Workbook();
+  await older.xlsx.load(await renderIcs({...data,version:"ics-v3"}) as unknown as ExcelJS.Buffer);
+  expect(older.worksheets[0]!.getCell(`A${older.worksheets[0]!.rowCount-1}`).value).toBe("2024-02-29");
+  expect(older.worksheets[0]!.getCell(`F${older.worksheets[0]!.rowCount-1}`).value).toBe("2026-11-12");
+});
