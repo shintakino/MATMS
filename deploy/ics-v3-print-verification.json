@@ -3,7 +3,10 @@
   "problem": "Clipped Unit Cost and signature labels in user print preview",
   "source_fonts_and_column_widths_retained": true,
   "historical_v1_v2_renderers_unchanged": true,
-  "paper_inches": [8.5, 13],
+  "paper_inches": [
+    8.5,
+    13
+  ],
   "cost_header_minimum_height_points": 36,
   "signature_label_minimum_height_points": 18,
   "received_label_minimum_height_points": 22,
@@ -11,16 +14,46 @@
   "strict_workspace_tasks_passed": 6,
   "lifecycle_v3_revision_assertions_passed": true,
   "rendering_engine": "LibreOffice 26.2.6.3",
-  "rendered_page_size_points": [612, 936],
+  "rendered_page_size_points": [
+    612,
+    936
+  ],
   "rendered_examples": [
-    {"scenario": "Single fan", "pages": 1},
-    {"scenario": "12 items", "pages": 2},
-    {"scenario": "Long description", "pages": 7, "unique_tokens_preserved": 180},
-    {"scenario": "Long signature offices", "pages": 1}
+    {
+      "scenario": "Single fan",
+      "pages": 1
+    },
+    {
+      "scenario": "12 items",
+      "pages": 2
+    },
+    {
+      "scenario": "Long description",
+      "pages": 7,
+      "unique_tokens_preserved": 180
+    },
+    {
+      "scenario": "Long signature offices",
+      "pages": 1
+    }
   ],
   "visual_header_and_signature_label_inspection_passed": true,
   "all_required_pdf_labels_preserved": true,
   "native_excel_and_physical_printer_acceptance": "Not performed",
   "existing_slip_upgrade": "Explicit Edit, review and Save changes and export Excel; number retained",
-  "production_status": "pending"
+  "production_status": "verified",
+  "revision": "1e31104cabb0f4a29372709696f82fe6075b7950",
+  "workflow_run_id": "43156490719",
+  "hosted_integrations_passed": 79,
+  "hosted_private_source_comparisons_skipped": 9,
+  "hosted_chromium_scenarios_passed": 15,
+  "release_invariant_tests_passed": 6,
+  "immutable_history_hashes_preserved": true,
+  "backup_and_migration_exit_codes": 0,
+  "live_routes_checked": 27,
+  "live_accessibility_scans": 6,
+  "live_accessibility_violations": 0,
+  "live_browser_errors": 0,
+  "live_ics_controls_verified": true,
+  "production_test_records_created": false
 }
