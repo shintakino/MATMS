@@ -134,3 +134,5 @@ See [the user guide](docs/user-guide.md#appendix-59--inventory-custodian-slip-ic
 The print-spacing correction (`ics-v3`, revision `1e31104`) gives the cost headings and signature labels enough height without changing their fonts. For an older saved slip, use **Edit → Review ICS → Save changes and export Excel** to retain its number and save the corrected layout. See [print verification](deploy/ics-v3-print-verification.json) and [workflow 43156490719](https://github.com/shintakino/MATMS/actions/runs/43156490719).
 
 New/edited ICS slips print signature dates as **MM-DD-YYYY**. After pushing changes, **`pnpm deploy:latest`** manually deploys the latest remote `main` through the existing checked workflow (GitHub CLI authentication required). Main pushes also deploy automatically. See the [operator guide](docs/deployment-coolify.md#automatic-deployment-configuration).
+
+See [date-format verification](deploy/ics-v4-date-verification.json) and [workflow 43159931691](https://github.com/shintakino/MATMS/actions/runs/43159931691) for executable revision `1268a9f`.

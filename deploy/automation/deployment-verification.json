@@ -1,30 +1,30 @@
 {
-  "revision": "1e31104cabb0f4a29372709696f82fe6075b7950",
+  "revision": "1268a9fbcd0fead2a1a7d40060ee4d26b74c8a74",
   "images": {
-    "web": "ghcr.io/shintakino/matms-web@sha256:3b161db1a83abcfb646785ae5a4babd5ad5ab1d5e3457737a8fc756dfee1b9b5",
-    "server": "ghcr.io/shintakino/matms-server@sha256:851cbf35d0edba56c453902764af5feba86c1a8907a9a02dfa853051a54dc39b",
-    "postgres": "ghcr.io/shintakino/matms-postgres@sha256:53d0833431b68aba64507d7676b829914d9028f78e3a41dbb331ebc0c7164358"
+    "web": "ghcr.io/shintakino/matms-web@sha256:fedb1b03f8498aa6e8d6ebc257f921341a68e1c7f495bd70f3d4a1c180a1b8a1",
+    "server": "ghcr.io/shintakino/matms-server@sha256:86209b8a40cc6b928cadea7d584e05948a8da0d455c58e3472f19ed855ee5779",
+    "postgres": "ghcr.io/shintakino/matms-postgres@sha256:27ee82280737d80d6cc28f6ab4476dd6ab6a14c5e0c4b51b01164b2214b86c75"
   },
-  "web_build_id": "43156490719-1",
-  "deployment_id": "43156490719-1",
+  "web_build_id": "43159931691-1",
+  "deployment_id": "43159931691-1",
   "origin": "https://matms.shintakino.qzz.io",
   "service_uuid": "mt8rqzgbtpkbzedwicy03wnf",
   "status": "verified",
   "volumes_preserved": true,
   "web_and_api_revision_verified": true,
-  "workflow_run_id": "43156490719",
-  "workflow_url": "https://github.com/shintakino/MATMS/actions/runs/43156490719",
+  "workflow_run_id": "43159931691",
+  "workflow_url": "https://github.com/shintakino/MATMS/actions/runs/43159931691",
   "required_jobs": [
     {
       "name": "Types, integration and browser checks",
       "conclusion": "success"
     },
     {
-      "name": "Build postgres image",
+      "name": "Build server image",
       "conclusion": "success"
     },
     {
-      "name": "Build server image",
+      "name": "Build postgres image",
       "conclusion": "success"
     },
     {
@@ -58,5 +58,5 @@
   "public_accessibility_violations": 0,
   "ics_crud_controls_verified": true,
   "ics_automatic_number_field_verified": true,
-  "ics_print_renderer": "ics-v3"
+  "ics_print_renderer": "ics-v4"
 }

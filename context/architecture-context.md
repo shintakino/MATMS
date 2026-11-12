@@ -1,6 +1,6 @@
 # Architecture Context
 
-ICS print spacing correction: new/edited slips pin `ics-v3`, with padded minimum heights for wrapped headings and signature labels. Preserve v1/v2 renderers unchanged for historical regeneration. This presentation revision requires no schema migration or stock changes.
+ICS print spacing correction introduced `ics-v3`, with padded minimum heights for wrapped headings and signature labels. Preserve v1/v2 renderers unchanged for historical regeneration. This presentation revision requires no schema migration or stock changes.
 
 The subsequent date presentation revision pins new/edited slips to `ics-v4`: format canonical ISO signature dates as `MM-DD-YYYY` at render time, retaining v3 spacing and all earlier renderers. `pnpm deploy:latest` dispatches the existing checked workflow for remote `main`; ordinary main pushes remain automatic.
 

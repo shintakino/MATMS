@@ -1,3 +1,13 @@
+## 2026-11-12 — ICS month-day-year printing and latest-release command deployed
+
+**Live:** revision `1268a9fbcd0fead2a1a7d40060ee4d26b74c8a74`, [workflow 43159931691](https://github.com/shintakino/MATMS/actions/runs/43159931691), web/API build `43159931691-1`. New/edited ICS exports print both signature dates as `MM-DD-YYYY` (for example `11-12-2026`) using renderer v4 over the unchanged padded v3 layout. Canonical dates remain ISO, prior renderers/snapshots remain intact, and existing slips adopt the format through an explicit saved edit under their existing number.
+
+Added **`pnpm deploy:latest`**, which dispatches the existing checked workflow for the latest remote `main` using GitHub CLI authentication. Normal main pushes continue to deploy automatically. The alias/CLI arguments were checked with `--help`; this release itself used the normal push trigger, avoiding a duplicate manual dispatch. The operator guide explains the command and Actions run URL.
+
+Verification passed 23 targeted ICS tests and all six strict workspace tasks. Hosted checks passed 80 application tests (nine private-source comparisons explicitly skipped), all 15 Chromium scenarios and six release-invariant tests, followed by all three image builds. LibreOffice single/multiple/long-description/long-office examples retained 1/2/7/1 long-bond pages, both dates in the requested format, all required labels and 180 long-description tokens; the single page was visually inspected.
+
+Production backup/migration exited zero; encrypted-backup checksum, exact images/revision, volumes, Administrator, baseline row counts and prior audit/stock/ICS snapshot hashes passed. No new schema migration was needed. Live Chromium passed all 27 routes, ICS/history controls, mobile checks, authentication/sign-out and six zero-violation WCAG scans with no browser errors. No production sample stock/slips were created or edited. See [date evidence](../deploy/ics-v4-date-verification.json), [deployment receipt](../deploy/automation/deployment-verification.json) and [live checks](../deploy/automation/public-verification.json). The evidence handoff uses `[skip ci]`; executable production code remains `1268a9f`.
+
 ## 2026-11-12 — ICS printed date format and one-command release in progress
 
 User confirmed the print-spacing fix and requested month-day-year printed dates and a command to deploy the latest pushed changes. New/edited slips will use renderer v4 for `MM-DD-YYYY` signature dates, preserving ISO snapshot dates and historical v1–v3 exports. Add `pnpm deploy:latest` to dispatch the existing checked `main` workflow; normal main pushes already deploy automatically. Implementation/checks and activation are pending.
