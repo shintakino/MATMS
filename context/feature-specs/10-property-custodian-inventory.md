@@ -62,3 +62,5 @@ Deliver schema/role contracts and permission tests first, register and ledger se
 ## Item code revision — 2026-11-16
 
 New codes use `USER-CODE-YYYY`, appending the current Asia/Manila year when the input has no four-digit year suffix. Preserve entered hyphens and an explicit year suffix. Existing codes are not bulk-renamed. Edits may retain or restore an alias owned by the same item, including a legacy unsuffixed code; reservations belonging to another item still conflict. Apply formatting server-side and retain old operation fingerprints for durable replay. Keep code reservation, version check, master update and audit atomic.
+
+Deployed and verified as `70c2634` / [workflow 43783532957](https://github.com/shintakino/MATMS/actions/runs/43783532957). Owner restoration/foreign collision, legacy replay, year boundaries, audit rollback and browser rename/restore passed; production preserved all prior code owners. See [range/code evidence](../../deploy/ics-v5-range-verification.json).

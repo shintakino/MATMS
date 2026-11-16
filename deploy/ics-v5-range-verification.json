@@ -12,20 +12,50 @@
   "backdated_and_concurrent_issue_ranges_verified": true,
   "export_does_not_consume_numbers_or_change_stock": true,
   "legacy_edit_upgrade_and_v5_frozen_identity_verified": true,
-  "historical_renderers_unchanged": ["ics-v1", "ics-v2", "ics-v3", "ics-v4"],
+  "historical_renderers_unchanged": [
+    "ics-v1",
+    "ics-v2",
+    "ics-v3",
+    "ics-v4"
+  ],
   "manual_lot_property_number_requirement_removed_for_ics_only": true,
   "local_application_tests_passed": 92,
   "strict_workspace_tasks_passed": 6,
   "targeted_tests_passed": 27,
-  "local_browser_workflows_passed": ["ICS batch and single-copy ranges, CRUD, mobile and accessibility", "Item year suffix, rename/restore and Stock Card"],
+  "local_browser_workflows_passed": [
+    "ICS batch and single-copy ranges, CRUD, mobile and accessibility",
+    "Item year suffix, rename/restore and Stock Card"
+  ],
   "initial_property_browser_disclosure_state_fixed_in_harness": true,
   "rendering_engine": "LibreOffice 26.2.6.3",
-  "rendered_page_size_points": [612, 936],
-  "batch_single_long_description_page_counts": [1, 1, 14],
+  "rendered_page_size_points": [
+    612,
+    936
+  ],
+  "batch_single_long_description_page_counts": [
+    1,
+    1,
+    14
+  ],
   "unique_long_description_tokens_preserved": 180,
   "visual_ranges_and_signature_labels_inspected": true,
   "printed_date_format_retained": "MM-DD-YYYY",
   "no_new_schema_migration": true,
   "native_excel_and_school_printer_acceptance": "Not performed for this release",
-  "production_status": "pending"
+  "production_status": "verified",
+  "revision": "70c26347d6a22ffb930809e466905e1d67a3d3cd",
+  "workflow_run_id": "43783532957",
+  "hosted_integrations_passed": 83,
+  "hosted_private_source_comparisons_skipped": 9,
+  "hosted_chromium_scenarios_passed": 15,
+  "release_invariant_tests_passed": 6,
+  "immutable_history_hashes_preserved": true,
+  "backup_and_migration_exit_codes": 0,
+  "live_routes_checked": 27,
+  "live_accessibility_scans": 6,
+  "live_accessibility_violations": 0,
+  "live_browser_errors": 0,
+  "live_ics_controls_verified": true,
+  "production_test_records_created": false,
+  "existing_code_owners_preserved": true
 }

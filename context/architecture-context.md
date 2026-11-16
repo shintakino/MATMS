@@ -6,7 +6,7 @@ ICS v5 freezes item-code-based issue ranges. Derive start/end with a windowed su
 
 ICS print spacing correction introduced `ics-v3`, with padded minimum heights for wrapped headings and signature labels. Preserve v1/v2 renderers unchanged for historical regeneration. This presentation revision requires no schema migration or stock changes.
 
-The subsequent date presentation revision pins new/edited slips to `ics-v4`: format canonical ISO signature dates as `MM-DD-YYYY` at render time, retaining v3 spacing and all earlier renderers. `pnpm deploy:latest` dispatches the existing checked workflow for remote `main`; ordinary main pushes remain automatic.
+The subsequent date presentation revision introduced `ics-v4`: format canonical ISO signature dates as `MM-DD-YYYY` at render time, retaining v3 spacing and all earlier renderers. V5 retains this date/layout behavior with frozen issue-range identifiers. `pnpm deploy:latest` dispatches the existing checked workflow for remote `main`; ordinary main pushes remain automatic.
 
 ## Baseline and implementation status
 

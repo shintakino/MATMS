@@ -138,3 +138,5 @@ New/edited ICS slips print signature dates as **MM-DD-YYYY**. After pushing chan
 See [date-format verification](deploy/ics-v4-date-verification.json) and [workflow 43159931691](https://github.com/shintakino/MATMS/actions/runs/43159931691) for executable revision `1268a9f`.
 
 The item-code revision permits restoring an item's own previous code while keeping it reserved against other items. New prefixes gain a Manila-year suffix (`TXVE10-2026`). New/upgraded ICS slips use continuing ranges per recorded issue: 90 copies → `TXVE10-2026-001-090`, next copy → `TXVE10-2026-091`. Existing saved versions remain unchanged; use a reviewed edit to adopt the new format. See the user guide and progress tracker for verification/release status.
+
+This revision is live as `70c2634`, [workflow 43783532957](https://github.com/shintakino/MATMS/actions/runs/43783532957). See [range/code verification](deploy/ics-v5-range-verification.json) for test, rendered and production-preservation evidence.
