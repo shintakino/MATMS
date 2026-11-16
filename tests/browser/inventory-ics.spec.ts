@@ -29,7 +29,6 @@ test("Appendix 59 ICS reviews recorded issues, exports and retains saved slips",
   const lot = page.locator("#setup-lot");
   if(await lot.getAttribute("open")===null) await lot.locator(":scope > summary").click();
   await lot.getByRole("combobox",{name:"Class",exact:true}).selectOption("semi_expendable");
-  await lot.getByLabel("Property number",{exact:true}).fill(code);
   await lot.getByLabel("Unit value in PHP (blank if unknown)").fill("1500.00");
   await lot.getByLabel("Fund cluster",{exact:true}).fill("ICS-BROWSER");
   await lot.getByLabel("Office / location",{exact:true}).fill("Fictional Stores");
@@ -44,12 +43,12 @@ test("Appendix 59 ICS reviews recorded issues, exports and retains saved slips",
   await expect(page.getByText("Office balance created with zero stock.")).toBeVisible();
   const operation = page.locator("#setup-operation");
   if(await operation.getAttribute("open")===null) await operation.locator(":scope > summary").click();
-  for (const type of ["opening","issue"] as const) {
+  for (const {type,quantity,reference} of [{type:"opening",quantity:"91",reference:"opening"},{type:"issue",quantity:"90",reference:"issue90"},{type:"issue",quantity:"1",reference:"issue1"}] as const) {
     await operation.getByRole("combobox",{name:"Action",exact:true}).selectOption(type);
     await operation.getByRole("combobox",{name:"Balance",exact:true}).selectOption({index:1});
-    await operation.getByLabel("Quantity (new count for correction)").fill(type==="opening"?"5":"2");
+    await operation.getByLabel("Quantity (new count for correction)").fill(quantity);
     await operation.getByLabel("Transaction date").fill("2026-01-02");
-    await operation.getByLabel("Reference",{exact:true}).fill(`${code}-${type}`);
+    await operation.getByLabel("Reference",{exact:true}).fill(`${code}-${reference}`);
     await operation.getByLabel("Reason / purpose").fill("Fictional ICS browser fixture");
     if(type==="issue") await operation.getByLabel("Source or receiving / returning office").fill("Fictional Recipient Office");
     await operation.getByRole("button",{name:"Review operation"}).click();
@@ -66,11 +65,11 @@ test("Appendix 59 ICS reviews recorded issues, exports and retains saved slips",
     await ics.getByLabel(`${prefix} — position/office`,{exact:true}).fill(office!);
     await ics.getByLabel(`${prefix} — date`,{exact:true}).fill("2026-01-02");
   }
-  await ics.getByRole("checkbox",{name:new RegExp(code)}).check();
-  await ics.getByLabel(new RegExp(`Estimated useful life —.*${code}`)).fill("5 years");
+  for (const reference of ["issue1","issue90"]) await ics.getByRole("checkbox",{name:new RegExp(`${code}-${reference}`)}).check();
+  for (const input of await ics.getByLabel(new RegExp(`Estimated useful life —.*${code}`)).all()) await input.fill("5 years");
   await ics.getByRole("button",{name:"Review ICS",exact:true}).click();
   await expect(ics.getByRole("heading",{name:"Review ICS",exact:true})).toBeVisible();
-  await expect(ics.getByRole("cell",{name:"3000.00",exact:true})).toBeVisible();
+  await expect(ics.getByRole("cell",{name:"135000.00",exact:true})).toBeVisible();
   const scan=await new AxeBuilder({page}).withTags(["wcag2a","wcag2aa"]).analyze();
   expect(scan.violations).toEqual([]);
   const pendingDownload = page.waitForEvent("download");
@@ -82,10 +81,14 @@ test("Appendix 59 ICS reviews recorded issues, exports and retains saved slips",
   const bytes = await readFile((await download.path())!);
   const book = XLSX.read(bytes,{type:"buffer"});
   expect(book.SheetNames).toEqual(["ICS"]);
-  expect(book.Sheets.ICS!.A12!.v).toBe(2);
+  // The later single-copy issue is listed first in the newest-first picker;
+  // numbering still follows original posting order, independent of selection.
+  const numbers = [book.Sheets.ICS!.G12!.v, book.Sheets.ICS!.G15!.v];
+  const year = new Intl.DateTimeFormat("en-US",{timeZone:"Asia/Manila",year:"numeric"}).format(new Date());
+  expect(numbers.sort()).toEqual([`${code}-${year}-001-090`,`${code}-${year}-091`].sort());
   expect(book.Sheets.ICS!.C12!.v).toBe(1500);
-  expect(book.Sheets.ICS!.D12!.v).toBe(3000);
-  expect(book.Sheets.ICS!.G12!.v).toBe(code);
+  expect([book.Sheets.ICS!.A12!.v,book.Sheets.ICS!.A15!.v].sort()).toEqual([1,90]);
+  expect([book.Sheets.ICS!.D12!.v,book.Sheets.ICS!.D15!.v].sort((a,b)=>Number(a)-Number(b))).toEqual([1500,135000]);
   await page.reload();
   const saved=ics.getByRole("listitem").filter({has:page.getByText(`ICS ${assigned}`,{exact:true})});
   await expect(saved).toBeVisible();
@@ -96,8 +99,8 @@ test("Appendix 59 ICS reviews recorded issues, exports and retains saved slips",
   await expect(ics.getByLabel("ICS number",{exact:true})).toHaveValue(assigned);
   await ics.getByLabel("Entity name",{exact:true}).fill("Fictional edited school");
   const longDescription="Fan HFAN-20HYP serial TEST-001. "+"Detailed equipment description for print verification. ".repeat(90);
-  await ics.getByLabel(/^Description —/).fill(longDescription);
-  await ics.getByLabel(/^Estimated useful life —/).fill("6 years");
+  await ics.getByLabel(/^Description —/).first().fill(longDescription);
+  await ics.getByLabel(/^Estimated useful life —/).first().fill("6 years");
   await ics.getByLabel("Reason for changes",{exact:true}).fill("Correct printed details");
   await ics.getByRole("button",{name:"Review ICS",exact:true}).click();
   const changedFile=page.waitForEvent("download");

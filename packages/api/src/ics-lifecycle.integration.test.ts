@@ -58,11 +58,18 @@ test("ICS populated upgrade, monthly numbering concurrency, revision CRUD, audit
     const item=await createCustodialItem(db,actor,{code:crypto.randomUUID(),article:"Fictional fan",description:"Serial-TEST",unit:"unit",reorderPoint:null,...operation()});
     const lot=await createCustodialLot(db,actor,{itemId:item.id,reportingClass:"semi_expendable",propertyNumber:crypto.randomUUID(),unitValue:"1500.00",fundCluster:"TEST",office:"Store",...operation()});
     const balance=await createCustodialBalance(db,actor,{itemId:item.id,lotId:lot.id,fundCluster:"TEST",office:"Store",...operation()});
-    await postCustodialOperation(db,actor,{balanceId:balance.id,type:"opening",quantity:5,transactionDate:"2026-01-01",reference:"Test opening",reason:"Fictional test",...operation()});
+    await postCustodialOperation(db,actor,{balanceId:balance.id,type:"opening",quantity:200,transactionDate:"2026-01-01",reference:"Test opening",reason:"Fictional test",...operation()});
     const issued=await postCustodialOperation(db,actor,{balanceId:balance.id,type:"issue",quantity:1,transactionDate:"2026-01-02",reference:"Test issue",reason:"Fictional test",counterparty:"Test Teacher",...operation()});
     const issue=(await client.query(`SELECT t.id FROM custodial_transactions t JOIN custodial_operations o ON o.id=t.operation_id WHERE o.operation_id=$1`,[issued.operationId])).rows[0].id;
     const details={entity:"Fictional School",fromName:"Issuer",fromOffice:"Property Office",toName:"Test Teacher",toOffice:"Classroom",fromDate:"2026-01-02",toDate:"2026-01-02",lines:[{transactionId:issue,usefulLife:"5 years"}]};
     const preview=await previewIcs(db,"ics-owner",details,crypto.randomUUID());
+    const parallel=await Promise.all([90,1].map(quantity=>postCustodialOperation(db!,actor,{balanceId:balance.id,type:"issue",quantity,transactionDate:"2026-01-03",reference:`Concurrent ${quantity}`,reason:"Concurrent issue range",counterparty:"Other Teacher",...operation()})));
+    const issuedIds=(await client.query(`SELECT t.id FROM custodial_transactions t JOIN custodial_operations o ON o.id=t.operation_id WHERE o.operation_id=ANY($1::uuid[])`,[parallel.map(row=>row.operationId)])).rows.map(row=>row.id as string);
+    const parallelPreview=await previewIcs(db,"ics-owner",{...details,toName:"Other Teacher",lines:issuedIds.map(transactionId=>({transactionId,usefulLife:"5 years"}))},crypto.randomUUID());
+    if(parallelPreview.payload.version!=="ics-v5")throw new Error("Expected current numbered ICS payload");
+    const ranges=parallelPreview.payload.lines.toSorted((a,b)=>BigInt(a.sequenceStart)<BigInt(b.sequenceStart)?-1:1);
+    expect(ranges[0]!.sequenceStart).toBe("2");expect(ranges[1]!.sequenceEnd).toBe("92");
+    expect(BigInt(ranges[0]!.sequenceEnd)+1n).toBe(BigInt(ranges[1]!.sequenceStart));
     const ledgerBefore=await db.select().from(custodialTransactions);
     const generated=await Promise.all(Array.from({length:4},()=>generateIcs(db!,"ics-owner",{details,operationId:crypto.randomUUID(),expectedDataHash:preview.dataHash},crypto.randomUUID())));
     expect(new Set(generated.map(row=>row.number)).size).toBe(4);
@@ -80,7 +87,7 @@ test("ICS populated upgrade, monthly numbering concurrency, revision CRUD, audit
     expect(results.filter(result=>result.status==="fulfilled")).toHaveLength(1);
     expect(results.filter(result=>result.status==="rejected")).toHaveLength(1);
     const current=await getIcs(db,"ics-owner",saved.id);expect(current.version).toBe(2);expect(current.history).toHaveLength(2);
-    expect(current.payload.version).toBe("ics-v4");
+    expect(current.payload.version).toBe("ics-v5");
     expect(current.payload.details.fromDate).toBe("2026-01-02");
     const original=await downloadIcs(db,"ics-owner",saved.id,crypto.randomUUID(),1);
     const firstBook=new ExcelJS.Workbook();await firstBook.xlsx.load(Buffer.from(original.base64,"base64") as unknown as ExcelJS.Buffer);

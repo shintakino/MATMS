@@ -12,7 +12,7 @@ Give the Property Custodian one register for supplies, semi-expendable property 
 
 ## Data and configuration
 
-- `custodial_items`: normalized unique item/stock code, article, description, unit, nullable nonnegative integer reorder point, default section, active status and notes. Codes remain text with leading zeros/hyphens intact; historical codes are not reused.
+- `custodial_items`: normalized unique item/stock code, article, description, unit, nullable nonnegative integer reorder point, default section, active status and notes. Codes remain text with leading zeros/hyphens intact; historical codes remain owned by their original item and cannot be assigned to another item. The owning item may restore its own previous code.
 - `custodial_lots`: item, exactly one class (`stock_card`, `semi_expendable`, `ppe`), property/semi-expendable number, nullable fixed-decimal PHP unit value, supplier/source, acquisition date or approved year label, fund cluster, accountable officer, office/location, condition/serviceability, remarks, lifecycle and version. Unknown valuation remains null; confirmed numeric zero is distinct.
 - Persist a versioned balance per item/lot, fund and office/location scope, with nonnegative integer quantity and explicit uniqueness for nullable-lot stock-card rows. Choose the concrete balance table/constraints in the reviewed migration; never store independent item and lot totals that can drift.
 - Nonblank normalized property numbers are unique in approved school/fund scope unless an Admin-authorized exception records the collision and reason. Blank numbers are visible data-quality issues where permitted. Lot history survives code, office, condition and metadata changes.
@@ -58,3 +58,7 @@ Deliver schema/role contracts and permission tests first, register and ledger se
 - Staff direct API posting/adjustment is denied even with draft assignment; no role escalation through replay (AC-35).
 - Back-dating recalculates subsequent projected balances, rejects intermediate negatives, and leaves prior ledger facts/export snapshots unchanged.
 - Fixed-decimal arithmetic, text identifiers, valid versus missing dates/values and mixed-condition remarks are covered by meaningful fixtures. Existing template/loan tests remain passing.
+
+## Item code revision — 2026-11-16
+
+New codes use `USER-CODE-YYYY`, appending the current Asia/Manila year when the input has no four-digit year suffix. Preserve entered hyphens and an explicit year suffix. Existing codes are not bulk-renamed. Edits may retain or restore an alias owned by the same item, including a legacy unsuffixed code; reservations belonging to another item still conflict. Apply formatting server-side and retain old operation fingerprints for durable replay. Keep code reservation, version check, master update and audit atomic.

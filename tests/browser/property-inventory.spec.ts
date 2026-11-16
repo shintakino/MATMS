@@ -50,6 +50,19 @@ test("property inventory opening and stock-card workflow", async ({ page }) => {
   await filters.getByRole("button", { name: "Apply filters" }).click();
   await page.getByRole("link", { name: "Fictional test supplies" }).click();
   const itemPath = new URL(page.url()).pathname;
+  const edit = page.locator("details").filter({ has: page.getByText("Edit item", { exact: true }) });
+  await edit.locator(":scope > summary").click();
+  const originalCode = await edit.getByLabel("Item / stock code").inputValue();
+  const year = new Intl.DateTimeFormat("en-US", { timeZone: "Asia/Manila", year: "numeric" }).format(new Date());
+  expect(originalCode).toBe(`${code}-${year}`);
+  for (const target of [`${code}-RENAMED`, originalCode]) {
+    await edit.getByLabel("Item / stock code").fill(target);
+    await edit.getByLabel("Reason for change", { exact: true }).fill("Verify rename and restore original code");
+    await edit.getByRole("button", { name: "Review item changes" }).click();
+    await page.getByRole("alertdialog").getByRole("button", { name: "Confirm changes" }).click();
+    await expect(edit.getByLabel("Item / stock code")).toHaveValue(target === originalCode ? originalCode : `${target}-${year}`);
+  }
+  await edit.locator(":scope > summary").click();
   await expect(page.getByRole("region", { name: "Set up this item" })).toBeVisible();
   await page.getByRole("button", { name: "Go to next step" }).click();
   await expect(page.locator("#setup-balance")).toHaveAttribute("open", "");

@@ -290,6 +290,7 @@ This module is the operational system of record for the school Property Custodia
 #### Item, lot, and report classification
 
 - Maintain a reusable item master with item/stock code, article, description, unit of measurement, reorder point, default report section, active status, and notes.
+- User-approved code format: append the current Manila year to a new unsuffixed code (`TXVE10-2026`); preserve explicit year suffixes, internal hyphens and existing codes. A renamed item may restore its own previous reserved code; other items cannot reuse that reservation. Keep authorized edits, optimistic versions, audit and durable retries intact.
 - Maintain one or more acquisition/property lots per item. A lot stores reporting class, property or semi-expendable property number, unit value, supplier/source, acquisition date or approved year label, fund cluster, accountable officer, current office/location, condition/serviceability, remarks, and lifecycle.
 - Preserve codes as text, including leading zeros, embedded hyphens, and year-like identifiers. Duplicate nonblank property/semi-expendable numbers are rejected unless an Admin records and resolves an approved exception.
 - Seed, but do not hard-code, the report types and sections found in the supplied files:
@@ -675,3 +676,5 @@ New ICS numbers are server-assigned on save as `YYYY-MM-NNN` using the current A
 The user-reported print clipping correction uses renderer `ics-v3` for new/edited slips. Preserve reference font sizes and column widths, while adding full line-height and padding to cost headings, metadata and signature rows. Pagination includes those expanded heights. Historical v1/v2 renderers remain unchanged; an explicit saved edit upgrades an existing slip's print layout under its original number.
 
 The subsequent user-approved `ics-v4` renderer prints signature dates as `MM-DD-YYYY`, retaining canonical ISO dates, v3 spacing and all earlier renderers. Existing slips adopt this presentation through an explicit saved edit under the original number.
+
+The 2026-11-16 user-approved ICS v5 extension prints item-code-based ranges using issued quantity and continuing numbers per item: `TXVE10-2026-001-090`, followed by `TXVE10-2026-091`. Number positions follow cumulative immutable issue posting sequence, including issues across lots/offices/funds; returns never reset them. Freeze prefix/range/output in each saved version, preserve all earlier renderers and adopt ranges on explicit legacy edits. ICS acquisition value and semi-expendable issue requirements remain; generated range identifiers replace the manual lot-number prerequisite for ICS only.

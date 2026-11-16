@@ -15,11 +15,56 @@ import { appRouter } from "./routers";
 import type { Context } from "./context";
 import { inventoryProfileTemplate } from "./inventory-profile-templates";
 import { custodialProfileDefinition } from "./custodial-service";
+import { formatCustodialItemCode } from "./custodial-item-code";
+import { createHash } from "node:crypto";
 
 const url = process.env.TEST_DATABASE_URL;
 if (!url || !new URL(url).pathname.endsWith("_test")) throw new Error("TEST_DATABASE_URL must point to an isolated _test database.");
 const db = createDb({ DATABASE_URL: url });
 const workerPath = fileURLToPath(new URL("../../../apps/server/src/custodial-import-worker.ts", import.meta.url).href);
+
+test("item codes gain a Manila year and can restore their owner's reserved aliases", async () => {
+  expect(formatCustodialItemCode(" TXVE-10 ",new Date("2025-12-31T16:00:00Z"))).toBe("TXVE-10-2026");
+  expect(formatCustodialItemCode("001-TXVE10-2024",new Date("2026-01-01Z"))).toBe("001-TXVE10-2024");
+  const rollback = new Error("Rollback code restoration fixture");
+  try { await db.transaction(async tx => {
+    const local=tx as unknown as Database,id=crypto.randomUUID(),prefix=`CODE-${crypto.randomUUID()}`;
+    await tx.insert(user).values({id,name:"Fictional code custodian",email:`${id}@example.test`,emailVerified:true});
+    await tx.insert(userProfiles).values({userId:id,role:"property_custodian",active:true,mustChangePassword:false});
+    const actor={id},op=()=>({operationId:crypto.randomUUID(),correlationId:crypto.randomUUID()});
+    const input={code:prefix,article:"Book",description:"Code fixture",unit:"copy",reorderPoint:null,...op()};
+    const item=await createCustodialItem(local,actor,input);
+    expect(item.code).toBe(formatCustodialItemCode(prefix));
+    expect((await createCustodialItem(local,actor,input)).id).toBe(item.id);
+    const change={itemId:item.id,expectedVersion:0,code:`${prefix}-NEW`,article:item.article,description:item.description,unit:item.unit,reorderPoint:null,defaultSectionId:null,notes:null,active:true,reason:"Rename fixture",...op()};
+    const renamed=await updateCustodialItem(local,actor,change);
+    expect(renamed.code).toBe(formatCustodialItemCode(change.code));
+    const restore={...change,code:item.code,expectedVersion:renamed.version,...op()};
+    const restored=await updateCustodialItem(local,actor,restore);
+    expect(restored.code).toBe(item.code);expect(restored.version).toBe(2);
+    expect((await updateCustodialItem(local,actor,restore)).version).toBe(2);
+    expect(await tx.select().from(custodialItemCodes).where(eq(custodialItemCodes.itemId,item.id))).toHaveLength(2);
+    const other=await createCustodialItem(local,actor,{...input,code:`${prefix}-OTHER`,...op()});
+    await expect(updateCustodialItem(local,actor,{...change,itemId:other.id,code:renamed.code,...op()})).rejects.toMatchObject({code:"CONFLICT"});
+    await expect(createCustodialItem(local,actor,{...input,code:renamed.code,...op()})).rejects.toMatchObject({code:"CONFLICT"});
+    await expect(updateCustodialItem(local,actor,{...change,code:`${prefix}-FAILED`,expectedVersion:2,...op(),correlationId:null as unknown as string})).rejects.toThrow();
+    expect((await tx.select().from(custodialItems).where(eq(custodialItems.id,item.id)))[0]!.code).toBe(item.code);
+    // A legacy unsuffixed alias remains restorable without automatic rewriting.
+    const [legacy]=await tx.insert(custodialItems).values({code:`${prefix}-LEGACY`,normalizedCode:`${prefix}-LEGACY`.toUpperCase(),article:"Legacy",description:"Legacy",unit:"copy"}).returning();
+    await tx.insert(custodialItemCodes).values({itemId:legacy!.id,code:legacy!.code,normalizedCode:legacy!.normalizedCode});
+    const legacyRequest={code:legacy!.code,article:"Legacy",description:"Legacy",unit:"copy",reorderPoint:null,...op()};
+    const legacyIntent={actorId:id,kind:"item.create",payload:{code:legacy!.code,normalizedCode:legacy!.normalizedCode,article:"Legacy",description:"Legacy",unit:"copy",reorderPoint:null}};
+    const canonical=(v:unknown):unknown=>Array.isArray(v)?v.map(canonical):v&&typeof v==="object"?Object.fromEntries(Object.entries(v).sort(([a],[b])=>a.localeCompare(b)).map(([k,value])=>[k,canonical(value)])):v;
+    await tx.insert(custodialMasterReplays).values({operationId:legacyRequest.operationId,actorId:id,kind:"item.create",fingerprint:createHash("sha256").update(JSON.stringify(canonical(legacyIntent))).digest("hex"),targetId:legacy!.id,result:JSON.parse(JSON.stringify(legacy))});
+    expect((await createCustodialItem(local,actor,legacyRequest)).code).toBe(legacy!.code);
+    const legacyRenamed=await updateCustodialItem(local,actor,{...change,itemId:legacy!.id,code:`${prefix}-LEGACY-NEW`,...op()});
+    const legacyRestored=await updateCustodialItem(local,actor,{...change,itemId:legacy!.id,code:legacy!.code,expectedVersion:legacyRenamed.version,...op()});
+    expect(legacyRestored.code).toBe(legacy!.code);
+    await tx.update(userProfiles).set({active:false}).where(eq(userProfiles.userId,id));
+    await expect(updateCustodialItem(local,actor,restore)).rejects.toMatchObject({code:"FORBIDDEN"});
+    throw rollback;
+  }); } catch(error) { if(error!==rollback)throw error; }
+},30000);
 
 test("custodial postings preserve ledger, retries and concurrent balance safety", async () => {
   const suffix = crypto.randomUUID();

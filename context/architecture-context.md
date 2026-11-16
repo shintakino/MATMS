@@ -1,5 +1,9 @@
 # Architecture Context
 
+2026-11-16 item code revision: new codes and newly selected rename targets gain a Manila-year suffix when missing (`TXVE10` → `TXVE10-2026`). Existing item-owned aliases can be restored verbatim; reservations never transfer between items. Preserve pre-format mutation intent fingerprints so retries across releases remain compatible. No existing records are bulk-renamed.
+
+ICS v5 freezes item-code-based issue ranges. Derive start/end with a windowed sum over immutable issue posting sequence for each item, under the existing exclusive source lock (posting operations take the shared counterpart before sequence allocation). This avoids a second mutable counter or ledger write at export time. Later/backdated issues append; returns do not reuse numbers. Earlier v1–v4 snapshots and renderers remain available. This does not add physical per-copy accession/return identity tracking.
+
 ICS print spacing correction introduced `ics-v3`, with padded minimum heights for wrapped headings and signature labels. Preserve v1/v2 renderers unchanged for historical regeneration. This presentation revision requires no schema migration or stock changes.
 
 The subsequent date presentation revision pins new/edited slips to `ics-v4`: format canonical ISO signature dates as `MM-DD-YYYY` at render time, retaining v3 spacing and all earlier renderers. `pnpm deploy:latest` dispatches the existing checked workflow for remote `main`; ordinary main pushes remain automatic.

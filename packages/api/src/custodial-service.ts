@@ -10,6 +10,7 @@ import { z } from "zod";
 import { projectCustodialLedger } from "./custodial-ledger";
 import { calculatePhysicalCountVariance } from "./physical-count-calculation";
 import { inspectIsolatedInventoryWorkbook } from "./custodial-import-isolation";
+import { formatCustodialItemCode } from "./custodial-item-code";
 
 export class CustodialError extends Error {
   constructor(public readonly code: "FORBIDDEN" | "CONFLICT" | "VALIDATION" | "INSUFFICIENT_STOCK" | "NOT_FOUND" | "RATE_LIMITED", message: string) { super(message); }
@@ -1169,6 +1170,9 @@ export async function createCustodialItem(db: Database, actor: Actor, input: { c
       if (!current?.active) throw new CustodialError("NOT_FOUND", "Item is unavailable.");
       return savedResult<typeof current>(replay.prior.result);
     }
+    values.code = formatCustodialItemCode(values.code);
+    values.normalizedCode = values.code.toUpperCase();
+    if (values.code.length > 1000) throw new CustodialError("VALIDATION", "The item code including its year must be at most 1000 characters.");
     if (values.defaultSectionId) {
       const [section] = await tx.select().from(custodialSections).where(eq(custodialSections.id, values.defaultSectionId));
       if (!section?.active) throw new CustodialError("VALIDATION", "The selected section is unavailable.");
@@ -1194,6 +1198,18 @@ export async function updateCustodialItem(db: Database, actor: Actor, input: { i
     await authorize(tx, actor);
     await lockCustodialSources(tx);
     const replay = await beginMaster(tx, actor, input.operationId, "item.update", values);
+    const [ownedCode] = await tx.select({ itemId: custodialItemCodes.itemId }).from(custodialItemCodes).where(eq(custodialItemCodes.normalizedCode, values.normalizedCode));
+    if (ownedCode && ownedCode.itemId !== input.itemId) throw new CustodialError("CONFLICT", "This item code belongs to another item.");
+    // Old requests keep their original fingerprints; the saved code is formatted
+    // only after replay lookup. An owned legacy alias is restored verbatim.
+    if (!ownedCode && !replay.prior) {
+      const [currentCode] = await tx.select({ normalizedCode: custodialItems.normalizedCode }).from(custodialItems).where(eq(custodialItems.id, input.itemId));
+      if (currentCode?.normalizedCode !== values.normalizedCode) {
+        values.code = formatCustodialItemCode(values.code);
+        values.normalizedCode = values.code.toUpperCase();
+      }
+    }
+    if (values.code.length > 1000) throw new CustodialError("VALIDATION", "The item code including its year must be at most 1000 characters.");
     await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${values.normalizedCode}, 4))`);
     const [item] = await tx.select().from(custodialItems).where(eq(custodialItems.id, input.itemId)).for("update");
     if (!item) throw new CustodialError("NOT_FOUND", "Item is unavailable.");
@@ -1216,8 +1232,8 @@ export async function updateCustodialItem(db: Database, actor: Actor, input: { i
     }
     if (values.normalizedCode !== item.normalizedCode) {
       const [reserved] = await tx.select({ itemId: custodialItemCodes.itemId }).from(custodialItemCodes).where(eq(custodialItemCodes.normalizedCode, values.normalizedCode));
-      if (reserved) throw new CustodialError("CONFLICT", "This item code is already reserved.");
-      await tx.insert(custodialItemCodes).values({ normalizedCode: values.normalizedCode, itemId: item.id, code: values.code });
+      if (reserved && reserved.itemId !== item.id) throw new CustodialError("CONFLICT", "This item code belongs to another item.");
+      if (!reserved) await tx.insert(custodialItemCodes).values({ normalizedCode: values.normalizedCode, itemId: item.id, code: values.code });
     }
     const [updated] = await tx.update(custodialItems).set({ code: values.code, normalizedCode: values.normalizedCode, article: values.article, description: values.description, unit: values.unit, reorderPoint: values.reorderPoint, defaultSectionId: values.defaultSectionId, notes: values.notes, active: values.active, version: item.version + 1, updatedAt: new Date() }).where(eq(custodialItems.id, item.id)).returning();
     if (!updated) throw new CustodialError("CONFLICT", "Item could not be updated.");

@@ -4,7 +4,8 @@ import * as XLSX from "xlsx";
 import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
-import { renderIcs, type IcsPayload } from "./ics-workbook";
+import { renderIcs, icsPayload, type IcsPayload } from "./ics-workbook";
+import { icsItemNumber } from "./ics-item-number";
 import { wrapIcsText } from "./ics-workbook-v2";
 import template from "./ics-template-v2";
 const reference=fileURLToPath(new URL("../../../ICS-2025-11-001.xlsx",import.meta.url).href);
@@ -12,6 +13,23 @@ function fixture(count:number,description="Fictional fan HFAN-20HYP"):IcsPayload
   const lines=Array.from({length:count},(_,i)=>({transactionId:crypto.randomUUID(),quantity:1,unit:"unit",description:`${description} ${i+1}`,itemNumber:`TEST-${i+1}`,unitCost:"1500.00",totalCost:"1500.00",usefulLife:"5 years"}));
   return {version:"ics-v2",sourceHash:template.sourceHash,fundCluster:"TEST",details:{number:"2026-11-001",entity:"Fictional School",fromName:"Fictional Issuer",fromOffice:"Property Office",toName:"Fictional Recipient",toOffice:"Test Classroom",fromDate:"2026-11-09",toDate:"2026-11-09",lines:lines.map(({transactionId,usefulLife})=>({transactionId,usefulLife}))},lines};
 }
+test("ICS v5 prints continuous quantity ranges and validates their frozen identities",async()=>{
+  expect(icsItemNumber("TXVE10-2026",90,1n,90n)).toBe("TXVE10-2026-001-090");
+  expect(icsItemNumber("TXVE-10-2026",1,1n,1n)).toBe("TXVE-10-2026-001");
+  expect(icsItemNumber("TXVE10-2026",1,91n,91n)).toBe("TXVE10-2026-091");
+  expect(icsItemNumber("TXVE10-2026",2,999n,1000n)).toBe("TXVE10-2026-999-1000");
+  const data=fixture(2);
+  const lines=data.lines.map((line,i)=>({...line,quantity:i===0?90:1,totalCost:i===0?"135000.00":"1500.00",itemCode:"TXVE10-2026",sequenceStart:i===0?"1":"91",sequenceEnd:i===0?"90":"91",itemNumber:i===0?"TXVE10-2026-001-090":"TXVE10-2026-091"}));
+  const current=icsPayload.parse({...data,version:"ics-v5",lines});
+  const book=new ExcelJS.Workbook();await book.xlsx.load(await renderIcs(current) as unknown as ExcelJS.Buffer);
+  const sheet=book.worksheets[0]!;
+  expect(sheet.getCell("G12").value).toBe("TXVE10-2026-001-090");
+  expect(sheet.getCell("G15").value).toBe("TXVE10-2026-091");
+  expect(sheet.getCell("D12").value).toBe(135000);
+  expect(sheet.getCell(`A${sheet.rowCount-1}`).value).toBe("11-09-2026");
+  expect(sheet.getRow(10).height!+sheet.getRow(11).height!).toBeGreaterThanOrEqual(36);
+  expect(()=>icsPayload.parse({...current,lines:[{...lines[0],sequenceEnd:"89"}]})).toThrow();
+});
 test.skipIf(!existsSync(reference))("ICS v2 matches the private reference fonts, sizes, column widths and fixed merges",async()=>{
   expect(createHash("sha256").update(new Uint8Array(readFileSync(reference))).digest("hex")).toBe(template.sourceHash);
   const source=new ExcelJS.Workbook();await source.xlsx.readFile(reference);

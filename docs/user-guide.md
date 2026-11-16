@@ -129,7 +129,7 @@ The module includes **Help with inventory terms** for explanations of items, acq
 4. Expand **Create office balance**. Select the applicable lot, or **Stock card without lot** when appropriate, and enter the fund and office. **Create zero balance** creates a balance of zero; it does not assume stock is on hand. Use matching fund and office details for the selected lot.
 5. To establish verified stock, expand **Record stock operation**, select **Verified opening balance** and the balance, enter the verified quantity, date, reference and reason, then select **Review operation** and confirm. For the example, a verified opening of `20` gives a balance of 20 reams. A verified zero opening may also be recorded.
 
-Administrators and Property Custodians can review changes under **Edit item** or **Edit lot**, enter a reason and confirm them. Item codes remain reserved after replacement, and the unit cannot be changed after a lot or balance exists. Missing property numbers, condition and valuation should be reviewed before a count is finalized.
+Administrators and Property Custodians can review changes under **Edit item** or **Edit lot**, enter a reason and confirm them. New item code prefixes gain the current Manila year automatically (`TXVE10` → `TXVE10-2026`); an explicit year suffix and internal hyphens are retained. Previous codes remain reserved for their original item, and that item can restore them through Edit item. Other items cannot take those codes. The unit cannot change after a lot or balance exists. Missing property numbers, condition and valuation should be reviewed before a count is finalized.
 
 ### Record stock movements and review a Stock Card
 
@@ -245,7 +245,7 @@ Production use still requires the school's approved policies, security review, b
 
 ## Appendix 59 — Inventory Custodian Slip (ICS)
 
-Admin and Property Custodian accounts open **Property Inventory → Reports → Appendix 59**. First create the equipment item and a semi-expendable acquisition lot with its inventory item number and unit value. Create the office balance, record verified opening stock and post an Issue to the receiving office/recipient.
+Admin and Property Custodian accounts open **Property Inventory → Reports → Appendix 59**. First create the item and a semi-expendable acquisition lot with its unit value. Create the office balance, record verified opening stock and post an Issue to the receiving office/recipient. ICS inventory item numbers are generated from the stock code and its continuing issued-quantity range.
 
 In the ICS section, select the recorded issues for the same fund and recipient. The server assigns a number such as `2026-11-001` when the slip is saved, using the current Manila year/month and the next monthly sequence. Enter the entity, Received from/by printed names, positions/offices, dates and estimated useful life for each selected issue. Select **Review ICS**, check quantities and costs, then **Confirm and export Excel (.xlsx)**. Quantities and costs come from the server; generation does not issue stock again or record a signed acknowledgement.
 
@@ -258,3 +258,7 @@ The latest layout follows `ICS-2025-11-001.xlsx`, with the reference fonts/sizes
 The print-spacing correction expands the cost headings and signature rows so their labels are fully visible. For a slip saved before this correction, use **Edit**, enter a reason such as “Update print spacing”, review and save/export the new version. This keeps the same ICS number and preserves the old version. Select long bond/Folio (8.5 × 13 inches) in the printer's paper settings and use the workbook's one-page-wide scaling; avoid fitting the whole workbook onto one page tall.
 
 New and edited slips print both signature dates as **MM-DD-YYYY**, for example **11-12-2026**. Dates remain stored as ISO dates. To update an older slip, save an edit with a reason such as “Update printed date format”; the ICS number and earlier copies are retained.
+
+For an item coded `TXVE10-2026`, the first issue of 90 copies prints **TXVE10-2026-001-090**; the next issue of one copy prints **TXVE10-2026-091**. An item's first single-copy issue prints **…-001**. Numbers continue across lots, funds and receiving offices in posting order, even when an issue is entered with an earlier transaction date. Returns do not reset the sequence. Generating another slip from the same recorded issue keeps its range. This is an issue-number sequence; individual returned copies are not assigned accession identities by this feature.
+
+Existing saved copies remain unchanged. To adopt the range format on an older slip, save a reviewed edit with a reason. Once a range is saved, later metadata edits keep its printed code/range and frozen quantities/costs. A manual lot property number remains separate acquisition information and can still be required for other inventory forms.

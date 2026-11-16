@@ -7,6 +7,8 @@ import { custodialIcsExports as exports, custodialIcsDocuments as documents, cus
 import { MatmsError } from "./errors";
 import { icsDraftDetails, icsCost, icsPayload, renderIcs, type IcsPayload, type IcsDraftDetails } from "./ics-workbook";
 import template from "./ics-template-v2";
+import { formatCustodialItemCode } from "./custodial-item-code";
+import { icsItemNumber } from "./ics-item-number";
 
 let activeRenders = 0;
 async function renderLimited(payload: unknown) {
@@ -26,7 +28,7 @@ async function authorize(tx: AuditTransaction, actorId: string) {
   if (!profile?.active || profile.mustChangePassword || !["admin", "property_custodian"].includes(profile.role)) throw new MatmsError("FORBIDDEN", "This action is unavailable.");
 }
 function issueQuery(tx: AuditTransaction) {
-  return tx.select({ transactionId: transactions.id, quantity: transactions.delta, date: operations.transactionDate, reference: operations.reference, recipient: operations.counterparty, fundCluster: balances.fundCluster, office: balances.office, code: items.code, article: items.article, description: items.description, unit: items.unit, propertyNumber: lots.propertyNumber, unitCost: lots.unitValue })
+  return tx.select({ transactionId: transactions.id, itemId: items.id, itemCreatedAt: items.createdAt, quantity: transactions.delta, date: operations.transactionDate, reference: operations.reference, recipient: operations.counterparty, fundCluster: balances.fundCluster, office: balances.office, code: items.code, article: items.article, description: items.description, unit: items.unit, propertyNumber: lots.propertyNumber, unitCost: lots.unitValue })
     .from(transactions).innerJoin(operations, eq(transactions.operationId, operations.id)).innerJoin(balances, eq(transactions.balanceId, balances.id)).innerJoin(items, eq(balances.itemId, items.id)).innerJoin(lots, eq(balances.lotId, lots.id));
 }
 const eligible = and(eq(operations.operationType, "issue"), eq(lots.reportingClass, "semi_expendable"));
@@ -81,16 +83,34 @@ async function snapshot(tx:AuditTransaction,raw:IcsDraftDetails,number:string,ba
   if(rows.length!==details.lines.length)throw new MatmsError("VALIDATION_ERROR","A selected issue is unavailable.");
   const fundCluster=rows[0]!.fundCluster,recipient=rows[0]!.recipient;
   if(rows.some(row=>row.fundCluster!==fundCluster||row.recipient!==recipient))throw new MatmsError("VALIDATION_ERROR","Choose issues for the same fund and receiving office or recipient.");
+  const itemIds=[...new Set(rows.map(row=>row.itemId))];
+  // Filter selected transaction IDs after the window: earlier issues must count
+  // even when omitted from this slip or issued to another recipient/fund.
+  const numbered=await tx.execute<{id:string;rangeEnd:string}>(sql`
+    SELECT id, range_end::text AS "rangeEnd" FROM (
+      SELECT ${transactions.id} AS id,
+        sum(-${transactions.delta}::bigint) OVER (PARTITION BY ${balances.itemId} ORDER BY ${operations.sequence}, ${transactions.id} ROWS UNBOUNDED PRECEDING) AS range_end
+      FROM ${transactions}
+      JOIN ${operations} ON ${operations.id}=${transactions.operationId}
+      JOIN ${balances} ON ${balances.id}=${transactions.balanceId}
+      WHERE ${operations.operationType}='issue' AND ${transactions.delta}<0 AND ${inArray(balances.itemId,itemIds)}
+    ) numbered_issues WHERE ${inArray(sql`id`,details.lines.map(line=>line.transactionId))}
+  `);
+  const ends=new Map(numbered.rows.map(row=>[row.id,BigInt(row.rangeEnd)]));
   const lines=details.lines.map(selection=>{
     const frozen=base?.lines.find(line=>line.transactionId===selection.transactionId);
-    if(frozen)return {...frozen,usefulLife:selection.usefulLife,description:selection.description??frozen.description};
+    if(frozen&&base?.version==="ics-v5")return {...frozen,usefulLife:selection.usefulLife,description:selection.description??frozen.description};
     const row=rows.find(row=>row.transactionId===selection.transactionId)!;
-    if(row.unitCost===null||!row.propertyNumber||row.quantity>=0)throw new MatmsError("VALIDATION_ERROR",`Complete the acquisition lot value and inventory item number for ${row.code}.`);
+    if((frozen?.unitCost??row.unitCost)===null||row.quantity>=0)throw new MatmsError("VALIDATION_ERROR",`Complete the acquisition lot value for ${row.code}.`);
+    const quantity=frozen?.quantity??-row.quantity,unitCost=frozen?.unitCost??row.unitCost!;
+    const end=ends.get(row.transactionId);
+    if(end===undefined)throw new MatmsError("CONFLICT","The issue number range is unavailable. Review the slip again.");
+    const start=end-BigInt(quantity)+1n,itemCode=formatCustodialItemCode(row.code,row.itemCreatedAt);
     let totalCost:string;
-    try {totalCost=icsCost(row.unitCost,-row.quantity);} catch {throw new MatmsError("VALIDATION_ERROR","An issued value exceeds supported Excel precision.");}
-    return {transactionId:row.transactionId,quantity:-row.quantity,unit:row.unit,description:selection.description??`${row.article}\n${row.description}`,itemNumber:row.propertyNumber,unitCost:row.unitCost,totalCost,usefulLife:selection.usefulLife};
+    try {totalCost=icsCost(unitCost,quantity);} catch {throw new MatmsError("VALIDATION_ERROR","An issued value exceeds supported Excel precision.");}
+    return {transactionId:row.transactionId,quantity,unit:frozen?.unit??row.unit,description:selection.description??frozen?.description??`${row.article}\n${row.description}`,itemNumber:icsItemNumber(itemCode,quantity,start,end),itemCode,sequenceStart:start.toString(),sequenceEnd:end.toString(),unitCost,totalCost:frozen?.totalCost??totalCost,usefulLife:selection.usefulLife};
   });
-  return icsPayload.parse({version:"ics-v4",sourceHash:template.sourceHash,details:{...details,number},fundCluster,lines});
+  return icsPayload.parse({version:"ics-v5",sourceHash:template.sourceHash,details:{...details,number},fundCluster,lines});
 }
 export type IcsEditScope={id:string;expectedVersion:number};
 export async function previewIcs(db:Database,actorId:string,details:IcsDraftDetails,correlationId:string,edit?:IcsEditScope) {

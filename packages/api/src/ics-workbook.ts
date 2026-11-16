@@ -4,14 +4,22 @@ import template from "./ics-template-v2";
 import { renderIcsV2 } from "./ics-workbook-v2";
 import { renderIcsV3 } from "./ics-workbook-v3";
 import { renderIcsV4 } from "./ics-workbook-v4";
+import { icsItemNumber } from "./ics-item-number";
 export { icsDetails, icsCost } from "./ics-workbook-v1";
 export const icsDraftDetails = icsDetails.omit({number:true}).extend({
   lines:z.array(z.object({transactionId:z.uuid(),usefulLife:z.string().trim().min(1).max(240),description:z.string().trim().min(1).max(10000).optional()})).min(1).max(2000),
 }).strip();
 const v2Payload = legacyPayload.extend({version:z.literal("ics-v2"),sourceHash:z.literal(template.sourceHash)});
 const v3Payload = legacyPayload.extend({version:z.literal("ics-v3"),sourceHash:z.literal(template.sourceHash)});
-export const icsCurrentPayload = legacyPayload.extend({version:z.literal("ics-v4"),sourceHash:z.literal(template.sourceHash)});
-export const icsPayload = z.discriminatedUnion("version",[legacyPayload,v2Payload,v3Payload,icsCurrentPayload]);
+const v4Payload = legacyPayload.extend({version:z.literal("ics-v4"),sourceHash:z.literal(template.sourceHash)});
+const sequence = z.string().regex(/^[1-9]\d*$/).max(30);
+const numberedLine = legacyPayload.shape.lines.element.extend({itemNumber:z.string().min(1).max(1100),itemCode:z.string().min(1).max(1005),sequenceStart:sequence,sequenceEnd:sequence}).superRefine((line,ctx)=>{
+  try {
+    if (line.itemNumber !== icsItemNumber(line.itemCode,line.quantity,BigInt(line.sequenceStart),BigInt(line.sequenceEnd))) throw new Error();
+  } catch { ctx.addIssue({code:"custom",message:"ICS item number must match its frozen code, sequence and quantity."}); }
+});
+export const icsCurrentPayload = legacyPayload.extend({version:z.literal("ics-v5"),sourceHash:z.literal(template.sourceHash),lines:z.array(numberedLine).min(1).max(2000)});
+export const icsPayload = z.discriminatedUnion("version",[legacyPayload,v2Payload,v3Payload,v4Payload,icsCurrentPayload]);
 export type IcsPayload = z.infer<typeof icsPayload>;
 export type IcsDraftDetails = z.infer<typeof icsDraftDetails>;
 export async function renderIcs(input: unknown) {
