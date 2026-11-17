@@ -9,7 +9,7 @@ const edit=z.object({id:z.uuid(),expectedVersion:z.number().int().positive()});
 const generation={details:icsDraftDetails,operationId:z.uuid(),expectedDataHash:z.string().regex(/^[0-9a-f]{64}$/)};
 const reason=z.string().trim().min(1).max(1000);
 export const inventoryIcsRouter={
-  issues:protectedProcedure.input(page).handler(({context,input})=>safely(()=>listIcsIssues(context.db,context.session.user.id,input.page))),
+  issues:protectedProcedure.input(page.extend({personId:z.uuid().optional(),unitId:z.uuid().optional()})).handler(({context,input})=>safely(()=>listIcsIssues(context.db,context.session.user.id,input.page,input))),
   nextNumber:protectedProcedure.handler(({context})=>safely(()=>suggestIcsNumber(context.db,context.session.user.id))),
   preview:protectedProcedure.input(icsDraftDetails).handler(({context,input})=>safely(()=>previewIcs(context.db,context.session.user.id,input,context.correlationId))),
   previewEdit:protectedProcedure.input(edit.extend({details:icsDraftDetails})).handler(({context,input})=>safely(()=>previewIcs(context.db,context.session.user.id,input.details,context.correlationId,input))),

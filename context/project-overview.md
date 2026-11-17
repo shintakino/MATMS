@@ -73,3 +73,5 @@ Metadata/links remain the archive storage model. Controlled inventory uploads an
 The PRD's six-week limited-pilot schedule is indicative. Preserve authorization, transaction history, count integrity, official-form fidelity and backups. Track implemented versus planned scope and school decisions in [progress-tracker.md](progress-tracker.md).
 
 Appendix 59 ICS generation is a user-authorized extension under spec 12, using selected posted semi-expendable issues and immutable report snapshots. See spec 12 for its scope and verification gates.
+
+User-authorized spec 15 extends Property Inventory with individual ICT equipment custody, permanent property/serial identifiers, teacher accountability and device ICS. Batch inventory remains supported; PAR generation is outside this extension.

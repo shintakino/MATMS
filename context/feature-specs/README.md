@@ -4,10 +4,13 @@ These units derive from [MATMS-PRD.md](../../MATMS-PRD.md) v1.3. Read `AGENTS.md
 
 ## Coverage and status
 
-**Active extension:** [14 — Leave and resource bookings](14-leave-and-resource-bookings.md), PRD FR-12. On-behalf directory/public-invitation revision deployed and verified (`586c9df`). Workflow choices are confirmed; quotas, enrollment and publication require Admin configuration. Existing official-form acceptance gaps remain open.
+**Active implementation:** [15 — Individual equipment custody](15-individual-equipment-custody.md), user-authorized FR-11 extension; local verification in progress.
+
+**Deployed extension:** [14 — Leave and resource bookings](14-leave-and-resource-bookings.md), PRD FR-12. On-behalf directory/public-invitation revision deployed and verified (`586c9df`). Workflow choices are confirmed; quotas, enrollment and publication require Admin configuration. Existing official-form acceptance gaps remain open.
 
 | Spec | Scope | PRD requirements | Acceptance coverage | State |
 | --- | --- | --- | --- | --- |
+| [15 — Individual equipment custody](15-individual-equipment-custody.md) | Permanent device identity, directory-person custody, physical return/reassignment, lifecycle/history and device ICS | FR-11 extension, specs 10–13 | Spec 15 verification | Implemented; release checks in progress |
 | [14 — Leave and bookings](14-leave-and-resource-bookings.md) | SHS/JHS/personnel directory, delegated leave, Admin resources, expiring public links, request editing/reapproval, separate calendars | FR-12, §5 | AC-37–AC-41 | Deployed and verified (`586c9df`) |
 | [00 — Foundation](00-project-foundation.md) | Existing workspace, service/db/audit foundation | §§3–4, 8–9, 12 | Foundation for all | Baseline implemented |
 | [01 — Design system](01-design-system.md) | Shared UI/shell; new inventory navigation/forms | §10, §11 accessibility | AC-21, AC-22 | Baseline implemented; extension in progress |
@@ -37,3 +40,5 @@ Source-faithful means matching the supplied layout/fields, with PRD-required pag
 Appendix 59 ICS generation is a user-authorized extension under spec 12, using selected posted semi-expendable issues and immutable report snapshots. See spec 12 for its scope and verification gates.
 
 The 2026-11-12 ICS revision uses the supplied `ICS-2025-11-001.xlsx` layout, long bond paper, automatic Manila-month numbering, editable versioned slips and Delete/Restore controls. See spec 12 and the user guide for workflow and release evidence.
+
+Spec 15 preserves batch quantities/ranges, legacy official snapshots and the existing scheduling directory. PAR generation remains outside its scope.

@@ -1,0 +1,65 @@
+{
+  "feature": "individual ICT equipment custody",
+  "spec": "context/feature-specs/15-individual-equipment-custody.md",
+  "migration": "20261116235141_futuristic_gabe_jones",
+  "one_unit_per_acquisition_lot": true,
+  "permanent_property_and_brand_serial_identity": true,
+  "existing_single_issue_adoption_without_reposting": true,
+  "directory_people_without_login_accounts": true,
+  "manager_only_reads_writes_and_replays": true,
+  "atomic_stock_custody_audit_and_replay": true,
+  "witnessed_reassignment_and_physical_returns": true,
+  "repair_loss_recovery_and_external_disposal_reference": true,
+  "ppe_par_reference_only_no_par_export": true,
+  "as_of_owned_counts_include_issued_and_lost_units": true,
+  "generic_posting_and_booking_pool_guards": true,
+  "concurrent_issue_return_and_registration_posting_race_verified": true,
+  "device_ics_payload": "ics-v6",
+  "batch_ics_payload_retained": "ics-v5",
+  "historical_ics_renderers_unchanged": [
+    "ics-v1",
+    "ics-v2",
+    "ics-v3",
+    "ics-v4",
+    "ics-v5"
+  ],
+  "duplicate_physical_device_on_one_slip_denied": true,
+  "device_identity_serial_and_accessories_in_export_verified": true,
+  "historical_slip_and_final_count_snapshots_preserved": true,
+  "fresh_and_populated_migration_checks_passed": true,
+  "local_application_tests_passed": 99,
+  "local_targeted_followup_tests_passed": 8,
+  "local_browser_workflows_passed": [
+    "two devices issued to one teacher and exported on one ICS; return/reissue, immutable serial/property identity, Staff denial, mobile and accessibility",
+    "existing batch ICS ranges, versioned CRUD, delete/restore, mobile and accessibility"
+  ],
+  "release_invariant_tests_passed": 6,
+  "renderer": "LibreOffice 26.2.6.3",
+  "rendered_examples": [
+    {
+      "name": "v6-device",
+      "pages": 1,
+      "size": "612 x 936 pts",
+      "unique_description_tokens": 0,
+      "serials_preserved": true
+    },
+    {
+      "name": "v6-multiple",
+      "pages": 1,
+      "size": "612 x 936 pts",
+      "unique_description_tokens": 0,
+      "serials_preserved": true
+    },
+    {
+      "name": "v6-long",
+      "pages": 14,
+      "size": "612 x 936 pts",
+      "unique_description_tokens": 180,
+      "serials_preserved": true
+    }
+  ],
+  "single_and_final_continuation_pages_visually_inspected": true,
+  "school_native_excel_and_physical_printer_acceptance": "Not performed for this extension",
+  "production_status": "pending checked release",
+  "production_test_records_created": false
+}

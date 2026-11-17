@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { AppRouterClient } from "@matms/api/routers/index";
 import { Button } from "@matms/ui/components/button";
@@ -20,6 +20,9 @@ type Field = typeof fields[number][0];
 const emptyFields = ():Record<Field,string> => ({entity:"",fromName:"",fromOffice:"",fromDate:"",toName:"",toOffice:"",toDate:""});
 
 export function InventoryIcs() {
+  const [issueFilter,setIssueFilter]=useState<{personId?:string;unitId?:string}>({});
+  useEffect(()=>{const params=new URLSearchParams(window.location.search);setIssueFilter({personId:params.get("recipient")??undefined,unitId:params.get("equipment")??undefined});},[]);
+
   const cache=useQueryClient();
   const editor=useRef<HTMLFormElement>(null);
   const [page,setPage]=useState(1),[historyPage,setHistoryPage]=useState(1),[deleted,setDeleted]=useState(false);
@@ -28,7 +31,7 @@ export function InventoryIcs() {
   const [editing,setEditing]=useState<Saved|null>(null),[viewing,setViewing]=useState<Saved|null>(null),[reason,setReason]=useState("");
   const [intent,setIntent]=useState<{details:Details;operationId:string;expectedDataHash:string}|null>(null);
   const [lifecycle,setLifecycle]=useState<{row:HistoryRow;deleted:boolean;reason:string;operationId:string}|null>(null);
-  const issues=useQuery({queryKey:["ics-issues",page],queryFn:()=>client.inventoryIcs.issues({page})});
+  const issues=useQuery({queryKey:["ics-issues",page,issueFilter],queryFn:()=>client.inventoryIcs.issues({page,...issueFilter})});
   const number=useQuery({queryKey:["ics-next-number"],queryFn:()=>client.inventoryIcs.nextNumber()});
   const history=useQuery({queryKey:["ics-history",historyPage,deleted],queryFn:()=>client.inventoryIcs.list({page:historyPage,deleted})});
   const invalidate=()=>{setPreview(null);setIntent(null);setMessage("");};
@@ -56,7 +59,7 @@ export function InventoryIcs() {
   return <section className="space-y-4 rounded-lg border bg-card p-5" aria-labelledby="ics-title">
     <h2 id="ics-title" className="text-xl font-semibold">Appendix 59 — Inventory Custodian Slip</h2>
     <p className="text-sm text-muted-foreground">Choose recorded semi-expendable issues for one fund and receiving office or recipient. Review the slip and export a workbook prepared for long bond paper (8.5 × 13 inches). Long descriptions continue at the same font size.</p>
-    <p className="text-sm">To prepare equipment for an ICS, open its inventory item, add a semi-expendable acquisition lot with unit value, then record verified stock and an issue to the recipient. Inventory item numbers use the stock code and a continuing range for the quantity issued.</p>
+    <p className="text-sm">To prepare equipment for an ICS, open its inventory item, add a semi-expendable acquisition lot with unit value, then record verified stock and an issue to the recipient. Batch item numbers use the stock code and a continuing range. <a className="underline" href="/property-inventory/equipment">Register individual equipment</a> to retain each device’s permanent number and serial across handovers.</p>
     {error?<p role="alert" className="text-destructive">{error}</p>:null}
     <p role="status" className="text-sm">{message}</p>
     <form ref={editor} className="scroll-mt-24 space-y-4" onSubmit={event=>{event.preventDefault();void run(review);}}>
@@ -65,10 +68,11 @@ export function InventoryIcs() {
       <p id="ics-number-help" className="text-sm text-muted-foreground">{editing?"The existing ICS number is retained when you save changes.":"Assigned automatically when saved using the current year and month in Manila. The displayed next number is provisional."}</p>
       {number.isError&&!editing?<ErrorState description="The next ICS number could not be loaded." onRetry={()=>void number.refetch()}/>:null}
       <div className="grid gap-3 sm:grid-cols-2">{fields.map(([name,label])=><label key={name} className="space-y-1 text-sm"><span>{label}</span><Input name={name} value={values[name]} onChange={event=>{invalidate();setValues(current=>({...current,[name]:event.target.value}));}} type={name.endsWith("Date")?"date":"text"} maxLength={240} required /></label>)}</div>
+      {issueFilter.personId||issueFilter.unitId?<p className="text-sm">Showing recorded issues for the selected {issueFilter.personId?"teacher / personnel":"device"}. <Button type="button" variant="outline" size="sm" onClick={()=>{setIssueFilter({});setPage(1);}}>Show all issues</Button></p>:null}
       {issues.isLoading?<LoadingState label="Loading recorded issues"/>:null}
       {issues.isError?<ErrorState description="Recorded issues could not be loaded." onRetry={()=>void issues.refetch()}/>:null}
       {issues.data?.rows.length===0?<p>No eligible recorded issues on this page.</p>:null}
-      <ul className="space-y-2">{issues.data?.rows.map(row=><li key={row.transactionId} className="rounded border p-3"><label className="flex items-start gap-3"><input type="checkbox" checked={!!selected[row.transactionId]} onChange={event=>{invalidate();setSelected(current=>{const next={...current};if(event.target.checked)next[row.transactionId]={label:`${row.article} · ${row.code} · ${row.date} · ${row.reference}`,usefulLife:"",description:`${row.article}\n${row.description}`};else delete next[row.transactionId];return next;});}}/><span className="min-w-0 break-words">{row.article} · {row.code} · {row.quantity} {row.unit}<span className="block text-sm text-muted-foreground">{row.date} · {row.reference} · {row.fundCluster} · {row.recipient}</span></span></label>{row.unitCost===null?<p className="text-sm">Complete the acquisition lot value before generating.</p>:null}</li>)}</ul>
+      <ul className="space-y-2">{issues.data?.rows.map(row=><li key={row.transactionId} className="rounded border p-3"><label className="flex items-start gap-3"><input type="checkbox" checked={!!selected[row.transactionId]} onChange={event=>{invalidate();setSelected(current=>{const next={...current};if(event.target.checked)next[row.transactionId]={label:`${row.article} · ${row.code} · ${row.date} · ${row.reference}`,usefulLife:"",description:`${row.article}\n${row.description}${row.device?.accessories?`\nAccessories: ${row.device.accessories}`:""}`};else delete next[row.transactionId];return next;});}}/><span className="min-w-0 break-words">{row.article} · {row.code} · {row.quantity} {row.unit}<span className="block text-sm text-muted-foreground">{row.date} · {row.reference} · {row.fundCluster} · {row.device?.personName??row.recipient}{row.device?` · ${row.device.permanentNumber} · Serial: ${row.device.serialNumber??"unavailable"}`:""}</span></span></label>{row.unitCost===null?<p className="text-sm">Complete the acquisition lot value before generating.</p>:null}</li>)}</ul>
       <nav aria-label="ICS issue pages" className="flex items-center gap-3"><Button type="button" variant="outline" disabled={page===1||issues.isFetching} onClick={()=>setPage(p=>p-1)}>Previous</Button><span>Page {page}</span><Button type="button" variant="outline" disabled={!issues.data?.hasNext||issues.isFetching} onClick={()=>setPage(p=>p+1)}>Next</Button></nav>
       <p className="text-sm">{Object.keys(selected).length} issues selected across pages.</p>
       {Object.entries(selected).map(([id,line])=><div key={id} className="space-y-3 rounded border p-3"><p className="break-words text-sm font-medium">{line.label}</p>
@@ -80,7 +84,7 @@ export function InventoryIcs() {
       <div className="flex flex-wrap gap-3"><Button type="submit" disabled={!Object.keys(selected).length}>{pending?"Processing…":"Review ICS"}</Button>{editing?<Button type="button" variant="outline" onClick={reset}>Cancel editing</Button>:null}</div>
       </fieldset>
     </form>
-    {preview&&intent?<div className="space-y-3"><h3 className="font-semibold">{editing?`Review ICS ${editing.number}`:"Review ICS"}</h3><p>{preview.payload.details.entity} · {preview.payload.fundCluster} · Received by {preview.payload.details.toName} ({preview.payload.details.toOffice})</p><p className="text-sm">Quantities and costs are read-only. Changes to a saved slip retain its previous versions.</p><div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr>{["Quantity","Unit","Unit cost","Total cost","Description","Inventory item no.","Estimated useful life"].map(label=><th key={label} className="p-2 text-left">{label}</th>)}</tr></thead><tbody>{preview.payload.lines.map(line=><tr key={line.transactionId}>{[line.quantity,line.unit,line.unitCost,line.totalCost,line.description,line.itemNumber,line.usefulLife].map((value,index)=><td key={index} className="whitespace-pre-wrap p-2">{value}</td>)}</tr>)}</tbody></table></div><Button disabled={pending} onClick={()=>void run(async()=>{
+    {preview&&intent?<div className="space-y-3"><h3 className="font-semibold">{editing?`Review ICS ${editing.number}`:"Review ICS"}</h3><p>{preview.payload.details.entity} · {preview.payload.fundCluster} · Received by {preview.payload.details.toName} ({preview.payload.details.toOffice})</p><p className="text-sm">Quantities and costs are read-only. Changes to a saved slip retain its previous versions.</p><div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr>{["Quantity","Unit","Unit cost","Total cost","Description","Inventory item no.","Estimated useful life"].map(label=><th key={label} className="p-2 text-left">{label}</th>)}</tr></thead><tbody>{preview.payload.lines.map(line=><tr key={line.transactionId}>{[line.quantity,line.unit,line.unitCost,line.totalCost,("device" in line?`${line.description}\n${line.device.brand} ${line.device.model}\nSerial: ${line.device.serialNumber??`Unavailable (${line.device.missingSerialReason})`}`:line.description),line.itemNumber,line.usefulLife].map((value,index)=><td key={index} className="whitespace-pre-wrap p-2">{value}</td>)}</tr>)}</tbody></table></div><Button disabled={pending} onClick={()=>void run(async()=>{
       const result=editing?await client.inventoryIcs.update({...intent,id:editing.id,expectedVersion:editing.version,reason}):await client.inventoryIcs.generate(intent);
       reset();setHistoryPage(1);setDeleted(false);await refresh();setMessage(`ICS ${result.number} saved.`);await download(result.id);
     })}>{editing?"Save changes and export Excel (.xlsx)":"Confirm and export Excel (.xlsx)"}</Button></div>:null}

@@ -19,10 +19,18 @@ const numberedLine = legacyPayload.shape.lines.element.extend({itemNumber:z.stri
   } catch { ctx.addIssue({code:"custom",message:"ICS item number must match its frozen code, sequence and quantity."}); }
 });
 export const icsCurrentPayload = legacyPayload.extend({version:z.literal("ics-v5"),sourceHash:z.literal(template.sourceHash),lines:z.array(numberedLine).min(1).max(2000)});
-export const icsPayload = z.discriminatedUnion("version",[legacyPayload,v2Payload,v3Payload,v4Payload,icsCurrentPayload]);
+const deviceLine = legacyPayload.shape.lines.element.extend({
+  quantity:z.literal(1), itemNumber:z.string().min(1).max(240),
+  device:z.object({unitId:z.uuid(),eventId:z.uuid(),personId:z.uuid(),personName:z.string().min(1),permanentNumber:z.string().min(1).max(240),brand:z.string().min(1),model:z.string().min(1),serialNumber:z.string().nullable(),missingSerialReason:z.string().nullable()}),
+}).superRefine((line,ctx)=>{if(line.itemNumber!==line.device.permanentNumber)ctx.addIssue({code:"custom",message:"Device ICS must retain its permanent property number."});});
+const devicePayload = legacyPayload.extend({version:z.literal("ics-v6"),sourceHash:z.literal(template.sourceHash),lines:z.array(z.union([numberedLine,deviceLine])).min(1).max(2000)});
+export function icsPrintedDescription(line:{description:string;device?:{brand:string;model:string;serialNumber:string|null;missingSerialReason:string|null}}) {
+  return line.device ? `${line.description}\n${line.device.brand} ${line.device.model}\nSerial: ${line.device.serialNumber??`Unavailable (${line.device.missingSerialReason})`}` : line.description;
+}
+export const icsPayload = z.discriminatedUnion("version",[legacyPayload,v2Payload,v3Payload,v4Payload,icsCurrentPayload,devicePayload]);
 export type IcsPayload = z.infer<typeof icsPayload>;
 export type IcsDraftDetails = z.infer<typeof icsDraftDetails>;
 export async function renderIcs(input: unknown) {
   const payload = icsPayload.parse(input);
-  return payload.version === "ics-v1" ? renderLegacy(payload) : payload.version === "ics-v2" ? renderIcsV2(payload) : payload.version === "ics-v3" ? renderIcsV3(payload) : renderIcsV4(payload);
+  return payload.version === "ics-v1" ? renderLegacy(payload) : payload.version === "ics-v2" ? renderIcsV2(payload) : payload.version === "ics-v3" ? renderIcsV3(payload) : renderIcsV4(payload.version==="ics-v6"?{...payload,lines:payload.lines.map(line=>({...line,description:icsPrintedDescription(line)}))}:payload);
 }

@@ -46,6 +46,7 @@ test("ICS populated upgrade, monthly numbering concurrency, revision CRUD, audit
     expect((await client.query(`SELECT md5(to_jsonb(e)::text) AS hash FROM custodial_ics_exports e WHERE id=$1`,[legacyId])).rows[0].hash).toBe(before);
     expect((await client.query(`SELECT number,current_export_id,version FROM custodial_ics_documents WHERE id=$1`,[legacyId])).rows[0]).toEqual({number:oldNumber,current_export_id:legacyId,version:1});
     expect((await client.query(`SELECT last_value FROM custodial_ics_counters WHERE period='2031-03'`)).rows[0].last_value).toBe(7);
+    for(const folder of readdirSync(directory).filter(entry=>/^\d{14}_/.test(entry)&&entry>migration).sort())for(const statement of readFileSync(`${directory}/${folder}/migration.sql`,"utf8").split("--> statement-breakpoint"))if(statement.trim())await client.query(statement);
     db=createDb({DATABASE_URL:target.toString()});
     expect((await getIcs(db,"ics-owner",legacyId)).payload).toEqual(historical);
     const {number:_legacyNumber,...legacyDraft}=metadata;

@@ -8,3 +8,4 @@ export * from "./settings";
 export * from "./custodial-inventory";
 export * from "./scheduling";
 export {};
+export * from "./equipment";

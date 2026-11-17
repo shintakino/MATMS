@@ -1,6 +1,7 @@
 import { writeAuditEntry } from "@matms/db";
 import type { AuditTransaction, Database } from "@matms/db";
 import { custodialBalances, custodialClassificationPolicies, custodialCountAssignments, custodialCountLines, custodialCountOmissions, custodialCounts, custodialFormProfiles, custodialImportBatches, custodialImportRows, custodialItemCodes, custodialItems, custodialLots, custodialMasterReplays, custodialOperations, custodialPropertyExceptions, custodialReportExports, custodialSections, custodialTransactions } from "@matms/db/schema/custodial-inventory";
+import { equipmentUnits, type EquipmentSnapshot } from "@matms/db/schema/equipment";
 import { userProfiles } from "@matms/db/schema/identity";
 import { user } from "@matms/db/schema/auth";
 import { bookableResources } from "@matms/db/schema/scheduling";
@@ -25,7 +26,7 @@ function fingerprint(value: unknown): string {
   const canonical = (v: unknown): unknown => Array.isArray(v) ? v.map(canonical) : v && typeof v === "object" ? Object.fromEntries(Object.entries(v).filter(([, item]) => item !== undefined).sort(([a], [b]) => a.localeCompare(b)).map(([key, item]) => [key, canonical(item)])) : v;
   return createHash("sha256").update(JSON.stringify(canonical(value))).digest("hex");
 }
-async function beginMaster(tx: AuditTransaction, actor: Actor, operationId: string, kind: string, payload: unknown) {
+export async function beginMaster(tx: AuditTransaction, actor: Actor, operationId: string, kind: string, payload: unknown) {
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(operationId)) throw new CustodialError("VALIDATION", "A valid operation ID is required.");
   await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${operationId.toLowerCase()}, 0))`);
   const hash = fingerprint({ actorId: actor.id, kind, payload });
@@ -34,7 +35,7 @@ async function beginMaster(tx: AuditTransaction, actor: Actor, operationId: stri
   if (posting || (prior && (prior.actorId !== actor.id || prior.kind !== kind || prior.fingerprint !== hash))) throw new CustodialError("CONFLICT", "Operation ID was used for a different action.");
   return { hash, prior };
 }
-async function saveMaster(tx: AuditTransaction, actor: Actor, operationId: string, kind: string, hash: string, targetId: string, result: unknown) {
+export async function saveMaster(tx: AuditTransaction, actor: Actor, operationId: string, kind: string, hash: string, targetId: string, result: unknown) {
   await tx.insert(custodialMasterReplays).values({ operationId, actorId: actor.id, kind, fingerprint: hash, targetId, result: JSON.parse(JSON.stringify(result)) });
 }
 function savedResult<T>(result: unknown): T {
@@ -42,7 +43,7 @@ function savedResult<T>(result: unknown): T {
   for (const key of ["createdAt", "updatedAt"]) if (typeof value[key] === "string") value[key] = new Date(value[key] as string);
   return value as T;
 }
-async function authorize(db: Pick<Database, "select">, actor: Actor) {
+export async function authorize(db: Pick<Database, "select">, actor: Actor) {
   // Hold the account row through mutations and replays, so a concurrent role
   // change cannot commit between authorization and the inventory write.
   const [profile] = await db.select().from(userProfiles).where(eq(userProfiles.userId, actor.id)).limit(1).for("share");
@@ -56,7 +57,7 @@ async function authorizeRead(db: Pick<Database, "select">, actor: Actor, history
   return profile;
 }
 
-async function lockCustodialSources(tx: AuditTransaction, exclusive = false) {
+export async function lockCustodialSources(tx: AuditTransaction, exclusive = false) {
   if (exclusive) await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended('custodial-count-source', 3))`);
   else await tx.execute(sql`SELECT pg_advisory_xact_lock_shared(hashtextextended('custodial-count-source', 3))`);
 }
@@ -64,6 +65,12 @@ async function lockCustodialSources(tx: AuditTransaction, exclusive = false) {
 async function lockPropertyNumber(tx: AuditTransaction, fundCluster: string, propertyNumber: string) {
   const key = JSON.stringify([fundCluster, propertyNumber]);
   await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${key}, 1))`);
+}
+
+/** Trusted service argument is never accepted by the public posting schema. */
+async function assertEquipmentPosting(tx: AuditTransaction, lotId: string, equipmentUnitId?: string) {
+  const [unit] = await tx.select({ id: equipmentUnits.id }).from(equipmentUnits).where(eq(equipmentUnits.lotId, lotId));
+  if (unit && unit.id !== equipmentUnitId) throw new CustodialError("CONFLICT", "Use the Equipment register to issue, return or change this individually tracked device.");
 }
 
 /** Stage evidence only; no item, balance, ledger or count is created here. */
@@ -607,15 +614,16 @@ export const countMetadata = z.object({
 async function getCountSources(tx: AuditTransaction, scope: { family: "rpcsp" | "rpcppe"; fundCluster: string; office: string | null; asOfDate: string; sectionIds: string[] }) {
   type LedgerRow = { id: string; effectiveDate: string; sequence: number; delta: number; balanceId: string; office: string };
   // One statement gives all included lots and their dated ledger a single PostgreSQL snapshot.
-  const lots = await tx.select({ lot: custodialLots, item: custodialItems, section: custodialSections, ledger: sql<LedgerRow[]>`coalesce((select jsonb_agg(jsonb_build_object('id', ct.id, 'effectiveDate', co.transaction_date, 'sequence', co.sequence, 'delta', ct.delta, 'balanceId', cb.id, 'office', cb.office) order by co.transaction_date, co.sequence, ct.id) from custodial_transactions ct join custodial_operations co on co.id = ct.operation_id join custodial_balances cb on cb.id = ct.balance_id where cb.lot_id = ${custodialLots.id} and co.transaction_date <= ${scope.asOfDate} ${scope.office ? sql`and cb.office = ${scope.office}` : sql``}), '[]'::jsonb)`, balanceVersions: sql<{ id: string; version: number }[]>`coalesce((select jsonb_agg(jsonb_build_object('id', cb.id, 'version', cb.version) order by cb.id) from custodial_balances cb where cb.lot_id = ${custodialLots.id} ${scope.office ? sql`and cb.office = ${scope.office}` : sql``}), '[]'::jsonb)` }).from(custodialLots).innerJoin(custodialItems, eq(custodialLots.itemId, custodialItems.id)).leftJoin(custodialSections, eq(custodialItems.defaultSectionId, custodialSections.id)).where(and(eq(custodialLots.fundCluster, scope.fundCluster), eq(custodialLots.reportingClass, scope.family === "rpcsp" ? "semi_expendable" : "ppe"), eq(custodialLots.active, true), eq(custodialItems.active, true), sql`(${custodialLots.acquiredOn} IS NULL OR ${custodialLots.acquiredOn} <= ${scope.asOfDate})`));
+  const lots = await tx.select({ lot: custodialLots, item: custodialItems, section: custodialSections, equipment: sql<{ id: string; snapshot: EquipmentSnapshot } | null>`(select jsonb_build_object('id', e.id, 'snapshot', e.snapshot) from custodial_equipment_events e join custodial_equipment_units u on u.id=e.unit_id where u.lot_id=${custodialLots.id} and e.effective_date<=${scope.asOfDate} order by e.effective_date desc, e.version desc limit 1)`, ledger: sql<LedgerRow[]>`coalesce((select jsonb_agg(jsonb_build_object('id', ct.id, 'effectiveDate', co.transaction_date, 'sequence', co.sequence, 'delta', ct.delta, 'balanceId', cb.id, 'office', cb.office) order by co.transaction_date, co.sequence, ct.id) from custodial_transactions ct join custodial_operations co on co.id = ct.operation_id join custodial_balances cb on cb.id = ct.balance_id where cb.lot_id = ${custodialLots.id} and co.transaction_date <= ${scope.asOfDate} ${scope.office ? sql`and cb.office = ${scope.office}` : sql``}), '[]'::jsonb)`, balanceVersions: sql<{ id: string; version: number }[]>`coalesce((select jsonb_agg(jsonb_build_object('id', cb.id, 'version', cb.version) order by cb.id) from custodial_balances cb where cb.lot_id = ${custodialLots.id} ${scope.office ? sql`and cb.office = ${scope.office}` : sql``}), '[]'::jsonb)` }).from(custodialLots).innerJoin(custodialItems, eq(custodialLots.itemId, custodialItems.id)).leftJoin(custodialSections, eq(custodialItems.defaultSectionId, custodialSections.id)).where(and(eq(custodialLots.fundCluster, scope.fundCluster), eq(custodialLots.reportingClass, scope.family === "rpcsp" ? "semi_expendable" : "ppe"), eq(custodialLots.active, true), eq(custodialItems.active, true), sql`(${custodialLots.acquiredOn} IS NULL OR ${custodialLots.acquiredOn} <= ${scope.asOfDate})`));
   const sources: Array<{ lotId: string; snapshot: Record<string, unknown>; sourceFingerprint: string }> = [];
-  for (const { lot, item, section, ledger, balanceVersions } of lots) {
+  for (const { lot, item, section, equipment, ledger, balanceVersions } of lots) {
     if (scope.sectionIds.length && (!item.defaultSectionId || !scope.sectionIds.includes(item.defaultSectionId))) continue;
-    if (scope.office && ledger.length === 0 && lot.office !== scope.office) continue;
+    if (equipment && scope.office && equipment.snapshot.location !== scope.office) continue;
+    if (!equipment && scope.office && ledger.length === 0 && lot.office !== scope.office) continue;
     const ordered = [...ledger].sort((a, b) => a.effectiveDate.localeCompare(b.effectiveDate) || a.sequence - b.sequence || a.id.localeCompare(b.id));
-    const cardQuantity = ordered.reduce((sum, entry) => sum + entry.delta, 0);
+    const cardQuantity = equipment ? (equipment.snapshot.state === "disposed" ? 0 : 1) : ordered.reduce((sum, entry) => sum + entry.delta, 0);
     if (!Number.isSafeInteger(cardQuantity) || cardQuantity < 0 || cardQuantity > 2147483647) throw new CustodialError("CONFLICT", "The as-of ledger is invalid.");
-    const snapshot = { itemId: item.id, itemCode: item.code, article: item.article, description: item.description, unit: item.unit, sectionId: item.defaultSectionId, section: section ? { id: section.id, version: section.version, name: section.name, sheetName: section.sheetName, displayOrder: section.displayOrder, active: section.active, effectiveFrom: section.effectiveFrom, effectiveUntil: section.effectiveUntil } : null, lotId: lot.id, lotVersion: lot.version, propertyNumber: lot.propertyNumber, unitValue: lot.unitValue, supplier: lot.supplier, acquiredOn: lot.acquiredOn, yearLabel: lot.yearLabel, fundCluster: lot.fundCluster, accountableOfficer: lot.accountableOfficer, lotOffice: lot.office, office: scope.office, condition: lot.condition, remarks: lot.remarks, cardQuantity };
+    const snapshot = { itemId: item.id, itemCode: item.code, article: item.article, description: equipment ? `${item.description}\n${equipment.snapshot.brand} ${equipment.snapshot.model}\nSerial: ${equipment.snapshot.serialNumber ?? `Unavailable (${equipment.snapshot.missingSerialReason})`}` : item.description, unit: item.unit, sectionId: item.defaultSectionId, section: section ? { id: section.id, version: section.version, name: section.name, sheetName: section.sheetName, displayOrder: section.displayOrder, active: section.active, effectiveFrom: section.effectiveFrom, effectiveUntil: section.effectiveUntil } : null, lotId: lot.id, lotVersion: lot.version, propertyNumber: equipment?.snapshot.permanentNumber ?? lot.propertyNumber, unitValue: lot.unitValue, supplier: lot.supplier, acquiredOn: lot.acquiredOn, yearLabel: lot.yearLabel, fundCluster: lot.fundCluster, accountableOfficer: equipment?.snapshot.personName ?? lot.accountableOfficer, lotOffice: equipment?.snapshot.location ?? lot.office, office: scope.office, condition: equipment?.snapshot.condition ?? lot.condition, remarks: lot.remarks, cardQuantity, ...(equipment ? { equipmentEventId: equipment.id, equipment: equipment.snapshot } : {}) };
     sources.push({ lotId: lot.id, snapshot: { ...snapshot, balanceVersions }, sourceFingerprint: fingerprint({ snapshot, ledger: ordered }) });
   }
   return sources;
@@ -1225,6 +1233,8 @@ export async function updateCustodialItem(db: Database, actor: Actor, input: { i
       if (lot || balance) throw new CustodialError("CONFLICT", "The unit cannot change after a lot or balance is created.");
     }
     if (item.active && !values.active) {
+      const [device] = await tx.select({ id: equipmentUnits.id }).from(equipmentUnits).innerJoin(custodialLots, eq(custodialLots.id, equipmentUnits.lotId)).where(eq(custodialLots.itemId, item.id)).limit(1);
+      if (device) throw new CustodialError("CONFLICT", "Account for registered equipment before retiring this item.");
       const [bookable] = await tx.select({ id: bookableResources.id }).from(bookableResources).innerJoin(custodialLots, eq(custodialLots.id, bookableResources.lotId)).where(and(eq(custodialLots.itemId, item.id), eq(bookableResources.active, true))).limit(1);
       if (bookable) throw new CustodialError("CONFLICT", "Retire linked bookable equipment before making this item inactive.");
       const [stock] = await tx.select({ id: custodialBalances.id }).from(custodialBalances).where(and(eq(custodialBalances.itemId, item.id), sql`${custodialBalances.quantity} > 0`)).limit(1);
@@ -1307,6 +1317,8 @@ export async function updateCustodialLot(db: Database, actor: Actor, input: { lo
     if (!lot) throw new CustodialError("NOT_FOUND", "Lot is unavailable.");
     if (replay.prior) return savedResult<typeof lot>(replay.prior.result);
     if (lot.version !== input.expectedVersion) throw new CustodialError("CONFLICT", "Lot changed; refresh and retry.");
+    const [device] = await tx.select().from(equipmentUnits).where(eq(equipmentUnits.lotId, lot.id));
+    if (device && (values.propertyNumber !== lot.propertyNumber || values.propertyExceptionId !== lot.propertyExceptionId || values.office !== lot.office || values.fundCluster !== lot.fundCluster || values.acquiredOn !== lot.acquiredOn || !values.active)) throw new CustodialError("CONFLICT", "The registered device's identity, acquisition date and holding office are fixed. Use Equipment for custody changes.");
     if (values.propertyExceptionId) {
       const [exception] = await tx.select().from(custodialPropertyExceptions).where(eq(custodialPropertyExceptions.id, values.propertyExceptionId));
       if (!exception || exception.fundCluster !== values.fundCluster || exception.normalizedPropertyNumber !== values.normalizedPropertyNumber) throw new CustodialError("VALIDATION", "Property-number exception does not match this fund and number.");
@@ -1484,12 +1496,14 @@ function backdatedPlanHash(input: PostInput, histories: PreviewHistory[]) {
 }
 
 /** Review the chronological effect without changing balances or ledger rows. */
-export async function previewCustodialOperation(db: Database, actor: Actor, input: PostInput) {
+export async function previewCustodialOperation(db: Database, actor: Actor, input: PostInput, equipmentUnitId?: string) {
   const valid = z.object({ balanceId: z.uuid(), destinationBalanceId: z.uuid().optional(), operationId: z.uuid(), type: z.enum(["opening", "receipt", "issue", "return", "transfer", "adjustment"]), quantity: z.number().int().min(0).max(2147483647), expectedVersion: z.number().int().min(0).max(2147483647).optional(), transactionDate: z.iso.date(), reference: z.string().trim().min(1).max(1000), reason: z.string().trim().min(1).max(1000), counterparty: z.string().trim().max(1000).optional(), daysToConsume: z.number().int().min(0).max(2147483647).optional(), confirmBackdated: z.boolean().optional(), backdatedPreviewHash: z.string().regex(/^[0-9a-f]{64}$/).optional(), correlationId: z.string().min(1) }).strict().safeParse(input);
   if (!valid.success || (input.quantity === 0 && input.type !== "adjustment") || (input.daysToConsume !== undefined && input.type !== "issue") || (input.type === "transfer" ? !input.destinationBalanceId || input.destinationBalanceId === input.balanceId : Boolean(input.destinationBalanceId)) || (input.type === "adjustment" && input.expectedVersion === undefined) || (["receipt", "issue", "return"].includes(input.type) && !input.counterparty?.trim())) throw new CustodialError("VALIDATION", "Valid operation details are required.");
   return db.transaction(async (tx) => {
     await authorize(tx, actor);
     await lockCustodialSources(tx);
+    const targets = await tx.select({ lotId: custodialBalances.lotId }).from(custodialBalances).where(inArray(custodialBalances.id, [input.balanceId, ...(input.destinationBalanceId ? [input.destinationBalanceId] : [])]));
+    for (const target of targets) if (target.lotId) await assertEquipmentPosting(tx, target.lotId, equipmentUnitId);
     const balances: Array<typeof custodialBalances.$inferSelect> = [];
     for (const id of [input.balanceId, ...(input.destinationBalanceId ? [input.destinationBalanceId] : [])].sort()) {
       const [balance] = await tx.select().from(custodialBalances).where(eq(custodialBalances.id, id)).for("update");
@@ -1530,7 +1544,7 @@ export async function previewCustodialOperation(db: Database, actor: Actor, inpu
   });
 }
 
-export async function postCustodialOperation(db: Database, actor: Actor, input: PostInput): Promise<Result> {
+export async function postCustodialOperation(db: Database, actor: Actor, input: PostInput, equipmentUnitId?: string): Promise<Result> {
   await authorize(db, actor);
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(input.operationId)) throw new CustodialError("VALIDATION", "A valid operation ID is required.");
   required(input.reference); required(input.reason);
@@ -1547,6 +1561,8 @@ export async function postCustodialOperation(db: Database, actor: Actor, input: 
   return db.transaction(async (tx) => {
     await authorize(tx, actor);
     await lockCustodialSources(tx);
+    const targets = await tx.select({ lotId: custodialBalances.lotId }).from(custodialBalances).where(inArray(custodialBalances.id, [input.balanceId, ...(input.destinationBalanceId ? [input.destinationBalanceId] : [])]));
+    for (const target of targets) if (target.lotId) await assertEquipmentPosting(tx, target.lotId, equipmentUnitId);
     await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${input.operationId.toLowerCase()}, 0))`);
     const [master] = await tx.select({ operationId: custodialMasterReplays.operationId }).from(custodialMasterReplays).where(eq(custodialMasterReplays.operationId, input.operationId));
     if (master) throw new CustodialError("CONFLICT", "Operation ID was used for a different action.");

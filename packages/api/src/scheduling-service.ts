@@ -1,3 +1,4 @@
+import { equipmentUnits } from "@matms/db/schema/equipment";
 import { and, asc, desc, eq, gte, ilike, inArray, lte, ne, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { writeAuditEntry, type Database } from "@matms/db";
@@ -40,7 +41,7 @@ export async function listBookableResources(db: Database, actor: Actor | null, r
 export async function bookableLotChoices(db: Database, actor: Actor, raw: z.input<typeof pageInput>) {
   await authorize(db, actor); manager(actor);
   const input = pageInput.parse(raw);
-  const rows = await db.select({ id: custodialLots.id, article: custodialItems.article, code: custodialItems.code, propertyNumber: custodialLots.propertyNumber, office: custodialLots.office }).from(custodialLots).innerJoin(custodialItems, eq(custodialLots.itemId, custodialItems.id)).where(and(eq(custodialLots.active, true), eq(custodialItems.active, true), ne(custodialLots.reportingClass, "stock_card"), or(ilike(custodialItems.article, `%${input.search.replace(/[\\%_]/g, "\\$&")}%`), ilike(custodialItems.code, `%${input.search.replace(/[\\%_]/g, "\\$&")}%`))))
+  const rows = await db.select({ id: custodialLots.id, article: custodialItems.article, code: custodialItems.code, propertyNumber: custodialLots.propertyNumber, office: custodialLots.office }).from(custodialLots).innerJoin(custodialItems, eq(custodialLots.itemId, custodialItems.id)).where(and(sql`not exists (select 1 from ${equipmentUnits} eu where eu.lot_id=${custodialLots.id})`, eq(custodialLots.active, true), eq(custodialItems.active, true), ne(custodialLots.reportingClass, "stock_card"), or(ilike(custodialItems.article, `%${input.search.replace(/[\\%_]/g, "\\$&")}%`), ilike(custodialItems.code, `%${input.search.replace(/[\\%_]/g, "\\$&")}%`))))
     .orderBy(asc(custodialItems.code), asc(custodialLots.id)).limit(26).offset((input.page - 1) * 25);
   return { items: rows.slice(0, 25), hasMore: rows.length > 25 };
 }
@@ -53,6 +54,8 @@ export async function saveBookableResource(db: Database, actor: Actor, raw: z.in
     if (existing && existing.version !== input.expectedVersion) fail("CONFLICT", "Resource changed. Refresh before saving.");
     if (input.lotId) {
       const [lot] = await tx.select({ lot: custodialLots, item: custodialItems }).from(custodialLots).innerJoin(custodialItems, eq(custodialItems.id, custodialLots.itemId)).where(eq(custodialLots.id, input.lotId)).for("share");
+      const [device] = await tx.select({ id: equipmentUnits.id }).from(equipmentUnits).where(eq(equipmentUnits.lotId, input.lotId));
+      if (device && input.active) fail("CONFLICT", "Individually tracked equipment is managed through Equipment custody. Choose another lot.");
       if (!lot || !lot.lot.active || !lot.item.active || lot.lot.reportingClass === "stock_card") fail("VALIDATION_ERROR", "Choose an active semi-expendable or PPE lot.");
     }
     if (existing) {

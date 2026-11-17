@@ -1,3 +1,4 @@
+import { equipmentRouter } from "./equipment";
 import type { RouterClient } from "@orpc/server";
 
 import { protectedProcedure, publicProcedure } from "../index";
@@ -35,6 +36,7 @@ export const appRouter = {
   inventoryImports: custodialImportsRouter,
   inventoryReports: inventoryReportsRouter,
   inventoryIcs: inventoryIcsRouter,
+  equipment: equipmentRouter,
   scheduling: schedulingRouter,
 };
 export type AppRouter = typeof appRouter;
