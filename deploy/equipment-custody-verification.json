@@ -60,7 +60,7 @@
   ],
   "single_and_final_continuation_pages_visually_inspected": true,
   "school_native_excel_and_physical_printer_acceptance": "Not performed for this extension",
-  "production_status": "pending checked release",
+  "production_status": "verified",
   "production_test_records_created": false,
   "count_snapshot_custody_allowlist_verified": true,
   "internal_device_notes_excluded_from_staff_count_snapshots": true,
@@ -68,5 +68,18 @@
   "latest_snapshot_guard_targeted_tests_passed": 7,
   "strict_workspace_tasks_passed": 6,
   "first_hosted_check_run": "43987486480",
-  "first_hosted_checks": "90 passed, 9 explicit private-source skips, 16 Chromium scenarios; cancelled before deployment to narrow count snapshots"
+  "first_hosted_checks": "90 passed, 9 explicit private-source skips, 16 Chromium scenarios; cancelled before deployment to narrow count snapshots",
+  "revision": "e7515ec66327e63e0c73c278e70c6e5b29abea1e",
+  "workflow_run_id": "43989185309",
+  "hosted_integrations_passed": 90,
+  "hosted_private_source_comparisons_skipped": 9,
+  "hosted_chromium_scenarios_passed": 16,
+  "immutable_history_hashes_preserved": true,
+  "backup_and_migration_exit_codes": 0,
+  "live_routes_checked": 28,
+  "live_accessibility_scans": 7,
+  "live_accessibility_violations": 0,
+  "live_browser_errors": 0,
+  "existing_code_owners_preserved": true,
+  "prior_code_reservations_verified": 18
 }

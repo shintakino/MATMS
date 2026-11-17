@@ -4,13 +4,13 @@ These units derive from [MATMS-PRD.md](../../MATMS-PRD.md) v1.3. Read `AGENTS.md
 
 ## Coverage and status
 
-**Active implementation:** [15 — Individual equipment custody](15-individual-equipment-custody.md), user-authorized FR-11 extension; local verification in progress.
+**Deployed extension:** [15 — Individual equipment custody](15-individual-equipment-custody.md), user-authorized FR-11 extension; deployed and verified (`e7515ec`). See the progress tracker for evidence and remaining school/printer acceptance.
 
 **Deployed extension:** [14 — Leave and resource bookings](14-leave-and-resource-bookings.md), PRD FR-12. On-behalf directory/public-invitation revision deployed and verified (`586c9df`). Workflow choices are confirmed; quotas, enrollment and publication require Admin configuration. Existing official-form acceptance gaps remain open.
 
 | Spec | Scope | PRD requirements | Acceptance coverage | State |
 | --- | --- | --- | --- | --- |
-| [15 — Individual equipment custody](15-individual-equipment-custody.md) | Permanent device identity, directory-person custody, physical return/reassignment, lifecycle/history and device ICS | FR-11 extension, specs 10–13 | Spec 15 verification | Implemented; release checks in progress |
+| [15 — Individual equipment custody](15-individual-equipment-custody.md) | Permanent device identity, directory-person custody, physical return/reassignment, lifecycle/history and device ICS | FR-11 extension, specs 10–13 | Spec 15 verification | Deployed and verified (`e7515ec`) |
 | [14 — Leave and bookings](14-leave-and-resource-bookings.md) | SHS/JHS/personnel directory, delegated leave, Admin resources, expiring public links, request editing/reapproval, separate calendars | FR-12, §5 | AC-37–AC-41 | Deployed and verified (`586c9df`) |
 | [00 — Foundation](00-project-foundation.md) | Existing workspace, service/db/audit foundation | §§3–4, 8–9, 12 | Foundation for all | Baseline implemented |
 | [01 — Design system](01-design-system.md) | Shared UI/shell; new inventory navigation/forms | §10, §11 accessibility | AC-21, AC-22 | Baseline implemented; extension in progress |

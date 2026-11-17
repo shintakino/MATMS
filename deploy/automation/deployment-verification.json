@@ -1,30 +1,30 @@
 {
-  "revision": "70c26347d6a22ffb930809e466905e1d67a3d3cd",
+  "revision": "e7515ec66327e63e0c73c278e70c6e5b29abea1e",
   "images": {
-    "postgres": "ghcr.io/shintakino/matms-postgres@sha256:b36dd5e4321c4fea8dfaddf6d13d6b30b17b4350c0b9f0a97f91adbb998d09c0",
-    "server": "ghcr.io/shintakino/matms-server@sha256:1bcc831c31e59d0f2dedf8ba8014f458fa31d5a6244c03038302b51bc7bb634e",
-    "web": "ghcr.io/shintakino/matms-web@sha256:3c8b44505574d0f57acb8f22cdbcb91ab5695a24a6d3626c6ea23e2a987a5006"
+    "postgres": "ghcr.io/shintakino/matms-postgres@sha256:f539d3ce66afc979787aead2853d622dcd0d6759b285aca7323438d3cfea0292",
+    "server": "ghcr.io/shintakino/matms-server@sha256:f1138c507e258bd59ccf3b7455ce75fed3a2b9f788b0963b44dfa1cd09c2b3db",
+    "web": "ghcr.io/shintakino/matms-web@sha256:2c20a95b3b0936e89762eac40b34271add97a6e97f8e76b571eae6a4be915b44"
   },
-  "web_build_id": "43783532957-1",
-  "deployment_id": "43783532957-1",
+  "web_build_id": "43989185309-1",
+  "deployment_id": "43989185309-1",
   "origin": "https://matms.shintakino.qzz.io",
   "service_uuid": "mt8rqzgbtpkbzedwicy03wnf",
   "status": "verified",
   "volumes_preserved": true,
   "web_and_api_revision_verified": true,
-  "workflow_run_id": "43783532957",
-  "workflow_url": "https://github.com/shintakino/MATMS/actions/runs/43783532957",
+  "workflow_run_id": "43989185309",
+  "workflow_url": "https://github.com/shintakino/MATMS/actions/runs/43989185309",
   "required_jobs": [
     {
       "name": "Types, integration and browser checks",
       "conclusion": "success"
     },
     {
-      "name": "Build postgres image",
+      "name": "Build web image",
       "conclusion": "success"
     },
     {
-      "name": "Build web image",
+      "name": "Build postgres image",
       "conclusion": "success"
     },
     {
@@ -46,6 +46,9 @@
   "immutable_history_hashes_preserved": true,
   "runtime_privileges_verified": true,
   "audit_update_delete_denied": true,
+  "equipment_tables_verified": true,
+  "equipment_guards_verified": true,
+  "equipment_unique_indexes_verified": true,
   "ics_document_tables_verified": true,
   "ics_document_guards_verified": true,
   "ics_snapshot_table_verified": true,
@@ -53,11 +56,13 @@
   "scheduling_tables_verified": 10,
   "beneficiary_overlap_verified": true,
   "capability_constraints_verified": true,
-  "public_routes_verified": 27,
-  "public_accessibility_scans": 6,
+  "public_routes_verified": 28,
+  "public_accessibility_scans": 7,
   "public_accessibility_violations": 0,
   "ics_crud_controls_verified": true,
   "ics_automatic_number_field_verified": true,
-  "ics_print_renderer": "ics-v5",
-  "existing_code_owners_preserved": true
+  "ics_print_renderer": "ics-v6 (devices), ics-v5 (batches)",
+  "existing_code_owners_preserved": true,
+  "equipment_live_queries_verified": true,
+  "equipment_mobile_layout_verified": true
 }
