@@ -32,7 +32,7 @@ async function fixture(local:Database){
     const lot=await createCustodialLot(local,actor,{itemId:item.id,reportingClass,propertyNumber:number,unitValue:"24500.00",fundCluster:item.id,office:"ICT Store",acquiredOn:"2026-01-01",...op()});
     const balance=await createCustodialBalance(local,actor,{itemId:item.id,lotId:lot.id,fundCluster:item.id,office:"ICT Store",...op()});
     await postCustodialOperation(local,actor,{balanceId:balance.id,type:"opening",quantity,transactionDate:"2026-01-01",reference:"Verified opening",reason:"Fixture",...op()});
-    const registration={balanceId:balance.id,mode:"available" as const,permanentNumber:number,brand:"Fictional Brand",model:"Laptop 1",accessories:"Charger and carry bag",serialNumber:crypto.randomUUID(),missingSerialReason:null,location:"ICT Store",condition:"serviceable",effectiveDate:"2026-01-01",reference:"Device verification",reason:"Fixture",confirmed:true as const,operationId:crypto.randomUUID()};
+    const registration={balanceId:balance.id,mode:"available" as const,permanentNumber:number,brand:"Fictional Brand",model:"Laptop 1",notes:"Internal equipment note — managers only",accessories:"Charger and carry bag",serialNumber:crypto.randomUUID(),missingSerialReason:null,location:"ICT Store",condition:"serviceable",effectiveDate:"2026-01-01",reference:"Device verification",reason:"Fixture",confirmed:true as const,operationId:crypto.randomUUID()};
     return {lot,balance,registration};
   }
   const action=(id:string,expectedVersion:number,action:Parameters<typeof actOnEquipment>[2]["action"],extra:Partial<Parameters<typeof actOnEquipment>[2]>={})=>actOnEquipment(local,actor,{id,expectedVersion,action,effectiveDate:"2026-01-02",reference:"Physical handover",reason:"Classroom ICT use",location:"Room 1",condition:"serviceable",operationId:crypto.randomUUID(),...extra},crypto.randomUUID());
@@ -162,6 +162,8 @@ test("dated counts retain issued school ownership and require explicit refresh w
   const count=await createCustodialCount(local,f.actor,{code:crypto.randomUUID(),family:"rpcsp",profileId:profile.id,asOfDate:"2026-01-03",fundCluster:f.item.id,office:"Room A",metadata,...op()});
   let lines=await local.select().from(custodialCountLines).where(eq(custodialCountLines.countId,count.id));
   expect(lines).toHaveLength(1);expect(lines[0]!.snapshot).toMatchObject({cardQuantity:1,accountableOfficer:f.persons[0]!.name,lotOffice:"Room A",propertyNumber:s.registration.permanentNumber});
+  expect(JSON.stringify(lines[0]!.snapshot)).not.toContain("Internal equipment note");
+  expect(lines[0]!.snapshot).toMatchObject({equipment:{state:"issued",personId:f.persons[0]!.id}});
   await f.action(unit.id,1,"lost",{effectiveDate:"2026-01-03",location:"Room A"});
   let plan=await previewCustodialCountRefresh(local,f.actor,count.id);expect(plan.changed).toHaveLength(1);
   expect((await local.select().from(custodialCountLines).where(eq(custodialCountLines.countId,count.id)))[0]!.snapshot).toEqual(lines[0]!.snapshot);

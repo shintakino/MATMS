@@ -16,7 +16,7 @@ Add equipment units and immutable event snapshots. One unit per lot, globally un
 
 Registered lots cannot be manipulated by generic stock posting/import or retired through ordinary item/lot edits. Only the equipment service may post their ledger. Active bookable links must be retired before individual registration, and registered lots cannot become bookable resources. Existing batch lots are not automatically converted.
 
-Store stock and owned property are distinct: an issued device has store quantity zero and owned quantity one. New/refreshed physical counts use latest equipment event on/before the as-of date (including held, repair and lost units until approved disposal) and freeze holder/location/serial. Existing finalized snapshots are untouched; draft changes require explicit refresh/review. Before the first recorded custody event, retain legacy ledger semantics rather than inventing history.
+Store stock and owned property are distinct: an issued device has store quantity zero and owned quantity one. New/refreshed physical counts use latest equipment event on/before the as-of date (including held, repair and lost units until approved disposal) and freeze holder/location/serial. Count snapshots allowlist only counting/custody fields; internal device notes, specifications, accessories and warranty remain in the manager-only register. Existing finalized snapshots are untouched; draft changes require explicit refresh/review. Before the first recorded custody event, retain legacy ledger semantics rather than inventing history.
 
 ## ICS
 

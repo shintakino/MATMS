@@ -61,5 +61,12 @@
   "single_and_final_continuation_pages_visually_inspected": true,
   "school_native_excel_and_physical_printer_acceptance": "Not performed for this extension",
   "production_status": "pending checked release",
-  "production_test_records_created": false
+  "production_test_records_created": false,
+  "count_snapshot_custody_allowlist_verified": true,
+  "internal_device_notes_excluded_from_staff_count_snapshots": true,
+  "finalized_device_count_and_later_return_snapshot_preservation_separately_verified": true,
+  "latest_snapshot_guard_targeted_tests_passed": 7,
+  "strict_workspace_tasks_passed": 6,
+  "first_hosted_check_run": "43987486480",
+  "first_hosted_checks": "90 passed, 9 explicit private-source skips, 16 Chromium scenarios; cancelled before deployment to narrow count snapshots"
 }
