@@ -1,0 +1,53 @@
+{
+  "feature": "natural property-number ordering of inventory choices",
+  "revision": "2d69c280a23b79d919b8994ccfc6a85a7e9b632b",
+  "workflow_run_id": "44209080272",
+  "production_status": "verified",
+  "example_order": [
+    "001",
+    "002",
+    "010",
+    "A2",
+    "A10"
+  ],
+  "case_insensitive_numeric_sort": true,
+  "unnumbered_entries_last": true,
+  "tie_breakers": [
+    "fund cluster",
+    "office",
+    "stable ID"
+  ],
+  "quantities_not_sort_keys": true,
+  "sorting_applied_after_authorization": true,
+  "consumers": [
+    "item Lot selector",
+    "stock-operation Balance selector",
+    "Transfer destination selector",
+    "item lot and balance lists"
+  ],
+  "mixed_code_and_office_fixture_verified_with_rollback": true,
+  "existing_targeted_integration_tests_passed": 7,
+  "strict_workspace_tasks_passed": 6,
+  "hosted_integrations_passed": 90,
+  "hosted_private_source_comparisons_skipped": 9,
+  "hosted_chromium_scenarios_passed": 16,
+  "release_invariant_tests_passed": 6,
+  "no_schema_migration_required": true,
+  "backup_and_migration_exit_codes": 0,
+  "baseline_counts_and_immutable_history_preserved": true,
+  "equipment_event_hashes_preserved": true,
+  "code_reservations_verified": 20,
+  "live_routes_checked": 28,
+  "live_accessibility_scans": 7,
+  "live_accessibility_violations": 0,
+  "live_choice_checks": {
+    "balance_natural_order_verified": true,
+    "lot_natural_order_verified": true,
+    "transfer_order_matches_balance": true,
+    "selected_balance_id_preserved": true,
+    "existing_balance_choices_checked": 46,
+    "browser_errors": [],
+    "production_test_records_created": false
+  },
+  "existing_uncommitted_guide_changes_preserved": true
+}

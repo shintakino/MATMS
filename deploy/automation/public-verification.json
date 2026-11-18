@@ -62,6 +62,15 @@
   "ics_live_queries_succeeded": true,
   "ics_mobile_layout_verified": true,
   "production_test_records_created": false,
-  "revision": "e7515ec66327e63e0c73c278e70c6e5b29abea1e",
-  "workflow_run_id": "43989185309"
+  "revision": "2d69c280a23b79d919b8994ccfc6a85a7e9b632b",
+  "workflow_run_id": "44209080272",
+  "inventory_choice_order": {
+    "balance_natural_order_verified": true,
+    "lot_natural_order_verified": true,
+    "transfer_order_matches_balance": true,
+    "selected_balance_id_preserved": true,
+    "existing_balance_choices_checked": 46,
+    "browser_errors": [],
+    "production_test_records_created": false
+  }
 }

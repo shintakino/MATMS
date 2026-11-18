@@ -68,3 +68,5 @@ Deployed and verified as `70c2634` / [workflow 43783532957](https://github.com/s
 ## Inventory choice order — 2026-11-18
 
 Within an authorized item detail response, order acquisition lots and office balances by natural, case-insensitive property number (`001`, `002`, `010`, `A2`, `A10`). Unnumbered records follow numbered records; fund, office and stable ID resolve ties. Apply this order to the existing Lot/Balance/Transfer destination consumers without changing record IDs, stock quantities, chronological ledgers or saved reports.
+
+Deployed and verified as `2d69c28` / [workflow 44209080272](https://github.com/shintakino/MATMS/actions/runs/44209080272). Mixed-code API checks and the live existing-item dropdown check passed; see [sorting evidence](../../deploy/inventory-choice-order-verification.json).
