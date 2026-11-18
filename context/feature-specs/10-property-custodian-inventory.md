@@ -64,3 +64,7 @@ Deliver schema/role contracts and permission tests first, register and ledger se
 New codes use `USER-CODE-YYYY`, appending the current Asia/Manila year when the input has no four-digit year suffix. Preserve entered hyphens and an explicit year suffix. Existing codes are not bulk-renamed. Edits may retain or restore an alias owned by the same item, including a legacy unsuffixed code; reservations belonging to another item still conflict. Apply formatting server-side and retain old operation fingerprints for durable replay. Keep code reservation, version check, master update and audit atomic.
 
 Deployed and verified as `70c2634` / [workflow 43783532957](https://github.com/shintakino/MATMS/actions/runs/43783532957). Owner restoration/foreign collision, legacy replay, year boundaries, audit rollback and browser rename/restore passed; production preserved all prior code owners. See [range/code evidence](../../deploy/ics-v5-range-verification.json).
+
+## Inventory choice order — 2026-11-18
+
+Within an authorized item detail response, order acquisition lots and office balances by natural, case-insensitive property number (`001`, `002`, `010`, `A2`, `A10`). Unnumbered records follow numbered records; fund, office and stable ID resolve ties. Apply this order to the existing Lot/Balance/Transfer destination consumers without changing record IDs, stock quantities, chronological ledgers or saved reports.

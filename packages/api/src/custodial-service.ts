@@ -1454,14 +1454,26 @@ export async function custodialDashboard(db: Database, actor: Actor) {
   });
 }
 
+const inventoryChoiceOrder = new Intl.Collator("en", { numeric: true, sensitivity: "base" });
+function comparePropertyNumbers(left: string | null | undefined, right: string | null | undefined) {
+  if (!left || !right) return left ? -1 : right ? 1 : 0;
+  return inventoryChoiceOrder.compare(left, right);
+}
+
 /** Read the item and its separate lot and office balances without summing scopes. */
 export async function getCustodialItem(db: Database, actor: Actor, itemId: string) {
   return db.transaction(async (tx) => {
     await authorizeRead(tx, actor);
     const [item] = await tx.select().from(custodialItems).where(eq(custodialItems.id, itemId));
     if (!item) throw new CustodialError("NOT_FOUND", "Item is unavailable.");
-    const lots = await tx.select().from(custodialLots).where(eq(custodialLots.itemId, itemId)).orderBy(custodialLots.createdAt, custodialLots.id);
-    const balances = await tx.select().from(custodialBalances).where(eq(custodialBalances.itemId, itemId)).orderBy(custodialBalances.fundCluster, custodialBalances.office, custodialBalances.id);
+    const lots = await tx.select().from(custodialLots).where(eq(custodialLots.itemId, itemId));
+    // Order authorized item choices by their visible property number, rather
+    // than creation time or UUID; stock quantities never affect this order.
+    const compareScope = (left: { fundCluster: string; office: string; id: string }, right: { fundCluster: string; office: string; id: string }) => inventoryChoiceOrder.compare(left.fundCluster, right.fundCluster) || inventoryChoiceOrder.compare(left.office, right.office) || left.id.localeCompare(right.id, "en");
+    lots.sort((left, right) => comparePropertyNumbers(left.propertyNumber, right.propertyNumber) || compareScope(left, right));
+    const propertyNumbers = new Map(lots.map((lot) => [lot.id, lot.propertyNumber]));
+    const balances = await tx.select().from(custodialBalances).where(eq(custodialBalances.itemId, itemId));
+    balances.sort((left, right) => comparePropertyNumbers(propertyNumbers.get(left.lotId ?? ""), propertyNumbers.get(right.lotId ?? "")) || compareScope(left, right));
     return { item, lots, balances: balances.map((balance) => ({ ...balance, reorder: item.reorderPoint !== null && balance.quantity <= item.reorderPoint })) };
   });
 }
