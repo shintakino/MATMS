@@ -42,6 +42,8 @@ export const equipmentEvents = pgTable("custodial_equipment_events", {
   unitId: uuid("unit_id").notNull().references(() => equipmentUnits.id, { onDelete: "restrict" }),
   kind: text("kind").notNull(),
   transactionId: uuid("transaction_id").references(() => custodialTransactions.id, { onDelete: "restrict" }),
+  correctedIssueId: uuid("corrected_issue_id").references(() => custodialTransactions.id, { onDelete: "restrict" }),
+  issueDetails: jsonb("issue_details").$type<{date:string;reference:string;purpose:string}>(),
   effectiveDate: date("effective_date").notNull(), reference: text("reference").notNull(), reason: text("reason").notNull(),
   documentReference: text("document_reference"), snapshot: jsonb("snapshot").$type<EquipmentSnapshot>().notNull(),
   version: integer("version").notNull(), actorId: text("actor_id").notNull().references(() => user.id, { onDelete: "restrict" }),
@@ -50,7 +52,20 @@ export const equipmentEvents = pgTable("custodial_equipment_events", {
   uniqueIndex("equipment_event_version_unique").on(t.unitId, t.version),
   uniqueIndex("equipment_event_transaction_unique").on(t.transactionId).where(sql`${t.transactionId} IS NOT NULL`),
   index("equipment_event_as_of_idx").on(t.unitId, t.effectiveDate, t.version),
-  check("equipment_event_kind", sql`${t.kind} IN ('register','adopt','issue','return','reassign','edit','repair','repaired','lost','recover','dispose')`),
+  check("equipment_event_kind", sql`${t.kind} IN ('register','adopt','issue','return','reassign','edit','correct_issue','repair','repaired','lost','recover','dispose')`),
+  index("equipment_issue_correction_idx").on(t.correctedIssueId, t.version),
+  check("equipment_issue_correction", sql`(${t.kind} = 'correct_issue') = (${t.correctedIssueId} IS NOT NULL AND ${t.issueDetails} IS NOT NULL) AND (${t.kind} = 'correct_issue' OR (${t.correctedIssueId} IS NULL AND ${t.issueDetails} IS NULL)) AND (${t.kind} <> 'correct_issue' OR ${t.transactionId} IS NULL)`),
   check("equipment_event_reference", sql`length(trim(${t.reference})) > 0 AND length(trim(${t.reason})) > 0`),
   check("equipment_event_version", sql`${t.version} >= 0`),
+]);
+
+// Corrected-away serials remain reserved for their original physical device.
+export const equipmentSerialReservations = pgTable("custodial_equipment_serial_reservations", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  unitId: uuid("unit_id").notNull().references(() => equipmentUnits.id, { onDelete: "restrict" }),
+  normalizedBrand: text("normalized_brand").notNull(), normalizedSerial: text("normalized_serial").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, t => [
+  uniqueIndex("equipment_serial_reservation_unique").on(t.normalizedBrand,t.normalizedSerial),
+  check("equipment_serial_reservation_normalized",sql`length(trim(${t.normalizedBrand})) > 0 AND ${t.normalizedBrand} = upper(trim(${t.normalizedBrand})) AND length(trim(${t.normalizedSerial})) > 0 AND ${t.normalizedSerial} = upper(trim(${t.normalizedSerial}))`),
 ]);

@@ -101,3 +101,5 @@ Appendix 59 ICS generation is a user-authorized extension under spec 12, using s
 The 2026-11-12 ICS revision uses the supplied `ICS-2025-11-001.xlsx` layout, long bond paper, automatic Manila-month numbering, editable versioned slips and Delete/Restore controls. See spec 12 and the user guide for workflow and release evidence.
 
 Individual equipment is a manager-only Property Inventory workspace with searchable device/person/status/location, reviewed registration, dated handover/physical return, immutable history and ICS links. Reuse the personnel directory; explain one device per lot, store balance versus school ownership and external PAR/disposal references in task language.
+
+Equipment detail provides prominent Edit device details / serial and Correct recorded issue links. Review shows manufacturer identity before/after and correction consequences. Issue correction pre-fills the current holder and annotated date/reference/purpose, displays the immutable original stock posting and requires explicit entry-error confirmation. Real physical handovers remain separate Return/Reassign actions.

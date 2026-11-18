@@ -8,7 +8,7 @@ async function safely<T>(action:()=>Promise<T>) {
     if(error instanceof CustodialError)throw new MatmsError(error.code==="VALIDATION"?"VALIDATION_ERROR":error.code,error.message).toORPCError();
     if(error instanceof z.ZodError)throw new MatmsError("VALIDATION_ERROR","Check the device details and handover confirmation.").toORPCError();
     const code=(error as {code?:string;cause?:{code?:string}})?.cause?.code??(error as {code?:string})?.code;
-    if(code==="23505")throw new MatmsError("CONFLICT","This device lot, permanent number or brand/serial number is already registered.").toORPCError();
+    if(code==="23505")throw new MatmsError("CONFLICT","This lot, permanent number or brand/serial is already registered or reserved for another device.").toORPCError();
     throw error;
   }
 }

@@ -1,4 +1,4 @@
-import { equipmentEvents, equipmentUnits } from "@matms/db/schema/equipment";
+import { equipmentEvents, equipmentUnits, type EquipmentSnapshot } from "@matms/db/schema/equipment";
 import { createHash } from "node:crypto";
 import { and, desc, eq, inArray, isNull, isNotNull, sql } from "drizzle-orm";
 import type { Database, AuditTransaction } from "@matms/db";
@@ -28,15 +28,20 @@ async function authorize(tx: AuditTransaction, actorId: string) {
   const [profile] = await tx.select().from(userProfiles).where(eq(userProfiles.userId, actorId)).for("share");
   if (!profile?.active || profile.mustChangePassword || !["admin", "property_custodian"].includes(profile.role)) throw new MatmsError("FORBIDDEN", "This action is unavailable.");
 }
+// Resolve append-only annotations for the issue, then overlay corrected manufacturer
+// identity for NEW snapshots. Historical export payloads never consult this projection.
+const resolvedIssue = sql`(SELECT e.snapshot FROM custodial_equipment_events e WHERE e.transaction_id=${transactions.id} OR e.corrected_issue_id=${transactions.id} ORDER BY e.version DESC LIMIT 1)`;
+const resolvedDevice = sql<EquipmentSnapshot | null>`CASE WHEN ${equipmentEvents.id} IS NULL THEN NULL ELSE ${resolvedIssue} || jsonb_build_object('brand',${equipmentUnits.brand},'model',${equipmentUnits.model},'serialNumber',${equipmentUnits.serialNumber},'missingSerialReason',${equipmentUnits.missingSerialReason}) END`;
+const resolvedEventId = sql<string|null>`(SELECT e.id FROM custodial_equipment_events e WHERE e.transaction_id=${transactions.id} OR e.corrected_issue_id=${transactions.id} ORDER BY e.version DESC LIMIT 1)`;
 function issueQuery(tx: AuditTransaction) {
-  return tx.select({ equipmentEventId: equipmentEvents.id, equipmentUnitId: equipmentEvents.unitId, device: equipmentEvents.snapshot, registeredUnitId: equipmentUnits.id, transactionId: transactions.id, itemId: items.id, itemCreatedAt: items.createdAt, quantity: transactions.delta, date: operations.transactionDate, reference: operations.reference, recipient: operations.counterparty, fundCluster: balances.fundCluster, office: balances.office, code: items.code, article: items.article, description: items.description, unit: items.unit, propertyNumber: lots.propertyNumber, unitCost: lots.unitValue })
+  return tx.select({ equipmentEventId: resolvedEventId, sourceEventId:equipmentEvents.id, identityVersion:equipmentUnits.version, equipmentUnitId: equipmentEvents.unitId, device: resolvedDevice, registeredUnitId: equipmentUnits.id, transactionId: transactions.id, itemId: items.id, itemCreatedAt: items.createdAt, quantity: transactions.delta, issueCorrection:sql<{date:string;reference:string;purpose:string}|null>`(SELECT e.issue_details FROM custodial_equipment_events e WHERE e.corrected_issue_id=${transactions.id} ORDER BY e.version DESC LIMIT 1)`, date: operations.transactionDate, reference: operations.reference, recipient: operations.counterparty, fundCluster: balances.fundCluster, office: balances.office, code: items.code, article: items.article, description: items.description, unit: items.unit, propertyNumber: lots.propertyNumber, unitCost: lots.unitValue })
     .from(transactions).innerJoin(operations, eq(transactions.operationId, operations.id)).innerJoin(balances, eq(transactions.balanceId, balances.id)).innerJoin(items, eq(balances.itemId, items.id)).innerJoin(lots, eq(balances.lotId, lots.id)).leftJoin(equipmentUnits,eq(equipmentUnits.lotId,lots.id)).leftJoin(equipmentEvents,and(eq(equipmentEvents.transactionId,transactions.id),inArray(equipmentEvents.kind,["issue","reassign","adopt"])));
 }
 const eligible = and(eq(operations.operationType, "issue"), eq(lots.reportingClass, "semi_expendable"));
 export async function listIcsIssues(db: Database, actorId: string, page: number, filter: {personId?:string;unitId?:string} = {}) {
   return db.transaction(async tx => {
     await authorize(tx, actorId);
-    const rows = await issueQuery(tx).where(and(eligible,sql`(${equipmentUnits.id} IS NULL OR ${equipmentEvents.id} IS NOT NULL)`,filter.personId?sql`${equipmentEvents.snapshot}->>'personId'=${filter.personId}`:undefined,filter.unitId?eq(equipmentEvents.unitId,filter.unitId):undefined)).orderBy(desc(operations.sequence), transactions.id).limit(26).offset((page-1)*25);
+    const rows = await issueQuery(tx).where(and(eligible,sql`(${equipmentUnits.id} IS NULL OR ${equipmentEvents.id} IS NOT NULL)`,filter.personId?sql`${resolvedDevice}->>'personId'=${filter.personId}`:undefined,filter.unitId?eq(equipmentEvents.unitId,filter.unitId):undefined)).orderBy(desc(operations.sequence), transactions.id).limit(26).offset((page-1)*25);
     return { rows: rows.slice(0,25).map(row => ({...row, quantity: -row.quantity})), hasNext: rows.length > 25 };
   });
 }
@@ -76,6 +81,9 @@ function requireCurrent(doc:typeof documents.$inferSelect,expectedVersion:number
   if(doc.deletedAt)throw new MatmsError("NOT_FOUND","Slip is deleted. Restore it from Deleted slips first.");
   if(doc.version!==expectedVersion)throw new MatmsError("CONFLICT","This slip changed. Reopen it before saving.");
 }
+function deviceProvenance<T extends {eventId:string;sourceEventId?:string;identityVersion?:number|null}>(device:T){
+  return {...device,sourceEventId:device.sourceEventId??device.eventId,identityVersion:device.identityVersion??null};
+}
 async function snapshot(tx:AuditTransaction,raw:IcsDraftDetails,number:string,base?:IcsPayload) {
   await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended('custodial-count-source', 3))`);
   const details=icsDraftDetails.parse(raw);
@@ -84,9 +92,12 @@ async function snapshot(tx:AuditTransaction,raw:IcsDraftDetails,number:string,ba
   if(rows.length!==details.lines.length)throw new MatmsError("VALIDATION_ERROR","A selected issue is unavailable.");
   const selectedDevices=rows.flatMap(row=>row.equipmentUnitId?[row.equipmentUnitId]:[]);
   if(new Set(selectedDevices).size!==selectedDevices.length)throw new MatmsError("VALIDATION_ERROR","Choose only one recorded handover per physical device on a slip.");
-  const fundCluster=rows[0]!.fundCluster,recipient=rows[0]!.device?.personName??rows[0]!.recipient;
-  const recipientId=rows[0]!.device?.personId??null;
-  if(rows.some(row=>row.fundCluster!==fundCluster||(row.device?.personName??row.recipient)!==recipient||(row.device?.personId??null)!==recipientId))throw new MatmsError("VALIDATION_ERROR","Choose issues for the same fund and receiving office or recipient.");
+  // Saved lines keep their frozen recipient/identity even after a later correction.
+  const preserved=(transactionId:string)=>base&&(base.version==="ics-v5"||base.version==="ics-v6"||base.version==="ics-v7")?base.lines.find(line=>line.transactionId===transactionId):undefined;
+  const recipientFor=(row:typeof rows[number])=>{const frozen=preserved(row.transactionId);return frozen&&"device" in frozen?frozen.device:row.device;};
+  const fundCluster=rows[0]!.fundCluster,recipient=recipientFor(rows[0]!)?.personName??rows[0]!.recipient;
+  const recipientId=recipientFor(rows[0]!)?.personId??null;
+  if(rows.some(row=>row.fundCluster!==fundCluster||(recipientFor(row)?.personName??row.recipient)!==recipient||(recipientFor(row)?.personId??null)!==recipientId))throw new MatmsError("VALIDATION_ERROR","Choose issues for the same fund and receiving office or recipient.");
   const itemIds=[...new Set(rows.map(row=>row.itemId))];
   // Filter selected transaction IDs after the window: earlier issues must count
   // even when omitted from this slip or issued to another recipient/fund.
@@ -103,7 +114,7 @@ async function snapshot(tx:AuditTransaction,raw:IcsDraftDetails,number:string,ba
   const ends=new Map(numbered.rows.map(row=>[row.id,BigInt(row.rangeEnd)]));
   const lines=details.lines.map(selection=>{
     const frozen=base?.lines.find(line=>line.transactionId===selection.transactionId);
-    if(frozen&&(base?.version==="ics-v5"||base?.version==="ics-v6"))return {...frozen,usefulLife:selection.usefulLife,description:selection.description??frozen.description};
+    if(frozen&&(base?.version==="ics-v5"||base?.version==="ics-v6"||base?.version==="ics-v7"))return {...frozen,usefulLife:selection.usefulLife,description:selection.description??frozen.description};
     const row=rows.find(row=>row.transactionId===selection.transactionId)!;
     if((frozen?.unitCost??row.unitCost)===null||row.quantity>=0)throw new MatmsError("VALIDATION_ERROR",`Complete the acquisition lot value for ${row.code}.`);
     const quantity=frozen?.quantity??-row.quantity,unitCost=frozen?.unitCost??row.unitCost!;
@@ -111,7 +122,7 @@ async function snapshot(tx:AuditTransaction,raw:IcsDraftDetails,number:string,ba
     if(row.device){
       if(quantity!==1||!row.device.personId||!row.device.personName)throw new MatmsError("CONFLICT","The device issue identity is incomplete.");
       return {transactionId:row.transactionId,quantity:1 as const,unit:frozen?.unit??row.unit,description:selection.description??frozen?.description??`${row.article}\n${row.description}${row.device.accessories?`\nAccessories: ${row.device.accessories}`:""}`,itemNumber:row.device.permanentNumber,unitCost,totalCost:icsCost(unitCost,1),usefulLife:selection.usefulLife,
-        device:{unitId:row.equipmentUnitId!,eventId:row.equipmentEventId!,personId:row.device.personId,personName:row.device.personName,permanentNumber:row.device.permanentNumber,brand:row.device.brand,model:row.device.model,serialNumber:row.device.serialNumber,missingSerialReason:row.device.missingSerialReason}};
+        device:{unitId:row.equipmentUnitId!,eventId:row.equipmentEventId!,sourceEventId:row.sourceEventId!,identityVersion:row.identityVersion!,personId:row.device.personId,personName:row.device.personName,permanentNumber:row.device.permanentNumber,brand:row.device.brand,model:row.device.model,serialNumber:row.device.serialNumber,missingSerialReason:row.device.missingSerialReason}};
     }
     const end=ends.get(row.transactionId);
     if(end===undefined)throw new MatmsError("CONFLICT","The issue number range is unavailable. Review the slip again.");
@@ -120,7 +131,9 @@ async function snapshot(tx:AuditTransaction,raw:IcsDraftDetails,number:string,ba
     try {totalCost=icsCost(unitCost,quantity);} catch {throw new MatmsError("VALIDATION_ERROR","An issued value exceeds supported Excel precision.");}
     return {transactionId:row.transactionId,quantity,unit:frozen?.unit??row.unit,description:selection.description??frozen?.description??`${row.article}\n${row.description}`,itemNumber:icsItemNumber(itemCode,quantity,start,end),itemCode,sequenceStart:start.toString(),sequenceEnd:end.toString(),unitCost,totalCost:frozen?.totalCost??totalCost,usefulLife:selection.usefulLife};
   });
-  return icsPayload.parse({version:lines.some(line=>"device" in line)?"ics-v6":"ics-v5",sourceHash:template.sourceHash,details:{...details,number},fundCluster,lines});
+  const version=lines.some(line=>"device" in line)?"ics-v7":"ics-v5";
+  const versionedLines=lines.map(line=>"device" in line&&line.device?{...line,device:deviceProvenance(line.device)}:line);
+  return icsPayload.parse({version,sourceHash:template.sourceHash,details:{...details,number},fundCluster,lines:versionedLines});
 }
 export type IcsEditScope={id:string;expectedVersion:number};
 export async function previewIcs(db:Database,actorId:string,details:IcsDraftDetails,correlationId:string,edit?:IcsEditScope) {

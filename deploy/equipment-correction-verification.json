@@ -1,0 +1,31 @@
+{
+  "feature": "audited individual equipment details, serial and outstanding issue corrections",
+  "spec": "context/feature-specs/15-individual-equipment-custody.md",
+  "production_status": "pending_checked_deployment",
+  "migration": "20261118022016_silky_marvel_boy",
+  "manufacturer_identity_edits_with_required_reason": true,
+  "permanent_property_and_stock_linkage_unchanged": true,
+  "lifetime_brand_serial_alias_ownership_and_owned_restoration": true,
+  "concurrent_serial_claims_commit_once": true,
+  "issue_corrections_link_original_transaction_without_reposting": true,
+  "closed_issue_and_disposed_device_corrections_denied": true,
+  "real_handover_requires_existing_return_reassign_workflow": true,
+  "audit_failure_rolls_back_reservation_head_event_and_replay": true,
+  "manager_authorization_and_replay_reauthorization_verified": true,
+  "as_of_counts_use_correction_date_without_rewriting_earlier_history": true,
+  "new_device_ics_payload": "ics-v7",
+  "frozen_source_correction_and_identity_provenance": true,
+  "old_saved_lines_and_payloads_remain_frozen": true,
+  "v6_v7_long_text_fonts_geometry_dates_equivalent_in_xlsx": true,
+  "v1_through_v6_print_renderers_preserved": true,
+  "batch_v5_ranges_preserved": true,
+  "fresh_and_populated_migration_verified": true,
+  "local_application_tests_passed": 102,
+  "strict_workspace_tasks_passed": 6,
+  "release_invariant_tests_passed": 6,
+  "local_browser_workflows_passed": [
+    "individual device register, issue, ICS, return/reissue, manufacturer correction and recipient correction; mobile and zero-violation accessibility",
+    "batch ICS generation and versioned CRUD, delete/restore, mobile and accessibility"
+  ],
+  "school_printer_and_native_excel_acceptance_remain_separate": true
+}

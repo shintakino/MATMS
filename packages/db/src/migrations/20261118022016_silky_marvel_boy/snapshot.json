@@ -1,0 +1,459 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "e365b2e2-d6c5-4884-988e-7a847c1bc419",
+  "prevIds": [
+    "9e70824c-d0d7-4295-8be5-590cfb9a1ab1"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_equipment_serial_reservations"
+      ],
+      "writes": [
+        "s|tbl|public.custodial_equipment_serial_reservations",
+        "n|tbl|public.custodial_equipment_serial_reservations",
+        "e|tbl|public.custodial_equipment_serial_reservations",
+        "n|rel|public.custodial_equipment_serial_reservations",
+        "n|type|public.custodial_equipment_serial_reservations",
+        "n|rel|public.custodial_equipment_serial_reservations_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "custodial_equipment_events",
+        "corrected_issue_id"
+      ],
+      "writes": [
+        "s|col|public.custodial_equipment_events.corrected_issue_id",
+        "n|col|public.custodial_equipment_events.corrected_issue_id",
+        "e|col|public.custodial_equipment_events.corrected_issue_id"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_equipment_events",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "custodial_equipment_events",
+        "issue_details"
+      ],
+      "writes": [
+        "s|col|public.custodial_equipment_events.issue_details",
+        "n|col|public.custodial_equipment_events.issue_details",
+        "e|col|public.custodial_equipment_events.issue_details"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_equipment_events",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_equipment_events",
+        "equipment_issue_correction_idx"
+      ],
+      "writes": [
+        "s|idx|public.equipment_issue_correction_idx",
+        "n|idx|public.equipment_issue_correction_idx",
+        "e|idx|public.equipment_issue_correction_idx",
+        "n|rel|public.equipment_issue_correction_idx"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_equipment_events",
+        "n|sch|public",
+        "n|col|public.custodial_equipment_events.corrected_issue_id",
+        "n|col|public.custodial_equipment_events.version"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "custodial_equipment_serial_reservations",
+        "equipment_serial_reservation_unique"
+      ],
+      "writes": [
+        "s|idx|public.equipment_serial_reservation_unique",
+        "n|idx|public.equipment_serial_reservation_unique",
+        "e|idx|public.equipment_serial_reservation_unique",
+        "n|rel|public.equipment_serial_reservation_unique"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_equipment_serial_reservations",
+        "n|sch|public",
+        "n|col|public.custodial_equipment_serial_reservations.normalized_brand",
+        "n|col|public.custodial_equipment_serial_reservations.normalized_serial"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_equipment_events"
+      ],
+      "writes": [
+        "s|fk|public.custodial_equipment_events.custodial_equipment_events_cjnn95Gr9Stg_fkey",
+        "n|fk|public.custodial_equipment_events.custodial_equipment_events_cjnn95Gr9Stg_fkey",
+        "e|fk|public.custodial_equipment_events.custodial_equipment_events_cjnn95Gr9Stg_fkey",
+        "n|con|public.custodial_equipment_events.custodial_equipment_events_cjnn95Gr9Stg_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_equipment_events",
+        "n|sch|public",
+        "n|tbl|public.custodial_transactions",
+        "n|sch|public",
+        "n|col|public.custodial_equipment_events.corrected_issue_id",
+        "n|col|public.custodial_transactions.id",
+        "e|uniqueness|public.custodial_transactions.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_equipment_serial_reservations"
+      ],
+      "writes": [
+        "s|fk|public.custodial_equipment_serial_reservations.custodial_equipment_serial_reservations_LUrBi4dtYWYD_fkey",
+        "n|fk|public.custodial_equipment_serial_reservations.custodial_equipment_serial_reservations_LUrBi4dtYWYD_fkey",
+        "e|fk|public.custodial_equipment_serial_reservations.custodial_equipment_serial_reservations_LUrBi4dtYWYD_fkey",
+        "n|con|public.custodial_equipment_serial_reservations.custodial_equipment_serial_reservations_LUrBi4dtYWYD_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_equipment_serial_reservations",
+        "n|sch|public",
+        "n|tbl|public.custodial_equipment_units",
+        "n|sch|public",
+        "n|col|public.custodial_equipment_serial_reservations.unit_id",
+        "n|col|public.custodial_equipment_units.id",
+        "e|uniqueness|public.custodial_equipment_units.id"
+      ]
+    },
+    {
+      "statementType": "add_check",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_equipment_events"
+      ],
+      "writes": [
+        "s|ck|public.custodial_equipment_events.equipment_issue_correction",
+        "n|ck|public.custodial_equipment_events.equipment_issue_correction",
+        "e|ck|public.custodial_equipment_events.equipment_issue_correction",
+        "n|con|public.custodial_equipment_events.equipment_issue_correction"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_equipment_events",
+        "n|sch|public",
+        "n|col|public.custodial_equipment_events.kind",
+        "n|col|public.custodial_equipment_events.corrected_issue_id",
+        "n|col|public.custodial_equipment_events.issue_details",
+        "n|col|public.custodial_equipment_events.transaction_id"
+      ]
+    },
+    {
+      "statementType": "alter_check",
+      "statementTarget": [
+        "table",
+        "public",
+        "custodial_equipment_events"
+      ],
+      "writes": [
+        "s|ck|public.custodial_equipment_events.equipment_event_kind"
+      ],
+      "reads": [
+        "n|tbl|public.custodial_equipment_events",
+        "n|sch|public",
+        "n|col|public.custodial_equipment_events.kind",
+        "e|col|public.custodial_equipment_events.kind"
+      ],
+      "sqlHash": "ea24d505d102cc92"
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "custodial_equipment_serial_reservations",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_equipment_events",
+        "name": "corrected_issue_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_equipment_events",
+        "name": "issue_details",
+        "type": "jsonb",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_equipment_serial_reservations",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_equipment_serial_reservations",
+        "name": "unit_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_equipment_serial_reservations",
+        "name": "normalized_brand",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_equipment_serial_reservations",
+        "name": "normalized_serial",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_equipment_serial_reservations",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_equipment_events",
+        "name": "equipment_issue_correction_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "corrected_issue_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "version",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_equipment_serial_reservations",
+        "name": "equipment_serial_reservation_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "normalized_brand",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "normalized_serial",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_equipment_events",
+        "name": "custodial_equipment_events_cjnn95Gr9Stg_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "corrected_issue_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "custodial_transactions",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_equipment_serial_reservations",
+        "name": "custodial_equipment_serial_reservations_LUrBi4dtYWYD_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "unit_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "custodial_equipment_units",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "RESTRICT",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_equipment_serial_reservations",
+        "name": "custodial_equipment_serial_reservations_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_equipment_events",
+        "name": "equipment_issue_correction",
+        "value": "(\"kind\" = 'correct_issue') = (\"corrected_issue_id\" IS NOT NULL AND \"issue_details\" IS NOT NULL) AND (\"kind\" = 'correct_issue' OR (\"corrected_issue_id\" IS NULL AND \"issue_details\" IS NULL)) AND (\"kind\" <> 'correct_issue' OR \"transaction_id\" IS NULL)",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "custodial_equipment_serial_reservations",
+        "name": "equipment_serial_reservation_normalized",
+        "value": "length(trim(\"normalized_brand\")) > 0 AND \"normalized_brand\" = upper(trim(\"normalized_brand\")) AND length(trim(\"normalized_serial\")) > 0 AND \"normalized_serial\" = upper(trim(\"normalized_serial\"))",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "checks\u0000[\"public\",\"custodial_equipment_events\",\"equipment_event_kind\"]",
+      "set": {
+        "value": "\"kind\" IN ('register','adopt','issue','return','reassign','edit','correct_issue','repair','repaired','lost','recover','dispose')"
+      }
+    }
+  ]
+}

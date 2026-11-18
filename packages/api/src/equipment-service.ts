@@ -12,6 +12,10 @@ const optional = z.string().trim().max(4000).default("");
 const date = z.iso.date();
 export const equipmentPage = z.object({ page: z.number().int().min(1).max(10000).default(1), search: z.string().trim().max(200).default("") });
 export const equipmentListInput = equipmentPage.extend({ personId: z.uuid().optional(), state: z.enum(equipmentStates).optional() });
+const identity = z.object({brand:z.string().trim().min(1).max(160),model:z.string().trim().min(1).max(240),serialNumber:z.string().trim().min(1).max(240).nullable(),missingSerialReason:text.nullable()}).strict().superRefine((v,ctx)=>{
+  if(v.serialNumber?v.missingSerialReason!==null:!v.missingSerialReason)ctx.addIssue({code:"custom",message:"Enter a serial number or explain why it is unavailable."});
+});
+const issueCorrection = z.object({transactionId:z.uuid(),date,reference:text,purpose:text}).strict();
 const metadata = z.object({ specifications: optional, accessories: optional, warrantyUntil: date.nullable().default(null), notes: optional });
 export const equipmentRegisterInput = metadata.extend({
   balanceId: z.uuid(), permanentNumber: z.string().trim().min(1).max(240), brand: z.string().trim().min(1).max(160), model: z.string().trim().min(1).max(240),
@@ -25,9 +29,9 @@ export const equipmentRegisterInput = metadata.extend({
 });
 export const equipmentActionInput = z.object({
   id: z.uuid(), expectedVersion: z.number().int().nonnegative(), operationId: z.uuid(),
-  action: z.enum(["issue", "return", "reassign", "repair", "repaired", "lost", "recover", "dispose", "edit"]),
+  action: z.enum(["issue", "return", "reassign", "repair", "repaired", "lost", "recover", "dispose", "edit", "correct_issue"]),
   personId: z.uuid().optional(), effectiveDate: date, reference: text, reason: text, location: text, condition: text,
-  documentReference: text.optional(), physicalHandover: z.boolean().default(false), needsRepair: z.boolean().default(false), metadata: metadata.optional(),
+  documentReference: text.optional(), physicalHandover: z.boolean().default(false), needsRepair: z.boolean().default(false), metadata: metadata.optional(), identity:identity.optional(), issueCorrection:issueCorrection.optional(), confirmedCorrection:z.literal(true).optional(),
 }).strict();
 type Actor = { id: string };
 type Unit = typeof units.$inferSelect;
@@ -81,13 +85,16 @@ export async function getEquipment(db: Database, actor: Actor, id: string, page 
     if (!record) throw new CustodialError("NOT_FOUND","Equipment is unavailable.");
     const history = await tx.select().from(events).where(eq(events.unitId,id)).orderBy(desc(events.version)).limit(26).offset((page-1)*25);
     const slips = await tx.selectDistinct({ id:documents.id, number:documents.number, version:versions.version, deletedAt:documents.deletedAt }).from(events).innerJoin(exports,sql`${exports.payload}->'lines' @> jsonb_build_array(jsonb_build_object('transactionId', ${events.transactionId}::text))`).innerJoin(versions,eq(versions.exportId,exports.id)).innerJoin(documents,eq(documents.id,versions.documentId)).where(eq(events.unitId,id)).orderBy(desc(documents.number),desc(versions.version)).limit(100);
-    return {...record, history:history.slice(0,25), hasNext:history.length>25, slips};
+    const [source]=await tx.select({id:events.id,transactionId:events.transactionId,date:operations.transactionDate,reference:operations.reference,purpose:operations.reason}).from(events).innerJoin(transactions,eq(transactions.id,events.transactionId)).innerJoin(operations,eq(operations.id,transactions.operationId)).where(and(eq(events.unitId,id),inArray(events.kind,["issue","reassign","adopt"]))).orderBy(desc(events.version)).limit(1);
+    const [correction]=source?await tx.select().from(events).where(eq(events.correctedIssueId,source.transactionId!)).orderBy(desc(events.version)).limit(1):[];
+    const currentIssue=record.unit.state==="issued"&&source?{...source,...correction?.issueDetails,originalDate:source.date,originalReference:source.reference}:null;
+    return {...record, currentIssue, history:history.slice(0,25), hasNext:history.length>25, slips};
   });
 }
-async function append(tx: AuditTransaction, actor: Actor, unit: Unit, kind: string, input: { effectiveDate:string; reference:string; reason:string; documentReference?:string }, transactionId: string | null, correlationId:string, before?:Unit) {
+async function append(tx: AuditTransaction, actor: Actor, unit: Unit, kind: string, input: { effectiveDate:string; reference:string; reason:string; documentReference?:string; issueCorrection?:z.infer<typeof issueCorrection> }, transactionId: string | null, correlationId:string, before?:Unit) {
   const after=snapshot(unit);
-  await tx.insert(events).values({unitId:unit.id,kind,transactionId,effectiveDate:input.effectiveDate,reference:input.reference,reason:input.reason,documentReference:input.documentReference??null,snapshot:after,version:unit.version,actorId:actor.id});
-  await writeAuditEntry(tx,{actorId:actor.id,action:`custodial.equipment.${kind}`,targetType:"custodial_equipment",targetId:unit.id,before:before?snapshot(before):undefined,after:{...after,reference:input.reference,reason:input.reason,documentReference:input.documentReference??null},correlationId});
+  await tx.insert(events).values({unitId:unit.id,kind,transactionId,correctedIssueId:input.issueCorrection?.transactionId??null,issueDetails:input.issueCorrection?{date:input.issueCorrection.date,reference:input.issueCorrection.reference,purpose:input.issueCorrection.purpose}:null,effectiveDate:input.effectiveDate,reference:input.reference,reason:input.reason,documentReference:input.documentReference??null,snapshot:after,version:unit.version,actorId:actor.id});
+  await writeAuditEntry(tx,{actorId:actor.id,action:`custodial.equipment.${kind}`,targetType:"custodial_equipment",targetId:unit.id,before:before?snapshot(before):undefined,after:{...after,reference:input.reference,reason:input.reason,documentReference:input.documentReference??null,...(input.issueCorrection?{issueCorrection:input.issueCorrection}:{})},correlationId});
 }
 export async function registerEquipment(db: Database, actor: Actor, raw: z.input<typeof equipmentRegisterInput>, correlationId:string) {
   const input=equipmentRegisterInput.parse(raw);
@@ -139,7 +146,10 @@ export async function actOnEquipment(db: Database, actor: Actor, raw:z.input<typ
     const [lot]=await tx.select().from(lots).where(eq(lots.id,unit.lotId));
     if(!lot?.active)fail("The acquisition lot is inactive.");
     if(["return","recover","reassign"].includes(input.action)&&!input.physicalHandover)throw new CustodialError("VALIDATION","Confirm actual physical receipt and handover before posting.");
-    if(!["issue","reassign"].includes(input.action)&&input.personId)throw new CustodialError("VALIDATION","A new recipient is valid only for issue or reassignment.");
+    if(!["issue","reassign","correct_issue"].includes(input.action)&&input.personId)throw new CustodialError("VALIDATION","A new recipient is valid only for issue or reassignment.");
+    if(input.action!=="edit"&&input.identity)throw new CustodialError("VALIDATION","Use Edit device details to correct manufacturer identity.");
+    if(input.action==="correct_issue"&&input.physicalHandover)throw new CustodialError("VALIDATION","Use Return and reissue for a physical handover.");
+    if(input.action!=="correct_issue"&&(input.issueCorrection||input.confirmedCorrection))throw new CustodialError("VALIDATION","Use Correct recorded issue for issue annotations.");
     if(input.action!=="edit"&&input.metadata)throw new CustodialError("VALIDATION","Use Edit details to change device notes or specifications.");
     if(input.needsRepair&&!["return","recover"].includes(input.action))throw new CustodialError("VALIDATION","Repair inspection applies only to physical return or recovery.");
     let change:Partial<Unit>={location:input.location,condition:input.condition,effectiveDate:input.effectiveDate,version:unit.version+1,updatedAt:new Date()},transactionId:string|null=null;
@@ -179,9 +189,17 @@ export async function actOnEquipment(db: Database, actor: Actor, raw:z.input<typ
         if(!input.documentReference)throw new CustodialError("VALIDATION","An external disposal or accountability-relief approval reference is required.");
         if(!unit.personId&&unit.state!=="lost")await post("adjustment","Holding office");
         change={...change,state:"disposed",personId:null,personName:null};break;
+      case "correct_issue": {
+        if(unit.state!=="issued"||!input.issueCorrection||!input.confirmedCorrection)throw new CustodialError("VALIDATION","Confirm this corrects a mistaken outstanding issue, without a physical handover.");
+        const [source]=await tx.select().from(events).where(and(eq(events.unitId,unit.id),inArray(events.kind,["issue","reassign","adopt"]))).orderBy(desc(events.version)).limit(1);
+        if(source?.transactionId!==input.issueCorrection.transactionId)fail("The outstanding issue changed. Reopen the device.");
+        if(input.issueCorrection.date>input.effectiveDate||(lot.acquiredOn&&input.issueCorrection.date<lot.acquiredOn))throw new CustodialError("VALIDATION","The recorded issue date must be between acquisition and the correction date. The stock posting date remains unchanged.");
+        const recipient=await person(tx,input.personId);
+        change={...change,personId:recipient.id,personName:recipient.name};break;
+      }
       case "edit":
         if(!input.metadata)throw new CustodialError("VALIDATION","Device details are required.");
-        change={...change,...input.metadata};break;
+        change={...change,...input.metadata,...(input.identity?{...input.identity,normalizedBrand:input.identity.brand.toUpperCase(),normalizedSerial:input.identity.serialNumber?.toUpperCase()??null}:{})};break;
     }
     const [updated]=await tx.update(units).set(change).where(eq(units.id,unit.id)).returning();
     await append(tx,actor,updated!,input.action,input,transactionId,correlationId,unit);

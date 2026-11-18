@@ -4,7 +4,7 @@ import ExcelJS from "exceljs";
 import { createDb, type Database } from "@matms/db";
 import { user } from "@matms/db/schema/auth";
 import { userProfiles } from "@matms/db/schema/identity";
-import { equipmentUnits, equipmentEvents } from "@matms/db/schema/equipment";
+import { equipmentUnits, equipmentEvents, equipmentSerialReservations } from "@matms/db/schema/equipment";
 import { schedulingPeople, bookableResources } from "@matms/db/schema/scheduling";
 import { custodialCounts, custodialCountLines, custodialTransactions, custodialOperations } from "@matms/db/schema/custodial-inventory";
 import { createCustodialItem, createCustodialLot, createCustodialBalance, postCustodialOperation, previewCustodialOperation, createCustodialCount, createCustodialFormProfile, custodialProfileDefinition, previewCustodialCountRefresh, refreshCustodialCount, getCustodialCount, updateCustodialItem, updateCustodialLot } from "./custodial-service";
@@ -118,7 +118,7 @@ test("adopts a real issue without posting stock and prints stable serial/propert
   expect(await local.select().from(custodialTransactions)).toEqual(ledgerBefore);
   const details={entity:"Fictional school",fromName:"ICT Custodian",fromOffice:"ICT Store",toName:f.persons[0]!.name,toOffice:"Room 1",fromDate:"2026-01-02",toDate:"2026-01-02",lines:[{transactionId:issue!.id,usefulLife:"5 years",description:"Custom device description"}]};
   const preview=await previewIcs(local,f.actor.id,details,crypto.randomUUID());
-  expect(preview.payload.version).toBe("ics-v6");expect(preview.payload.lines[0]!.itemNumber).toBe(s.registration.permanentNumber);
+  expect(preview.payload.version).toBe("ics-v7");expect(preview.payload.lines[0]!.itemNumber).toBe(s.registration.permanentNumber);
   const doc=await generateIcs(local,f.actor.id,{details,expectedDataHash:preview.dataHash,operationId:crypto.randomUUID()},crypto.randomUUID());
   const file=await downloadIcs(local,f.actor.id,doc.id,crypto.randomUUID());
   const book=new ExcelJS.Workbook();await book.xlsx.load(Buffer.from(file.base64,"base64") as unknown as ExcelJS.Buffer);
@@ -204,6 +204,89 @@ test("concurrent issue and return commit once with consistent stock and immutabl
     expect(registrationRace.filter(result=>result.status==="fulfilled")).toHaveLength(1);
     const registered=await local.select().from(equipmentUnits).where(eq(equipmentUnits.lotId,race.lot.id));
     if(registered[0])expect((await getEquipment(local,f.actor,registered[0].id)).balance.quantity).toBe(1);
+    const one=await f.source(),two=await f.source(),first=await registerEquipment(local,f.actor,one.registration,crypto.randomUUID()),second=await registerEquipment(local,f.actor,two.registration,crypto.randomUUID());
+    const alias=`RACE-${crypto.randomUUID()}`,ledgerBefore=await local.select().from(custodialTransactions);
+    const edits=await Promise.allSettled([first,second].map(device=>f.action(device.id,0,"edit",{metadata:{notes:"Verified physical label"},identity:{brand:one.registration.brand,model:"Verified model",serialNumber:alias,missingSerialReason:null}})));
+    expect(edits.filter(v=>v.status==="fulfilled")).toHaveLength(1);
+    expect(await local.select().from(equipmentSerialReservations).where(eq(equipmentSerialReservations.normalizedSerial,alias.toUpperCase()))).toHaveLength(1);
+    expect(await local.select().from(custodialTransactions)).toEqual(ledgerBefore);
+
 
   }finally{if(local)await local.$client.end();if(created)await owner.query(`DROP DATABASE "${name}"`);owner.release();}
 },30000);
+
+
+test("manufacturer detail corrections reserve serial aliases, restore owned aliases and roll back on audit failure",()=>isolated(async local=>{
+  const f=await fixture(local),s=await f.source(),saved=await registerEquipment(local,f.actor,s.registration,crypto.randomUUID());
+  const identity={brand:s.registration.brand,model:"Corrected laptop model",serialNumber:`CORRECT-${crypto.randomUUID()}`,missingSerialReason:null};
+  const edit={id:saved.id,expectedVersion:0,action:"edit" as const,metadata:{notes:"Corrected label",accessories:"Verified charger",specifications:"16 GB RAM",warrantyUntil:"2028-01-01"},identity,effectiveDate:"2026-01-02",reference:"Physical label verification",reason:"Correct a transcription error",location:"ICT Store",condition:"serviceable",operationId:crypto.randomUUID()};
+  const before=await getEquipment(local,f.actor,saved.id),ledger=await local.select().from(custodialTransactions);
+  await expect(actOnEquipment(local,f.actor,edit,null as unknown as string)).rejects.toThrow();
+  expect((await getEquipment(local,f.actor,saved.id)).unit).toEqual(before.unit);
+  expect((await local.select().from(equipmentSerialReservations).where(eq(equipmentSerialReservations.unitId,saved.id)))).toHaveLength(1);
+  for(const id of [f.ids.staff,f.ids.viewer])await expect(actOnEquipment(local,{id},edit,crypto.randomUUID())).rejects.toMatchObject({code:"FORBIDDEN"});
+  const result=await actOnEquipment(local,f.actor,edit,crypto.randomUUID());expect(result.version).toBe(1);
+  expect(await actOnEquipment(local,f.actor,edit,crypto.randomUUID())).toEqual(result);
+  await expect(actOnEquipment(local,f.actor,{...edit,identity:{...identity,model:"Different intent"}},crypto.randomUUID())).rejects.toMatchObject({code:"CONFLICT"});
+  let detail=await getEquipment(local,f.actor,saved.id);expect(detail.unit).toMatchObject({...identity,notes:"Corrected label",specifications:"16 GB RAM",permanentNumber:s.registration.permanentNumber});
+  expect(detail.history[1]!.snapshot.serialNumber).toBe(s.registration.serialNumber);
+  expect(await local.select().from(custodialTransactions)).toEqual(ledger);
+  const other=await f.source();await expect(registerEquipment(local,f.actor,{...other.registration,serialNumber:s.registration.serialNumber.toUpperCase()},crypto.randomUUID())).rejects.toThrow();
+  await f.action(saved.id,1,"edit",{identity:{...identity,serialNumber:s.registration.serialNumber},metadata:{notes:"Restore verified original serial"}});
+  detail=await getEquipment(local,f.actor,saved.id);expect(detail.unit.serialNumber).toBe(s.registration.serialNumber);
+  expect(await local.select().from(equipmentSerialReservations).where(eq(equipmentSerialReservations.unitId,saved.id))).toHaveLength(2);
+  await expect(local.transaction(async tx=>{await tx.delete(equipmentSerialReservations).where(eq(equipmentSerialReservations.unitId,saved.id));})).rejects.toThrow();
+  await expect(f.action(saved.id,2,"edit",{identity:{...identity,serialNumber:null},metadata:{}})).rejects.toThrow();
+  await f.action(saved.id,2,"edit",{identity:{...identity,serialNumber:null,missingSerialReason:"Label damaged; verification pending"},metadata:{}});
+  expect((await getEquipment(local,f.actor,saved.id)).unit.serialNumber).toBeNull();
+  await local.execute(sql`SET CONSTRAINTS ALL IMMEDIATE`);await local.execute(sql`SET CONSTRAINTS ALL DEFERRED`);
+  await local.update(userProfiles).set({active:false}).where(eq(userProfiles.userId,f.actor.id));
+  await expect(actOnEquipment(local,f.actor,edit,crypto.randomUUID())).rejects.toMatchObject({code:"FORBIDDEN"});
+}));
+
+test("outstanding issue corrections annotate without reposting and new ICS freezes corrected source while old slips remain unchanged",()=>isolated(async local=>{
+  const f=await fixture(local),s=await f.source(),saved=await registerEquipment(local,f.actor,s.registration,crypto.randomUUID());
+  await f.action(saved.id,0,"issue",{personId:f.persons[0]!.id});
+  const initial=await getEquipment(local,f.actor,saved.id),source=initial.currentIssue!;
+  const details={entity:"Fictional school",fromName:"Custodian",fromOffice:"ICT Store",toName:f.persons[0]!.name,toOffice:"Room 1",fromDate:"2026-01-02",toDate:"2026-01-02",lines:[{transactionId:source.transactionId!,usefulLife:"5 years"}]};
+  const preview=await previewIcs(local,f.actor.id,details,crypto.randomUUID());
+  const doc=await generateIcs(local,f.actor.id,{details,expectedDataHash:preview.dataHash,operationId:crypto.randomUUID()},crypto.randomUUID());
+  const ledger=await local.select().from(custodialTransactions),operations=await local.select().from(custodialOperations),events=initial.history;
+  const correction={id:saved.id,expectedVersion:1,action:"correct_issue" as const,personId:f.persons[1]!.id,issueCorrection:{transactionId:source.transactionId!,date:"2026-01-01",reference:"Verified issue reference",purpose:"Correct classroom deployment record"},confirmedCorrection:true as const,effectiveDate:"2026-01-03",reference:"Correction review",reason:"Original recipient and reference were transcribed incorrectly",location:"Room B",condition:"serviceable",operationId:crypto.randomUUID()};
+  await expect(actOnEquipment(local,f.actor,{...correction,confirmedCorrection:undefined},crypto.randomUUID())).rejects.toThrow();
+  await expect(actOnEquipment(local,f.actor,{...correction,issueCorrection:{...correction.issueCorrection,date:"2025-12-01"}},crypto.randomUUID())).rejects.toThrow();
+  await expect(actOnEquipment(local,f.actor,{...correction,issueCorrection:{...correction.issueCorrection,date:"2026-01-04"}},crypto.randomUUID())).rejects.toThrow();
+  await expect(actOnEquipment(local,f.actor,{...correction,issueCorrection:{...correction.issueCorrection,transactionId:crypto.randomUUID()}},crypto.randomUUID())).rejects.toThrow();
+  await expect(actOnEquipment(local,f.actor,correction,null as unknown as string)).rejects.toThrow();
+  expect((await getEquipment(local,f.actor,saved.id)).unit.personId).toBe(f.persons[0]!.id);
+  await actOnEquipment(local,f.actor,correction,crypto.randomUUID());
+  expect(await actOnEquipment(local,f.actor,correction,crypto.randomUUID())).toEqual({id:saved.id,version:2});
+  let current=await getEquipment(local,f.actor,saved.id);
+  expect(current.currentIssue).toMatchObject({...correction.issueCorrection,originalDate:"2026-01-02",originalReference:"Physical handover"});
+  expect(current.unit).toMatchObject({personId:f.persons[1]!.id,state:"issued",location:"Room B"});expect(current.balance.quantity).toBe(0);
+  expect(current.history.slice(1)).toEqual(events);expect(current.history[0]!.correctedIssueId).toBe(source.transactionId);
+  expect(await local.select().from(custodialTransactions)).toEqual(ledger);expect(await local.select().from(custodialOperations)).toEqual(operations);
+  expect((await listIcsIssues(local,f.actor.id,1,{personId:f.persons[0]!.id})).rows).toHaveLength(0);
+  expect((await listIcsIssues(local,f.actor.id,1,{personId:f.persons[1]!.id})).rows).toHaveLength(1);
+  await expect(generateIcs(local,f.actor.id,{details,expectedDataHash:preview.dataHash,operationId:crypto.randomUUID()},crypto.randomUUID())).rejects.toMatchObject({code:"CONFLICT"});
+  const serial=`VERIFIED-${crypto.randomUUID()}`;
+  await f.action(saved.id,2,"edit",{effectiveDate:"2026-01-03",metadata:{notes:"Verified manufacturer label"},identity:{brand:s.registration.brand,model:"Verified model",serialNumber:serial,missingSerialReason:null}});
+  const correctedDetails={...details,toName:f.persons[1]!.name};
+  const fresh=await previewIcs(local,f.actor.id,correctedDetails,crypto.randomUUID());expect(fresh.payload.version).toBe("ics-v7");
+  expect(fresh.payload.lines[0]).toMatchObject({device:{serialNumber:serial,personId:f.persons[1]!.id,eventId:current.history[0]!.id,sourceEventId:source.id,identityVersion:3}});
+  const newDoc=await generateIcs(local,f.actor.id,{details:correctedDetails,expectedDataHash:fresh.dataHash,operationId:crypto.randomUUID()},crypto.randomUUID());
+  const newFile=await downloadIcs(local,f.actor.id,newDoc.id,crypto.randomUUID());const newBook=new ExcelJS.Workbook();await newBook.xlsx.load(Buffer.from(newFile.base64,"base64") as unknown as ExcelJS.Buffer);expect(newBook.worksheets[0]!.getCell("E12").text).toContain(serial);
+  const oldFile=await downloadIcs(local,f.actor.id,doc.id,crypto.randomUUID(),1);const oldBook=new ExcelJS.Workbook();await oldBook.xlsx.load(Buffer.from(oldFile.base64,"base64") as unknown as ExcelJS.Buffer);expect(oldBook.worksheets[0]!.getCell("E12").text).toContain(s.registration.serialNumber);expect(oldBook.worksheets[0]!.getCell("E12").text).not.toContain(serial);
+  const template=inventoryProfileTemplate("rpcsp");
+  const profile=await createCustodialFormProfile(local,{id:f.ids.admin},{family:"rpcsp",effectiveFrom:"2026-01-01",sourceHash:template.sourceHash,versionNote:"Correction count fixture",visualApproval:"Fictional fixture",definition:custodialProfileDefinition.parse(template.definition),...op()});
+  const countMetadata={entity:"Fictional school",accountableOfficer:"Officer",accountableDesignation:"Officer",accountabilityAssumedDate:"2026-01-01",custodian:"Custodian",custodianDesignation:"Custodian",committeeChair:"Chair",committeeChairDesignation:"Chair",committeeMember:"Member",committeeMemberDesignation:"Member",schoolHead:"Head",schoolHeadDesignation:"Head"};
+  for(const [asOfDate,teacher,expectedSerial] of [["2026-01-02",f.persons[0]!.name,s.registration.serialNumber],["2026-01-03",f.persons[1]!.name,serial]]){
+    const count=await createCustodialCount(local,f.actor,{code:crypto.randomUUID(),family:"rpcsp",profileId:profile.id,asOfDate:asOfDate!,fundCluster:f.item.id,metadata:countMetadata,...op()});
+    const [line]=await local.select().from(custodialCountLines).where(eq(custodialCountLines.countId,count.id));
+    expect(line!.snapshot).toMatchObject({cardQuantity:1,accountableOfficer:teacher});expect(line!.snapshot).toMatchObject({description:expect.stringContaining(expectedSerial!)});
+  }
+  const unchanged=await previewIcs(local,f.actor.id,details,crypto.randomUUID(),{id:doc.id,expectedVersion:1});expect(unchanged.payload.lines[0]).toEqual(preview.payload.lines[0]);
+  await f.action(saved.id,3,"return",{effectiveDate:"2026-01-04",physicalHandover:true});
+  await expect(actOnEquipment(local,f.actor,{...correction,expectedVersion:4,effectiveDate:"2026-01-04",operationId:crypto.randomUUID()},crypto.randomUUID())).rejects.toThrow();
+  await local.execute(sql`SET CONSTRAINTS ALL IMMEDIATE`);await local.execute(sql`SET CONSTRAINTS ALL DEFERRED`);
+}));

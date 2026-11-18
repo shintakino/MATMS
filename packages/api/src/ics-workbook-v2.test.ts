@@ -131,3 +131,19 @@ test("ICS v4 prints both dates as MM-DD-YYYY while preserving ISO snapshots and 
   expect(older.worksheets[0]!.getCell(`A${older.worksheets[0]!.rowCount-1}`).value).toBe("2024-02-29");
   expect(older.worksheets[0]!.getCell(`F${older.worksheets[0]!.rowCount-1}`).value).toBe("2026-11-12");
 });
+
+test("device ICS v7 retains v6 print geometry, complete long identity text and immutable input",async()=>{
+  const base=fixture(1,"Verified equipment description ".repeat(80));
+  const device={unitId:crypto.randomUUID(),eventId:crypto.randomUUID(),personId:crypto.randomUUID(),personName:"Fictional Teacher",permanentNumber:"ICT-2026-001",brand:"Fictional Brand",model:"Verified model",serialNumber:"VERIFIED-SERIAL-001",missingSerialReason:null};
+  const line={...base.lines[0],quantity:1,itemNumber:device.permanentNumber,device};
+  const legacy=icsPayload.parse({...base,version:"ics-v6",lines:[line]});
+  const current=icsPayload.parse({...base,version:"ics-v7",lines:[{...line,device:{...device,sourceEventId:crypto.randomUUID(),identityVersion:4}}]});
+  const before=structuredClone(current),books:ExcelJS.Workbook[]=[];
+  for(const payload of [legacy,current]){const book=new ExcelJS.Workbook();await book.xlsx.load(await renderIcs(payload) as unknown as ExcelJS.Buffer);books.push(book);}
+  const [oldSheet,newSheet]=books.map(book=>book.worksheets[0]!);
+  expect(newSheet!.pageSetup).toEqual(oldSheet!.pageSetup);expect(newSheet!.model.merges).toEqual(oldSheet!.model.merges);
+  expect(newSheet!.columns.map(column=>column.width)).toEqual(oldSheet!.columns.map(column=>column.width));
+  let description="";newSheet!.eachRow(row=>{expect(row.height).toBe(oldSheet!.getRow(row.number).height);row.eachCell(cell=>{expect(cell.value).toEqual(oldSheet!.getCell(cell.address).value);expect(cell.style).toEqual(oldSheet!.getCell(cell.address).style);});const cell=row.getCell(5);if(row.number>=12&&cell.address===cell.master.address&&typeof cell.value==="string")description+=cell.value;});
+  expect(description).toContain(device.serialNumber);expect(description).toContain(base.lines[0]!.description);expect(current).toEqual(before);
+  expect(newSheet!.getCell(`A${newSheet!.rowCount-1}`).value).toBe("11-09-2026");expect(newSheet!.pageSetup.paperSize).toBe(14 as ExcelJS.PaperSize);
+});

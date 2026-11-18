@@ -3,7 +3,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { Client } from "pg";
 const migration="20261116235141_futuristic_gabe_jones";
-for(const populated of [false,true])test(`equipment migration ${populated?"preserves populated inventory":"creates an empty device register on a fresh schema"}`,async()=>{
+for(const populated of [false,true])test(`equipment migrations ${populated?"preserves populated inventory":"creates an empty device register on a fresh schema"}`,async()=>{
   const raw=process.env.TEST_DATABASE_URL;
   if(!raw||!new URL(raw).pathname.endsWith("_test"))throw new Error("Migration tests require an isolated _test database.");
   const name=`matms_equipment_${crypto.randomUUID().replaceAll("-","")}_test`,target=new URL(raw);target.pathname=`/${name}`;
@@ -32,5 +32,23 @@ for(const populated of [false,true])test(`equipment migration ${populated?"prese
     const triggers=(await client.query("SELECT tgname FROM pg_trigger WHERE NOT tgisinternal AND tgname LIKE 'equipment_%' ORDER BY tgname")).rows.map(row=>row.tgname);
     expect(triggers).toEqual(["equipment_balance_consistent","equipment_event_protected","equipment_head_protected","equipment_state_consistent"]);
     expect((await client.query("SELECT indexname FROM pg_indexes WHERE indexname IN ('equipment_lot_unique','equipment_number_unique','equipment_serial_unique','equipment_event_version_unique','equipment_event_transaction_unique')")).rows).toHaveLength(5);
+    if(populated){
+      await client.query("BEGIN");
+      const person=(await client.query("INSERT INTO scheduling_people(code,name,category) VALUES ('MIGRATION-TEACHER','Fictional teacher','jhs') RETURNING id")).rows[0].id;
+      const source=(await client.query("SELECT l.id AS lot,b.id AS balance,ct.id AS issue FROM custodial_lots l JOIN custodial_balances b ON b.lot_id=l.id JOIN custodial_transactions ct ON ct.balance_id=b.id JOIN custodial_operations co ON co.id=ct.operation_id WHERE co.operation_type='issue'")).rows[0];
+      const unit=(await client.query(`INSERT INTO custodial_equipment_units(lot_id,balance_id,permanent_number,normalized_number,brand,normalized_brand,model,serial_number,normalized_serial,state,person_id,person_name,location,condition,effective_date,created_by) VALUES ($1,$2,'OLD-001','OLD-001','Fictional Brand','FICTIONAL BRAND','Original model','Old-Serial','OLD-SERIAL','issued',$3,'Fictional teacher','Room A','serviceable','2026-01-01','migration-owner') RETURNING *`,[source.lot,source.balance,person])).rows[0];
+      const snapshot={permanentNumber:unit.permanent_number,brand:unit.brand,model:unit.model,serialNumber:unit.serial_number,missingSerialReason:null,specifications:"",accessories:"",warrantyUntil:null,notes:"",state:"issued",personId:person,personName:"Fictional teacher",location:"Room A",condition:"serviceable",version:0};
+      await client.query("INSERT INTO custodial_equipment_events(unit_id,kind,transaction_id,effective_date,reference,reason,snapshot,version,actor_id) VALUES ($1,'adopt',$2,'2026-01-01','Verified old device','Existing custody',$3,0,'migration-owner')",[unit.id,source.issue,JSON.stringify(snapshot)]);
+      await client.query("COMMIT");
+    }
+    const heads=(await client.query("SELECT to_jsonb(t) AS row FROM custodial_equipment_units t")).rows;
+    const history=(await client.query("SELECT to_jsonb(t) AS row FROM custodial_equipment_events t")).rows;
+    const existing=await hashes();await apply("20261118022016_silky_marvel_boy");expect(await hashes()).toEqual(existing);
+    expect((await client.query("SELECT to_jsonb(t) AS row FROM custodial_equipment_units t")).rows).toEqual(heads);
+    expect((await client.query("SELECT to_jsonb(t)-'corrected_issue_id'-'issue_details' AS row FROM custodial_equipment_events t")).rows).toEqual(history);
+    expect((await client.query("SELECT normalized_brand,normalized_serial FROM custodial_equipment_serial_reservations")).rows).toEqual(populated?[{normalized_brand:"FICTIONAL BRAND",normalized_serial:"OLD-SERIAL"}]:[]);
+    expect((await client.query("SELECT count(*)::int AS n FROM pg_trigger WHERE NOT tgisinternal AND tgname LIKE 'equipment_%'")).rows[0].n).toBe(5);
+    expect((await client.query("SELECT condeferrable AND condeferred AS deferred FROM pg_constraint WHERE conrelid='custodial_equipment_serial_reservations'::regclass AND contype='f'")).rows[0].deferred).toBe(true);
+
   }finally{if(connected)await client.end();if(created)await owner.query(`DROP DATABASE "${name}"`);await owner.end();}
 },30000);
