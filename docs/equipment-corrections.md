@@ -35,7 +35,7 @@ For an actual handover, use **Record physical return**, confirm receipt, then **
 
 ## ICS after corrections
 
-Select **Generate ICS / saved slips** from the device. New slips use the corrected recipient and manufacturer identity, with the permanent property number unchanged. Multiple devices still require the same recipient and fund.
+Select **Generate ICS / saved slips** from the device. New slips use the corrected recipient and manufacturer identity, with the permanent property number unchanged. Multiple devices still require the same recipient and fund. Enter the printed signature dates in the ICS form as usual.
 
 Saved ICS versions keep their frozen serial, recipient and other details. An ordinary Edit of a saved slip preserves its existing line identity. To print corrected source details, generate a new slip after reviewing the corrected issue. If an old slip should leave active history, use its existing reason-bearing **Delete** action; it remains restorable with its original number and versions.
 

@@ -62,15 +62,26 @@
   "ics_live_queries_succeeded": true,
   "ics_mobile_layout_verified": true,
   "production_test_records_created": false,
-  "revision": "2d69c280a23b79d919b8994ccfc6a85a7e9b632b",
-  "workflow_run_id": "44209080272",
-  "inventory_choice_order": {
-    "balance_natural_order_verified": true,
-    "lot_natural_order_verified": true,
-    "transfer_order_matches_balance": true,
-    "selected_balance_id_preserved": true,
-    "existing_balance_choices_checked": 46,
+  "revision": "942e9836da416241647a118fcf8a4712efee1bab",
+  "workflow_run_id": "44224943507",
+  "equipment_correction_forms": {
+    "existing_issued_devices_checked": 1,
+    "edit_identity_fields_prefilled": true,
+    "outstanding_issue_fields_and_current_recipient_verified": true,
+    "correction_confirmation_visible": true,
+    "accessibility_scans": [
+      {
+        "form": "Edit device details / serial",
+        "violations": 0
+      },
+      {
+        "form": "Correct recorded issue",
+        "violations": 0
+      }
+    ],
+    "mobile_layout_verified": true,
     "browser_errors": [],
+    "production_business_writes_performed": false,
     "production_test_records_created": false
   }
 }

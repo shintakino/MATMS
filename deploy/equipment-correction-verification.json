@@ -1,7 +1,7 @@
 {
   "feature": "audited individual equipment details, serial and outstanding issue corrections",
   "spec": "context/feature-specs/15-individual-equipment-custody.md",
-  "production_status": "pending_checked_deployment",
+  "production_status": "verified",
   "migration": "20261118022016_silky_marvel_boy",
   "manufacturer_identity_edits_with_required_reason": true,
   "permanent_property_and_stock_linkage_unchanged": true,
@@ -27,5 +27,43 @@
     "individual device register, issue, ICS, return/reissue, manufacturer correction and recipient correction; mobile and zero-violation accessibility",
     "batch ICS generation and versioned CRUD, delete/restore, mobile and accessibility"
   ],
-  "school_printer_and_native_excel_acceptance_remain_separate": true
+  "school_printer_and_native_excel_acceptance_remain_separate": true,
+  "revision": "942e9836da416241647a118fcf8a4712efee1bab",
+  "workflow_run_id": "44224943507",
+  "workflow_url": "https://github.com/shintakino/MATMS/actions/runs/44224943507",
+  "hosted_integrations_passed": 93,
+  "hosted_private_source_comparisons_skipped": 9,
+  "hosted_chromium_scenarios_passed": 16,
+  "backup_and_migration_exit_codes": 0,
+  "baseline_tables_preserved": 56,
+  "legacy_event_fields_and_snapshot_hashes_preserved": true,
+  "legacy_equipment_hash_projection_excludes_only_new_nullable_annotation_columns": true,
+  "serial_reservations_backfilled_and_owner_checked": true,
+  "code_reservations_verified": 20,
+  "live_routes_checked": 28,
+  "live_accessibility_scans": 9,
+  "live_accessibility_violations": 0,
+  "live_browser_errors": 0,
+  "live_correction_forms": {
+    "existing_issued_devices_checked": 1,
+    "edit_identity_fields_prefilled": true,
+    "outstanding_issue_fields_and_current_recipient_verified": true,
+    "correction_confirmation_visible": true,
+    "accessibility_scans": [
+      {
+        "form": "Edit device details / serial",
+        "violations": 0
+      },
+      {
+        "form": "Correct recorded issue",
+        "violations": 0
+      }
+    ],
+    "mobile_layout_verified": true,
+    "browser_errors": [],
+    "production_business_writes_performed": false,
+    "production_test_records_created": false
+  },
+  "production_test_records_created": false,
+  "production_equipment_records_edited": false
 }

@@ -1,19 +1,19 @@
 {
-  "revision": "2d69c280a23b79d919b8994ccfc6a85a7e9b632b",
+  "revision": "942e9836da416241647a118fcf8a4712efee1bab",
   "images": {
-    "server": "ghcr.io/shintakino/matms-server@sha256:444ce196034af7445b3b2c37e94140a72244327b13aa20016577b65849b9ff46",
-    "postgres": "ghcr.io/shintakino/matms-postgres@sha256:306dc888b93a2c092ecc137b777a0c15878873f5a72360b8405c6d0f12e3e257",
-    "web": "ghcr.io/shintakino/matms-web@sha256:a5ac59d72e4f953f3e342ddf255b8053015200035310c5dc62302fb886aa32fc"
+    "server": "ghcr.io/shintakino/matms-server@sha256:9f1667a7d7e9a1378550e93cad5e12f070e4020c6f4ceb00bdfd3d23193e6250",
+    "postgres": "ghcr.io/shintakino/matms-postgres@sha256:c1a5dce01fe7f6d950f5a7309c548512f5e816b58dbb4dbc69fe69e8466e3c3d",
+    "web": "ghcr.io/shintakino/matms-web@sha256:e99d0a2ce2998c9f8afa0d71df362c244a14db995c2c89c6fb1aef79070838cd"
   },
-  "web_build_id": "44209080272-1",
-  "deployment_id": "44209080272-1",
+  "web_build_id": "44224943507-1",
+  "deployment_id": "44224943507-1",
   "origin": "https://matms.shintakino.qzz.io",
   "service_uuid": "mt8rqzgbtpkbzedwicy03wnf",
   "status": "verified",
   "volumes_preserved": true,
   "web_and_api_revision_verified": true,
-  "workflow_run_id": "44209080272",
-  "workflow_url": "https://github.com/shintakino/MATMS/actions/runs/44209080272",
+  "workflow_run_id": "44224943507",
+  "workflow_url": "https://github.com/shintakino/MATMS/actions/runs/44224943507",
   "required_jobs": [
     {
       "name": "Types, integration and browser checks",
@@ -49,6 +49,10 @@
   "equipment_tables_verified": true,
   "equipment_guards_verified": true,
   "equipment_unique_indexes_verified": true,
+  "equipment_correction_guards_verified": true,
+  "equipment_serial_alias_ownership_verified": true,
+  "equipment_issue_correction_columns_verified": true,
+  "equipment_legacy_history_hash_excludes_new_nullable_annotation_columns": true,
   "ics_document_tables_verified": true,
   "ics_document_guards_verified": true,
   "ics_snapshot_table_verified": true,
@@ -59,7 +63,9 @@
   "public_routes_verified": 28,
   "public_accessibility_scans": 7,
   "public_accessibility_violations": 0,
+  "equipment_correction_accessibility_scans": 2,
+  "equipment_correction_accessibility_violations": 0,
   "existing_code_owners_preserved": true,
-  "inventory_choice_order_verified": true,
-  "ics_print_renderer": "ics-v6 (devices), ics-v5 (batches)"
+  "equipment_correction_forms_verified": true,
+  "ics_print_renderer": "ics-v7 (devices), ics-v5 (batches)"
 }
